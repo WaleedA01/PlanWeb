@@ -5,6 +5,7 @@ import { BusinessFormData, initialBusinessFormData } from './types';
 import FormContainer from '../shared/FormContainer';
 import FormStep from '../shared/FormStep';
 import RecapScreen from '../shared/RecapScreen';
+import AnimatedTransition from '../shared/AnimatedTransition';
 import Step1BusinessInfo from './steps/Step1BusinessInfo';
 import Step2BusinessType from './steps/Step2BusinessType';
 import Step3Products from './steps/Step3Products';
@@ -15,13 +16,16 @@ export default function BusinessForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<BusinessFormData>(initialBusinessFormData);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showTransition, setShowTransition] = useState(false);
 
   const updateFormData = (updates: Partial<BusinessFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
   const handleNext = () => {
-    if (currentStep < 5) {
+    if (currentStep === 1) {
+      setShowTransition(true);
+    } else if (currentStep < 5) {
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -30,6 +34,11 @@ export default function BusinessForm() {
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
     }
+  };
+
+  const handleTransitionComplete = () => {
+    setShowTransition(false);
+    setCurrentStep(2);
   };
 
   const handleSubmit = async () => {
@@ -65,6 +74,20 @@ export default function BusinessForm() {
 
   if (isSubmitted) {
     return <RecapScreen data={formData} />;
+  }
+
+  if (showTransition) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        <AnimatedTransition
+          text="Great! Nice to meet you. Now let's find you the coverage that meets your needs."
+          animationType="slideUp"
+          gifSrc="/gifs/thumbup.gif"
+          duration={4500}
+          onComplete={handleTransitionComplete}
+        />
+      </div>
+    );
   }
 
   return (

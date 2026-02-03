@@ -30,7 +30,7 @@ export default function Step3Products({ data, onUpdate }: Step3Props) {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Choose Products</h2>
         <p className="text-muted-foreground">Select all insurance products you're interested in</p>
       </div>

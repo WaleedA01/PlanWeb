@@ -24,7 +24,7 @@ const businessTypes = [
 export default function Step2BusinessType({ data, onUpdate }: Step2Props) {
   return (
     <div className="space-y-6">
-      <div>
+      <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Choose Your Business Type</h2>
         <p className="text-muted-foreground">Select the category that best describes your business</p>
       </div>

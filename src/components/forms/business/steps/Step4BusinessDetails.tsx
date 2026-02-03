@@ -13,7 +13,7 @@ interface Step4Props {
 export default function Step4BusinessDetails({ data, onUpdate }: Step4Props) {
   return (
     <div className="space-y-6">
-      <div>
+      <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Business Details</h2>
         <p className="text-muted-foreground">Tell us more about your business</p>
       </div>

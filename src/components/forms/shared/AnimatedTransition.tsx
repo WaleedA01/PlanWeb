@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Image from 'next/image';
+import SplitText from '@/components/SplitText';
 
 interface AnimatedTransitionProps {
   text: string;
@@ -25,12 +26,6 @@ export default function AnimatedTransition({
     }
   }, [onComplete, duration]);
 
-  const animationClass = {
-    fadeIn: 'animate-[fadeInUp_0.8s_ease-out_forwards]',
-    typewriter: 'animate-[fadeInUp_0.8s_ease-out_forwards]', // Can be enhanced later
-    slideUp: 'animate-[fadeInUp_1s_ease-out_forwards]',
-  }[animationType];
-
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] text-center px-4">
       {gifSrc && (
@@ -38,9 +33,15 @@ export default function AnimatedTransition({
           <Image src={gifSrc} alt="Loading" width={200} height={200} />
         </div>
       )}
-      <h2 className={`text-2xl md:text-3xl font-bold text-foreground opacity-0 ${animationClass}`}>
-        {text}
-      </h2>
+      <SplitText
+        text={text}
+        className="text-2xl md:text-3xl font-bold text-foreground"
+        delay={30}
+        duration={0.8}
+        splitType="chars"
+        threshold={0}
+        tag="h2"
+      />
     </div>
   );
 }

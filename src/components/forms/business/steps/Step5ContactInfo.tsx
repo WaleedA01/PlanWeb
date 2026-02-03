@@ -14,7 +14,7 @@ interface Step5Props {
 export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
   return (
     <div className="space-y-6">
-      <div>
+      <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Contact Information</h2>
         <p className="text-muted-foreground">How can we reach you?</p>
       </div>
