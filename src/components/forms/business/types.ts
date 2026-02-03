@@ -28,6 +28,11 @@ export interface BusinessFormData {
   expectedDate: string;
   preferredContactMethod: string;
   additionalInfo: string;
+
+  // Server routing / metadata (not user-entered fields)
+  leadSource?: string;
+  tags?: string;
+  agent?: string;
 }
 
 export const initialBusinessFormData: BusinessFormData = {
@@ -51,4 +56,7 @@ export const initialBusinessFormData: BusinessFormData = {
   expectedDate: '',
   preferredContactMethod: '',
   additionalInfo: '',
+  leadSource: '',
+  tags: '',
+  agent: '',
 };

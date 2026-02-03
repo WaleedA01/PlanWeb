@@ -1,5 +1,3 @@
-
-
 import { buildBusinessComments } from "@/lib/submit/comments/businessComments";
 import { firstNonEmpty, limit, str } from "@/lib/submit/utils/strings";
 
@@ -72,6 +70,12 @@ export function mapBusiness(
 
     // Optional AZ field
     yearBusinessStarted: limit(str(answers.yearBusinessStarted), 10),
+
+    // Optional AZ field
+    numEmployees: limit(str(answers.numEmployees), 20),
+
+    // Optional AZ field
+    nextExpirationDate: limit(str(answers.nextExpirationDate), 10),
 
     // Notes/comments: products + businessType + other details
     comments: buildBusinessComments(answers),

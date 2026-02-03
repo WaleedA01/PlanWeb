@@ -64,12 +64,12 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
         </div>
 
         <div>
-          <Label htmlFor="expectedDate">When do you need this coverage?</Label>
+          <Label htmlFor="expectedCoverageDate">When do you need this coverage?</Label>
           <Input
-            id="expectedDate"
+            id="expectedCoverageDate"
             type="date"
-            value={data.expectedDate}
-            onChange={(e) => onUpdate({ expectedDate: e.target.value })}
+            value={data.expectedCoverageDate}
+            onChange={(e) => onUpdate({ expectedCoverageDate: e.target.value })}
           />
         </div>
 

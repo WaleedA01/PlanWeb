@@ -11,12 +11,19 @@ import Step2BusinessType from './steps/Step2BusinessType';
 import Step3Products from './steps/Step3Products';
 import Step4BusinessDetails from './steps/Step4BusinessDetails';
 import Step5ContactInfo from './steps/Step5ContactInfo';
+import { TurnstileWidget } from "@/components/TurnstileWidget";
 
 export default function BusinessForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<BusinessFormData>(initialBusinessFormData);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showTransition, setShowTransition] = useState(false);
+
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileKey, setTurnstileKey] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitResult, setSubmitResult] = useState<any>(null);
 
   const updateFormData = (updates: Partial<BusinessFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
@@ -42,16 +49,61 @@ export default function BusinessForm() {
   };
 
   const handleSubmit = async () => {
-    // TODO: Integrate Zapier webhook here
-    console.log('Form submitted:', formData);
-    
-    // Placeholder for Zapier integration
-    // const response = await fetch('ZAPIER_WEBHOOK_URL', {
-    //   method: 'POST',
-    //   body: JSON.stringify(formData),
-    // });
+    setSubmitError(null);
+    setSubmitResult(null);
 
-    setIsSubmitted(true);
+    if (!turnstileToken) {
+      setSubmitError('Please complete the verification before submitting.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Include any routing hints you want the backend/Zapier to receive.
+      // (These can be overridden server-side later when you add attribution logic.)
+      const answers = {
+        ...formData,
+        // keep these consistent with your existing pipeline tests
+        leadSource: formData.leadSource || 'Business Questionnaire',
+        tags: (formData as any).tags || 'online',
+        agent: (formData as any).agent || 'Oraib Aref',
+      };
+
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          formType: 'business',
+          answers,
+          turnstileToken,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+      setSubmitResult(data);
+
+      if (!res.ok) {
+        setSubmitError(data?.error || `Submit failed (HTTP ${res.status})`);
+        // Turnstile tokens are single-use; force re-verify
+        setTurnstileToken(null);
+        setTurnstileKey((k) => k + 1);
+        return;
+      }
+
+      // Success
+      setIsSubmitted(true);
+
+      // reset token/widget to prevent accidental re-submit with same token
+      setTurnstileToken(null);
+      setTurnstileKey((k) => k + 1);
+    } catch (err: any) {
+      setSubmitError(err?.message || 'Network error submitting lead.');
+      setTurnstileToken(null);
+      setTurnstileKey((k) => k + 1);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Validation logic for each step
@@ -66,7 +118,7 @@ export default function BusinessForm() {
       case 4:
         return formData.isNewBusiness !== null && formData.numEmployees !== '';
       case 5:
-        return formData.firstName && formData.lastName && formData.email && formData.phoneNumber && formData.preferredContactMethod;
+        return formData.firstName && formData.lastName && formData.email && formData.phoneNumber && formData.preferredContactMethod && !!turnstileToken;
       default:
         return false;
     }
@@ -98,7 +150,7 @@ export default function BusinessForm() {
       onPrevious={handlePrevious}
       onSubmit={handleSubmit}
       isLastStep={currentStep === 5}
-      canProceed={!!canProceed()}
+      canProceed={!!canProceed() && !isSubmitting}
     >
       <FormStep isActive={currentStep === 1}>
         <Step1BusinessInfo data={formData} onUpdate={updateFormData} />
@@ -118,6 +170,29 @@ export default function BusinessForm() {
 
       <FormStep isActive={currentStep === 5}>
         <Step5ContactInfo data={formData} onUpdate={updateFormData} />
+
+        <div className="mt-6 space-y-3">
+          <TurnstileWidget
+            key={turnstileKey}
+            onToken={(token: string) => setTurnstileToken(token)}
+          />
+
+          {submitError && (
+            <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {submitError}
+            </div>
+          )}
+
+          {submitResult && (
+            <pre className="max-h-64 overflow-auto rounded-md border bg-gray-50 p-3 text-xs">
+{JSON.stringify(submitResult, null, 2)}
+            </pre>
+          )}
+
+          {isSubmitting && (
+            <div className="text-sm text-gray-600">Submitting…</div>
+          )}
+        </div>
       </FormStep>
     </FormContainer>
   );

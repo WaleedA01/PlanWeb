@@ -1,5 +1,3 @@
-
-
 import { arr, limit, str } from "@/lib/submit/utils/strings";
 
 /**
@@ -32,16 +30,10 @@ export function buildBusinessComments(a: Record<string, unknown>): string {
 
   // Operational / timeline details
   const isNewBusiness = str(a.isNewBusiness);
-  const yearBusinessStarted = str(a.yearBusinessStarted);
-  const numEmployees = str(a.numEmployees);
-  const nextExpirationDate = str(a.nextExpirationDate);
   const expectedCoverageDate = str(a.expectedCoverageDate);
 
   const ops: string[] = [];
   if (isNewBusiness) ops.push(`New business: ${isNewBusiness}`);
-  if (yearBusinessStarted) ops.push(`Year business started: ${yearBusinessStarted}`);
-  if (numEmployees) ops.push(`Estimated employees: ${numEmployees}`);
-  if (nextExpirationDate) ops.push(`Next expiration date: ${nextExpirationDate}`);
   if (expectedCoverageDate) ops.push(`Expected coverage date: ${expectedCoverageDate}`);
   if (ops.length) parts.push(ops.join("\n"));
 
