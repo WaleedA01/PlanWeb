@@ -23,7 +23,7 @@ export default function Step4BusinessDetails({ data, onUpdate }: Step4Props) {
           <Label className="mb-3 block">Is this a new business?</Label>
           <RadioGroup
             value={data.isNewBusiness === null ? '' : data.isNewBusiness.toString()}
-            onValueChange={(value) => onUpdate({ isNewBusiness: value === 'true' })}
+            onValueChange={(value) => onUpdate({ isNewBusiness: value === '' ? null : value === 'true' })}
           >
             <div className="flex gap-4">
               <div className="flex items-center space-x-2">

@@ -75,7 +75,7 @@ export default function BusinessForm() {
       onPrevious={handlePrevious}
       onSubmit={handleSubmit}
       isLastStep={currentStep === 5}
-      canProceed={canProceed()}
+      canProceed={!!canProceed()}
     >
       <FormStep isActive={currentStep === 1}>
         <Step1BusinessInfo data={formData} onUpdate={updateFormData} />
