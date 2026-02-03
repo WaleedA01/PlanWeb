@@ -1,5 +1,6 @@
 import FadeInSection from '@/components/animations/FadeInSection';
 import HeroSection from '@/components/sections/landing/HeroSection';
+import PersonalAndBusinessSection from '@/components/sections/landing/PersonalAndBusinessSection';
 import GetStartedSection from '@/components/sections/landing/GetStartedSection';
 import PartnersSection from '@/components/sections/landing/PartnersSection';
 import WhyPlanLifeSection from '@/components/sections/landing/WhyPlanLifeSection';
@@ -13,9 +14,15 @@ export default function Home() {
       {/* Hero - No fade, immediately visible */}
       <HeroSection />
 
+
       {/* All other sections fade in on scroll */}
       <FadeInSection>
         <GetStartedSection />
+      </FadeInSection>
+
+            {/* Personal and Business Section */}
+      <FadeInSection>
+        <PersonalAndBusinessSection />
       </FadeInSection>
 
       <FadeInSection delay={0.1}>

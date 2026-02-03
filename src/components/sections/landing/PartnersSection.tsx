@@ -1,15 +1,32 @@
+'use client';
+
+import LogoLoop, { LogoItem } from '@/components/LogoLoop';
+
 export default function PartnersSection() {
-  // Placeholder partner data - replace with actual logos later
-  const partners = [
-    { name: 'State Farm', logo: 'SF' },
-    { name: 'Allstate', logo: 'AS' },
-    { name: 'Progressive', logo: 'PG' },
-    { name: 'Geico', logo: 'GC' },
-    { name: 'Nationwide', logo: 'NW' },
-    { name: 'Liberty Mutual', logo: 'LM' },
-    { name: 'Farmers', logo: 'FM' },
-    { name: 'Travelers', logo: 'TV' },
+  const carriers = [
+    { src: '/carriers/amtrust.png', alt: 'AmTrust', title: 'AmTrust' },
+    { src: '/carriers/berkshire.png', alt: 'Berkshire', title: 'Berkshire' },
+    { src: '/carriers/bristolwest.png', alt: 'Bristol West', title: 'Bristol West' },
+    { src: '/carriers/citizens.png', alt: 'Citizens', title: 'Citizens' },
+    { src: '/carriers/geico.png', alt: 'Geico', title: 'Geico' },
+    { src: '/carriers/hartford.png', alt: 'Hartford', title: 'Hartford' },
+    { src: '/carriers/libertymutual.png', alt: 'Liberty Mutual', title: 'Liberty Mutual' },
+    { src: '/carriers/progressive.png', alt: 'Progressive', title: 'Progressive' },
+    { src: '/carriers/safeco.png', alt: 'Safeco', title: 'Safeco' },
   ];
+
+  const renderItem = (item: LogoItem) => (
+    <div className="relative group/logo">
+      <img
+        src={(item as any).src}
+        alt={(item as any).alt}
+        className="rounded-lg transition-transform"
+      />
+      <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-secondary text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap opacity-0 group-hover/logo:opacity-100 transition-opacity pointer-events-none z-50 shadow-lg">
+        {(item as any).title}
+      </div>
+    </div>
+  );
 
   return (
     <section className="py-16 md:py-24 bg-secondary/5">
@@ -23,27 +40,25 @@ export default function PartnersSection() {
             We compare rates from leading carriers to find you the best coverage at the best price
           </p>
         </div>
+      </div>
 
-        {/* Partners Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
-          {partners.map((partner, index) => (
-            <div
-              key={index}
-              className="group bg-white border border-border rounded-lg p-6 md:p-8 flex items-center justify-center hover:border-primary hover:shadow-lg transition-all duration-300 aspect-square"
-            >
-              {/* Placeholder - Replace with actual logo images */}
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-muted-foreground/30 group-hover:text-primary/50 transition-colors">
-                  {partner.logo}
-                </div>
-                <div className="text-xs text-muted-foreground mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {partner.name}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* Logo Loop */}
+      <div className="overflow-visible py-12">
+        <LogoLoop
+          logos={carriers}
+          speed={50}
+          logoHeight={120}
+          gap={64}
+          pauseOnHover
+          scaleOnHover
+          fadeOut
+          fadeOutColor="#f4f5f7"
+          renderItem={renderItem}
+          className="!overflow-visible"
+        />
+      </div>
 
+      <div className="container mx-auto px-4">
         {/* Bottom Text */}
         <div className="text-center mt-12">
           <p className="text-muted-foreground">

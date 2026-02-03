@@ -45,9 +45,9 @@ export default function Header() {
                 FAQ
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
               </Link>
-              <Link href="/contact">
-                <Button className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity">
-                  Get Quote
+              <Link href="/personal">
+                <Button className="bg-secondary hover:bg-secondary/90 text-white shadow-lg font-semibold transition-all">
+                  Get Started
                 </Button>
               </Link>
             </div>
@@ -139,8 +139,8 @@ export default function Header() {
                 className="animate-[slideInFade_0.5s_ease-out_0.7s_forwards] opacity-0"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <Button className="bg-gradient-to-r from-primary to-primary/80 text-lg px-12 py-6 hover:scale-105 transition-transform">
-                  Get Quote
+                <Button className="bg-secondary hover:bg-secondary/90 text-white shadow-lg font-semibold transition-all text-lg px-8 py-4">
+                  Get Started
                 </Button>
               </Link>
             </nav>
