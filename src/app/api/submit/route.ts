@@ -5,6 +5,7 @@ import { isOriginAllowed } from "@/lib/submit/origin";
 import { resolveZapierWebhook } from "@/lib/submit/webhook";
 import { str } from "@/lib/submit/utils/strings";
 import { routeAndMap } from "@/lib/submit/router";
+import { getAgentById, getAgentFullName } from "@/lib/agents/getAgents";
 
 type ParsedBody = Partial<SubmitRequest> & Record<string, unknown>;
 
@@ -47,6 +48,25 @@ export async function POST(req: Request) {
     string,
     unknown
   >;
+
+  // 5b) Resolve agent server-side (avoid client spoofing)
+  const agentIdRaw = str((answers as any).agentId || (answers as any).selectedAgentId);
+  const agentId = agentIdRaw.trim();
+
+  if (agentId) {
+    const agent = getAgentById(agentId);
+    if (agent) {
+      // Always set the human-readable agent name from our source of truth
+      (answers as any).agent = getAgentFullName(agent);
+
+      // Optionally expose these for downstream Zapier steps (safe-ish contact fields)
+      (answers as any).agentEmail = agent.email;
+      (answers as any).agentPhone = agent.phone;
+    } else {
+      // If an unknown agentId is provided, keep the id for debugging but don't trust any agent name
+      (answers as any).agent = "(unknown)";
+    }
+  }
 
   // 6) Map answers to the payload that Zapier expects (router + category-specific mappers)
   const routed = routeAndMap(formType, answers);

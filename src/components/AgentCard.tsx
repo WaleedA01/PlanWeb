@@ -2,13 +2,16 @@ import Image from 'next/image';
 
 interface AgentCardProps {
   name: string;
-  image: string | null;
+  image?: string | null;
   title?: string;
   phone?: string;
   email?: string;
 }
 
 export default function AgentCard({ name, image, title, phone, email }: AgentCardProps) {
+  const fallbackImage = "/logo-square.png";
+  const imgSrc = (image && image.trim().length > 0) ? image : fallbackImage;
+
   return (
     <div className="bg-gradient-to-br from-[#0da9e4] via-[#3db8e8] to-[#7dd3f0] border border-border rounded-2xl overflow-visible hover:shadow-lg hover:border-primary/50 transition-all duration-300 h-64 relative">
       {/* Agent Info - Top right */}
@@ -21,10 +24,10 @@ export default function AgentCard({ name, image, title, phone, email }: AgentCar
       </div>
 
       {/* Agent Image - Full size with overflow, shifted left */}
-      {image ? (
+      {imgSrc ? (
         <div className="absolute inset-0 -top-12 -left-32">
           <Image
-            src={image}
+            src={imgSrc}
             alt={name}
             fill
             className="object-contain object-top rounded-2xl"

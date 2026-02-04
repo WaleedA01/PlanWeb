@@ -67,7 +67,9 @@ export default function BusinessForm() {
         // keep these consistent with your existing pipeline tests
         leadSource: formData.leadSource || 'Business Questionnaire',
         tags: (formData as any).tags || 'online',
-        agent: (formData as any).agent || 'Oraib Aref',
+
+        // New: stable agent selection (server will resolve to display name / routing)
+        agentId: formData.selectedAgentId,
       };
 
       const res = await fetch('/api/submit', {
@@ -118,7 +120,15 @@ export default function BusinessForm() {
       case 4:
         return formData.isNewBusiness !== null && formData.numEmployees !== '';
       case 5:
-        return formData.firstName && formData.lastName && formData.email && formData.phoneNumber && formData.preferredContactMethod && !!turnstileToken;
+        return (
+          formData.firstName &&
+          formData.lastName &&
+          formData.email &&
+          formData.phoneNumber &&
+          formData.preferredContactMethod &&
+          formData.selectedAgentId &&
+          !!turnstileToken
+        );
       default:
         return false;
     }

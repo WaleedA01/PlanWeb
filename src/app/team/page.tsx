@@ -1,13 +1,24 @@
+import fs from "fs";
+import path from "path";
+
 import AgentCard from '@/components/AgentCard';
+import { getActiveAgents, getAgentFullName, sortAgents } from "@/lib/agents/getAgents";
 
 export default function Team() {
-  const agents = [
-    { name: 'Gus Aref', image: '/agents/full/gus.png', title: 'Insurance Agent', phone: '555-0001', email: 'gus@example.com' },
-    { name: 'Justin Soto', image: '/agents/full/justin.png', title: 'Insurance Agent', phone: '555-0002', email: 'justin@example.com' },
-    { name: 'Oraib Aref', image: '/agents/full/oraib.png', title: 'Insurance Agent', phone: '555-0003', email: 'oraib@example.com' },
-    { name: 'Sara Diaz', image: '/agents/full/sara.png', title: 'Insurance Agent', phone: '555-0004', email: 'sara@example.com' },
-    { name: 'Samir Saber', image: null, title: 'Insurance Agent', phone: '555-0005', email: 'samir@example.com' },
-  ];
+  const agents = sortAgents(getActiveAgents());
+
+  const fallbackImage = "/logo-square.png";
+
+  function resolvePublicImage(src?: string | null) {
+    const candidate = (src ?? "").trim();
+    if (!candidate) return fallbackImage;
+
+    // Only resolve local public assets (e.g. /agents/full/gus.png)
+    if (!candidate.startsWith("/")) return fallbackImage;
+
+    const publicPath = path.join(process.cwd(), "public", candidate);
+    return fs.existsSync(publicPath) ? candidate : fallbackImage;
+  }
 
   return (
     <main className="min-h-screen py-16 md:py-24">
@@ -24,11 +35,11 @@ export default function Team() {
 
         {/* Agent Grid */}
         <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
-          {agents.map((agent, index) => (
-            <div key={index} className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+          {agents.map((agent) => (
+            <div key={agent.id} className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
               <AgentCard
-                name={agent.name}
-                image={agent.image}
+                name={getAgentFullName(agent)}
+                image={resolvePublicImage(agent.fullImageSrc)}
                 title={agent.title}
                 phone={agent.phone}
                 email={agent.email}

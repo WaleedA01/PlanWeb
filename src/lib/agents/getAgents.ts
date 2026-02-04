@@ -2,7 +2,7 @@
 
 // src/lib/agents/getAgents.ts
 
-import { AGENTS, type Agent, type AgentStatus } from "@/config/agents";
+import { AGENTS, type Agent, type AgentStatus } from "@/lib/agents";
 
 /**
  * Returns a shallow-copied list of agents.

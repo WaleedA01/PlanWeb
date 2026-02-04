@@ -24,7 +24,7 @@ export interface BusinessFormData {
   lastName: string;
   email: string;
   phoneNumber: string;
-  selectedAgent: string;
+  selectedAgentId: string;
   expectedDate: string;
   preferredContactMethod: string;
   additionalInfo: string;
@@ -52,7 +52,7 @@ export const initialBusinessFormData: BusinessFormData = {
   lastName: '',
   email: '',
   phoneNumber: '',
-  selectedAgent: '',
+  selectedAgentId: '',
   expectedDate: '',
   preferredContactMethod: '',
   additionalInfo: '',

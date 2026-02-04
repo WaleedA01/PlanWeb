@@ -1,10 +1,18 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { BusinessFormData } from '../types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
+type Agent = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  status: 'available' | 'unavailable' | 'inactive';
+};
 
 interface Step5Props {
   data: BusinessFormData;
@@ -12,6 +20,53 @@ interface Step5Props {
 }
 
 export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [agentsLoading, setAgentsLoading] = useState(false);
+  const [agentsError, setAgentsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAgents() {
+      setAgentsLoading(true);
+      setAgentsError(null);
+
+      try {
+        const res = await fetch('/api/agents', { method: 'GET' });
+        const json = (await res.json().catch(() => ({}))) as { agents?: Agent[]; error?: string };
+
+        if (!res.ok) {
+          throw new Error(json?.error ?? `Failed to load agents (${res.status})`);
+        }
+
+        const list = Array.isArray(json.agents) ? json.agents : [];
+
+        if (!cancelled) {
+          setAgents(list);
+
+          // Default selection if none picked yet
+          if (!data.selectedAgentId && list.length > 0) {
+            onUpdate({ selectedAgentId: list[0].id } as Partial<BusinessFormData>);
+          }
+        }
+      } catch (e: any) {
+        if (!cancelled) {
+          setAgents([]);
+          setAgentsError(e?.message ?? 'Failed to load agents');
+        }
+      } finally {
+        if (!cancelled) setAgentsLoading(false);
+      }
+    }
+
+    loadAgents();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -42,41 +97,6 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
         </div>
 
         <div>
-<<<<<<< Updated upstream
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            value={data.email}
-            onChange={(e) => onUpdate({ email: e.target.value })}
-            placeholder="john@example.com"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="phoneNumber">Phone Number</Label>
-          <Input
-            id="phoneNumber"
-            type="tel"
-            value={data.phoneNumber}
-            onChange={(e) => onUpdate({ phoneNumber: e.target.value })}
-            placeholder="(555) 123-4567"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="expectedCoverageDate">When do you need this coverage?</Label>
-          <Input
-            id="expectedCoverageDate"
-            type="date"
-            value={data.expectedCoverageDate}
-            onChange={(e) => onUpdate({ expectedCoverageDate: e.target.value })}
-          />
-        </div>
-
-        <div>
-=======
->>>>>>> Stashed changes
           <Label className="mb-3 block">How would you like us to contact you?</Label>
           <RadioGroup
             value={data.preferredContactMethod}
@@ -119,6 +139,34 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
             onChange={(e) => onUpdate({ phoneNumber: e.target.value })}
             placeholder="(555) 123-4567"
           />
+        </div>
+
+        <div>
+          <Label htmlFor="selectedAgentId">Select Agent</Label>
+          <select
+            id="selectedAgentId"
+            value={(data.selectedAgentId as any) ?? ''}
+            onChange={(e) => onUpdate({ selectedAgentId: e.target.value } as Partial<BusinessFormData>)}
+            disabled={agentsLoading || agents.length === 0}
+            className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+          >
+            {agentsLoading ? (
+              <option value="">Loading agents…</option>
+            ) : agents.length === 0 ? (
+              <option value="">No agents available</option>
+            ) : (
+              agents
+                .filter((a) => a.status !== 'inactive')
+                .map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.firstName} {a.lastName} — {a.status === 'available' ? 'Available' : 'Unavailable'}
+                  </option>
+                ))
+            )}
+          </select>
+          {agentsError ? (
+            <p className="text-xs text-red-600 mt-1">{agentsError}</p>
+          ) : null}
         </div>
 
         <div>

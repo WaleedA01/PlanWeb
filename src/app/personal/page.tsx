@@ -12,6 +12,19 @@ type PersonalLeadDraft = {
   state: string;
   leadSource: string;
   notes: string;
+  selectedAgentId: string;
+};
+
+type Agent = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  title: string;
+  email: string;
+  phone: string;
+  status: "available" | "unavailable" | "inactive";
+  headshotSrc: string;
+  fullImageSrc: string;
 };
 
 const STORAGE_KEY = "pl_personal_test_payload";
@@ -40,6 +53,7 @@ export default function PersonalPage() {
     state: "FL",
     leadSource: "Questionnaire Test",
     notes: "Testing Next.js → Turnstile → Zapier",
+    selectedAgentId: "",
   });
 
   const [savedPayload, setSavedPayload] = useState<PersonalLeadDraft | null>(null);
@@ -47,6 +61,51 @@ export default function PersonalPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [agentsLoading, setAgentsLoading] = useState(false);
+  const [agentsError, setAgentsError] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAgents() {
+      setAgentsLoading(true);
+      setAgentsError(null);
+
+      try {
+        const res = await fetch("/api/agents", { method: "GET" });
+        const data = (await res.json().catch(() => ({}))) as { agents?: Agent[] };
+
+        if (!res.ok) {
+          throw new Error((data as any)?.error ?? `Failed to load agents (${res.status})`);
+        }
+
+        const list = Array.isArray(data.agents) ? data.agents : [];
+
+        if (!cancelled) {
+          setAgents(list);
+
+          // If no agent is selected yet, default to the first agent in the list.
+          if (!draft.selectedAgentId && list.length > 0) {
+            setDraft((d) => ({ ...d, selectedAgentId: list[0].id }));
+          }
+        }
+      } catch (e: any) {
+        if (!cancelled) {
+          setAgents([]);
+          setAgentsError(e?.message ?? "Failed to load agents");
+        }
+      } finally {
+        if (!cancelled) setAgentsLoading(false);
+      }
+    }
+
+    loadAgents();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // When we land on the verify step, load the saved payload from sessionStorage.
   useEffect(() => {
@@ -62,13 +121,19 @@ export default function PersonalPage() {
     setError(null);
   }, [isVerifyStep]);
 
+  const selectedAgentName = useMemo(() => {
+    const a = agents.find((x) => x.id === draft.selectedAgentId);
+    return a ? `${a.firstName} ${a.lastName}`.trim() : "";
+  }, [agents, draft.selectedAgentId]);
+
   const canGoNext = useMemo(() => {
     const emailOk = draft.email.trim().includes("@");
     return (
       draft.firstName.trim().length > 0 &&
       draft.lastName.trim().length > 0 &&
       emailOk &&
-      draft.phone.trim().length > 0
+      draft.phone.trim().length > 0 &&
+      draft.selectedAgentId.trim().length > 0
     );
   }, [draft]);
 
@@ -112,7 +177,8 @@ export default function PersonalPage() {
       ...savedPayload,
       // hard-coded fields requested
       tags: "online",
-      agent: "Oraib Aref",
+      agent: selectedAgentName || "(unknown)",
+      agentId: savedPayload.selectedAgentId,
       // turnstile token
       turnstileToken: tsToken,
     };
@@ -150,6 +216,32 @@ export default function PersonalPage() {
           </h2>
 
           <div style={{ display: "grid", gap: 10 }}>
+            <label>
+              Select Agent*
+              <select
+                value={draft.selectedAgentId}
+                onChange={(e) => setDraft((d) => ({ ...d, selectedAgentId: e.target.value }))}
+                disabled={agentsLoading || agents.length === 0}
+                style={{ width: "100%", padding: 8, border: "1px solid #ccc", borderRadius: 8 }}
+              >
+                {agentsLoading ? (
+                  <option value="">Loading agents…</option>
+                ) : agents.length === 0 ? (
+                  <option value="">No agents available</option>
+                ) : (
+                  agents
+                    .filter((a) => a.status !== "inactive")
+                    .map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.firstName} {a.lastName} — {a.status === "available" ? "Available" : "Unavailable"}
+                      </option>
+                    ))
+                )}
+              </select>
+              {agentsError ? (
+                <div style={{ marginTop: 6, color: "crimson", fontSize: 12 }}>{agentsError}</div>
+              ) : null}
+            </label>
             <label>
               First Name*
               <input
@@ -252,7 +344,8 @@ export default function PersonalPage() {
                     {
                       ...savedPayload,
                       tags: "online",
-                      agent: "Oraib Aref",
+                      agent: selectedAgentName || "(unknown)",
+                      agentId: savedPayload.selectedAgentId,
                     },
                     null,
                     2
