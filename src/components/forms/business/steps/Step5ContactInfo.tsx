@@ -42,6 +42,7 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
         </div>
 
         <div>
+<<<<<<< Updated upstream
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
@@ -74,6 +75,8 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
         </div>
 
         <div>
+=======
+>>>>>>> Stashed changes
           <Label className="mb-3 block">How would you like us to contact you?</Label>
           <RadioGroup
             value={data.preferredContactMethod}
@@ -94,6 +97,28 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
               </div>
             </div>
           </RadioGroup>
+        </div>
+
+        <div>
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            value={data.email}
+            onChange={(e) => onUpdate({ email: e.target.value })}
+            placeholder="john@example.com"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="phoneNumber">Phone Number</Label>
+          <Input
+            id="phoneNumber"
+            type="tel"
+            value={data.phoneNumber}
+            onChange={(e) => onUpdate({ phoneNumber: e.target.value })}
+            placeholder="(555) 123-4567"
+          />
         </div>
 
         <div>
