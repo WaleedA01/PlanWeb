@@ -60,7 +60,8 @@
   }
   .theme {
     --animate-marquee: marquee var(--duration) infinite linear;
-    --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite
+    --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+    --animate-orbit: orbit calc(var(--duration) * 1s) linear infinite;
   }
 }
 
@@ -128,6 +129,53 @@
   }
 }
 
+@keyframes drawCircle {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes drawCheck {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes simpleOrbit {
+  from {
+    transform: rotate(0deg) translateX(180px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(180px) rotate(-360deg);
+  }
+}
+
+@keyframes simpleOrbitReverse {
+  from {
+    transform: rotate(0deg) translateX(260px) rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg) translateX(260px) rotate(360deg);
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -152,6 +200,14 @@
     }
   to {
     transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes orbit {
+  0% {
+    transform: rotate(calc(var(--angle) * 1deg)) translateY(calc(var(--radius) * 1px)) rotate(calc(var(--angle) * -1deg));
+    }
+  100% {
+    transform: rotate(calc(var(--angle) * 1deg + 360deg)) translateY(calc(var(--radius) * 1px)) rotate(calc((var(--angle) * -1deg) - 360deg));
     }
   }
 }

@@ -6,11 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ChevronDown } from 'lucide-react';
 
 type Agent = {
   id: string;
   firstName: string;
   lastName: string;
+  title: string;
+  headshotSrc: string;
   status: 'available' | 'unavailable' | 'inactive';
 };
 
@@ -23,6 +26,7 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [agentsLoading, setAgentsLoading] = useState(false);
   const [agentsError, setAgentsError] = useState<string | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,6 +70,8 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const selectedAgent = agents.find(a => a.id === data.selectedAgentId);
 
   return (
     <div className="space-y-6">
@@ -141,32 +147,67 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
           />
         </div>
 
-        <div>
-          <Label htmlFor="selectedAgentId">Select Agent</Label>
-          <select
-            id="selectedAgentId"
-            value={(data.selectedAgentId as any) ?? ''}
-            onChange={(e) => onUpdate({ selectedAgentId: e.target.value } as Partial<BusinessFormData>)}
+        <div className="relative">
+          <Label>Select Agent</Label>
+          <button
+            type="button"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             disabled={agentsLoading || agents.length === 0}
-            className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+            className="w-full mt-1 px-4 py-3 rounded-md border border-input bg-background text-left flex items-center justify-between hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {agentsLoading ? (
-              <option value="">Loading agents…</option>
-            ) : agents.length === 0 ? (
-              <option value="">No agents available</option>
+              <span className="text-sm text-gray-500">Loading agents…</span>
+            ) : selectedAgent ? (
+              <div className="flex items-center gap-3">
+                <img
+                  src={selectedAgent.headshotSrc}
+                  alt={`${selectedAgent.firstName} ${selectedAgent.lastName}`}
+                  className="w-12 h-12 rounded-lg object-cover"
+                />
+                <div>
+                  <div className="font-semibold text-lg">{selectedAgent.firstName} {selectedAgent.lastName}</div>
+                  <div className="text-sm text-gray-500">{selectedAgent.title}</div>
+                </div>
+              </div>
             ) : (
-              agents
-                .filter((a) => a.status !== 'inactive')
-                .map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.firstName} {a.lastName} — {a.status === 'available' ? 'Available' : 'Unavailable'}
-                  </option>
-                ))
+              <span className="text-sm text-gray-500">Select an agent</span>
             )}
-          </select>
-          {agentsError ? (
+            <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {isDropdownOpen && agents.length > 0 && (
+            <div className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg max-h-80 overflow-auto">
+              {agents
+                .filter((a) => a.status !== 'inactive')
+                .map((agent) => (
+                  <button
+                    key={agent.id}
+                    type="button"
+                    onClick={() => {
+                      onUpdate({ selectedAgentId: agent.id } as Partial<BusinessFormData>);
+                      setIsDropdownOpen(false);
+                    }}
+                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 border-b last:border-b-0 transition-colors flex items-center gap-3 ${
+                      data.selectedAgentId === agent.id ? 'bg-primary/5' : ''
+                    }`}
+                  >
+                    <img
+                      src={agent.headshotSrc}
+                      alt={`${agent.firstName} ${agent.lastName}`}
+                      className="w-14 h-14 rounded-lg object-cover"
+                    />
+                    <div>
+                      <div className="font-semibold text-lg">{agent.firstName} {agent.lastName}</div>
+                      <div className="text-sm text-gray-500">{agent.title}</div>
+                    </div>
+                  </button>
+                ))}
+            </div>
+          )}
+
+          {agentsError && (
             <p className="text-xs text-red-600 mt-1">{agentsError}</p>
-          ) : null}
+          )}
         </div>
 
         <div>

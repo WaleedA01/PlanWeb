@@ -55,7 +55,7 @@ export default function HeroSection() {
                 size="lg" 
                 className="w-full text-xl sm:text-2xl px-6 sm:px-10 py-6 sm:py-8 bg-secondary hover:bg-secondary/90 text-white shadow-lg font-bold"
               >
-                <Link href="/personal">Get Started</Link>
+                <Link href="/business/form">Get Started</Link>
               </Button>
               <Button 
                 asChild 
@@ -86,7 +86,7 @@ export default function HeroSection() {
                     size="lg" 
                     className="text-3xl px-16 py-10 bg-secondary hover:bg-secondary/90 text-white shadow-[0_0_30px_rgba(40,47,87,0.6)] hover:shadow-[0_0_40px_rgba(40,47,87,0.8)] font-bold w-full transition-all"
                   >
-                    <Link href="/personal">Get Started</Link>
+                    <Link href="/business/form">Get Started</Link>
                   </Button>
                   <Button 
                     asChild 

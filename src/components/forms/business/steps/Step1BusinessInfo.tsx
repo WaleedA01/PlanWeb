@@ -22,15 +22,14 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
       setShowForm(true);
       setSelectedPlace(data.businessName || data.streetAddress);
     }
-  }, []);
+  }, [data.businessName, data.streetAddress]);
 
   const handlePlaceSelect = async (placeDetails: any) => {
     console.log('🔍 Place selected - Full details:', placeDetails);
     console.log('📍 Coordinates:', { lat: placeDetails.latitude, lng: placeDetails.longitude });
     
-    // Google Places API already provides lat/lng
     const updates = {
-      businessName: placeDetails.businessName || data.businessName,
+      businessName: placeDetails.businessName || '',
       streetAddress: placeDetails.streetAddress,
       city: placeDetails.city,
       state: placeDetails.state,

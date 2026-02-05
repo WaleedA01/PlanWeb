@@ -12,6 +12,13 @@ interface PlaceResult {
   secondaryText: string;
 }
 
+interface NearbyBusiness {
+  placeId: string;
+  name: string;
+  address: string;
+  types: string[];
+}
+
 interface PlacesAutocompleteProps {
   value: string;
   onPlaceSelect: (placeDetails: any) => void;
@@ -32,6 +39,12 @@ export default function PlacesAutocomplete({
   const [showDropdown, setShowDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+<<<<<<< Updated upstream
+=======
+  const [nearbyBusinesses, setNearbyBusinesses] = useState<NearbyBusiness[]>([]);
+  const [showNearbyBusinesses, setShowNearbyBusinesses] = useState(false);
+  const [addressDetails, setAddressDetails] = useState<any>(null);
+>>>>>>> Stashed changes
   const debounceTimer = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
@@ -75,6 +88,38 @@ export default function PlacesAutocomplete({
     }, 300);
   };
 
+  const isAddressOnly = (placeDetails: any) => {
+    console.log('🔍 Checking if address-only:', {
+      businessName: placeDetails.businessName,
+      types: placeDetails.types,
+      formattedAddress: placeDetails.formattedAddress
+    });
+    
+    const addressTypes = ['street_address', 'route', 'premise', 'subpremise', 'postal_code'];
+    const hasAddressType = placeDetails.types?.some((type: string) => addressTypes.includes(type));
+    const hasNoBusinessName = !placeDetails.businessName || placeDetails.businessName === placeDetails.formattedAddress || placeDetails.businessName === placeDetails.streetAddress;
+    
+    const result = hasAddressType && hasNoBusinessName;
+    console.log('✅ Is address-only?', result, { hasAddressType, hasNoBusinessName });
+    
+    return result;
+  };
+
+  const fetchNearbyBusinesses = async (lat: number, lng: number) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/places/nearby?lat=${lat}&lng=${lng}`);
+      const data = await response.json();
+      setNearbyBusinesses(data.businesses || []);
+      setShowNearbyBusinesses(true);
+    } catch (error) {
+      console.error('Error fetching nearby businesses:', error);
+      setNearbyBusinesses([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handlePlaceSelect = async (placeId: string, description: string) => {
     console.log('🔍 Fetching place details for:', { placeId, description });
     setInputValue(description);
@@ -86,11 +131,73 @@ export default function PlacesAutocomplete({
       const data = await response.json();
       console.log('✅ Place details received:', data);
       console.log('📍 Coordinates from API:', { lat: data.latitude, lng: data.longitude });
-      onPlaceSelect(data);
+      
+      if (isAddressOnly(data)) {
+        console.log('🏠 Address-only detected, fetching nearby businesses');
+        setAddressDetails(data);
+        await fetchNearbyBusinesses(data.latitude, data.longitude);
+      } else {
+        onPlaceSelect(data);
+      }
     } catch (error) {
       console.error('❌ Error fetching place details:', error);
     }
   };
+
+  const handleNearbyBusinessSelect = async (placeId: string) => {
+    try {
+      const response = await fetch(`/api/places/details?placeId=${placeId}`);
+      const data = await response.json();
+      onPlaceSelect(data);
+      setShowNearbyBusinesses(false);
+      setNearbyBusinesses([]);
+      setAddressDetails(null);
+    } catch (error) {
+      console.error('Error fetching business details:', error);
+    }
+  };
+
+  const handleNoneOfThese = () => {
+    if (addressDetails) {
+      onPlaceSelect({ ...addressDetails, businessName: '' });
+    }
+    setShowNearbyBusinesses(false);
+    setNearbyBusinesses([]);
+    setAddressDetails(null);
+  };
+
+  if (showNearbyBusinesses) {
+    return (
+      <div className="space-y-4">
+        <div>
+          <Label>Businesses at this location</Label>
+          <p className="text-sm text-gray-500 mt-1">Select your business or choose "None of these" to enter manually</p>
+        </div>
+        
+        <div className="space-y-2">
+          {nearbyBusinesses.map((business) => (
+            <button
+              key={business.placeId}
+              onClick={() => handleNearbyBusinessSelect(business.placeId)}
+              className="w-full px-4 py-3 text-left bg-white border rounded-md hover:bg-gray-50 hover:border-primary transition-colors"
+            >
+              <div className="font-medium text-sm">{business.name}</div>
+              <div className="text-xs text-gray-500">{business.address}</div>
+            </button>
+          ))}
+        </div>
+        
+        <Button
+          type="button"
+          onClick={handleNoneOfThese}
+          variant="outline"
+          className="w-full"
+        >
+          None of these - Enter business name manually
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">

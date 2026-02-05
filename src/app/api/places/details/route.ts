@@ -34,13 +34,36 @@ export async function GET(request: NextRequest) {
     const getComponent = (type: string) => 
       addressComponents.find((c: any) => c.types.includes(type))?.long_name || '';
 
+    const streetAddress = `${getComponent('street_number')} ${getComponent('route')}`.trim();
+    
+    // Normalize strings for comparison (remove extra spaces, convert to lowercase)
+    const normalize = (str: string) => str?.toLowerCase().replace(/\s+/g, ' ').trim() || '';
+    const normalizedName = normalize(result.name);
+    const normalizedStreetAddress = normalize(streetAddress);
+    const normalizedFormattedAddress = normalize(result.formatted_address);
+    
+    // Check if the "name" is actually just the address (not a real business name)
+    const nameIsAddress = !result.name || 
+      normalizedName === normalizedStreetAddress ||
+      normalizedName === normalizedFormattedAddress ||
+      normalizedFormattedAddress.startsWith(normalizedName + ',');
+    
+    console.log('🏢 Name analysis:', {
+      googleName: result.name,
+      streetAddress,
+      normalizedName,
+      normalizedStreetAddress,
+      nameIsAddress,
+      types: result.types
+    });
+
     const placeDetails = {
       placeId: result.place_id,
-      businessName: result.name,
+      businessName: nameIsAddress ? '' : result.name,
       formattedAddress: result.formatted_address,
       streetNumber: getComponent('street_number'),
       route: getComponent('route'),
-      streetAddress: `${getComponent('street_number')} ${getComponent('route')}`.trim(),
+      streetAddress,
       city: getComponent('locality') || getComponent('sublocality'),
       state: getComponent('administrative_area_level_1'),
       postalCode: getComponent('postal_code'),

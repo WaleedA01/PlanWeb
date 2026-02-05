@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BusinessFormData, initialBusinessFormData } from './types';
 import FormContainer from '../shared/FormContainer';
 import FormStep from '../shared/FormStep';
 import RecapScreen from '../shared/RecapScreen';
+import SuccessAnimation from '../shared/SuccessAnimation';
 import AnimatedTransition from '../shared/AnimatedTransition';
 import Step1BusinessInfo from './steps/Step1BusinessInfo';
 import Step2BusinessType from './steps/Step2BusinessType';
@@ -26,6 +27,27 @@ export default function BusinessForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitResult, setSubmitResult] = useState<any>(null);
+
+  // Load saved progress on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('businessFormProgress');
+    if (saved) {
+      try {
+        const { formData: savedData, currentStep: savedStep } = JSON.parse(saved);
+        setFormData(savedData);
+        setCurrentStep(savedStep);
+      } catch (e) {
+        console.error('Failed to load saved progress:', e);
+      }
+    }
+  }, []);
+
+  // Save progress whenever formData or currentStep changes
+  useEffect(() => {
+    if (!isSubmitted) {
+      localStorage.setItem('businessFormProgress', JSON.stringify({ formData, currentStep }));
+    }
+  }, [formData, currentStep, isSubmitted]);
 
   // Get dynamic icon based on business type
   const getBusinessIcon = () => {
@@ -151,6 +173,7 @@ export default function BusinessForm() {
       setIsSubmitted(true);
       setTurnstileToken(null);
       setTurnstileKey((k) => k + 1);
+      localStorage.removeItem('businessFormProgress'); // Clear saved progress after successful submit
     } catch (err: any) {
       setSubmitError(err?.message || 'Network error submitting lead.');
       setTurnstileToken(null);
@@ -185,8 +208,14 @@ export default function BusinessForm() {
     }
   };
 
+  useEffect(() => {
+    if (isSubmitted) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [isSubmitted]);
+
   if (isSubmitted) {
-    return <RecapScreen data={formData} />;
+    return <SuccessAnimation data={formData} />;
   }
 
   return (
@@ -245,10 +274,12 @@ export default function BusinessForm() {
 
           <FormStep isActive={showTransition}>
             <AnimatedTransition
-              text="Great! Nice to meet you. Now let's find you the coverage that meets your needs."
+              line1="Nice to meet you!"
+              line2="Tell us more about your business!"
+              line1ClassName="text-5xl md:text-6xl font-bold text-primary"
+              line2ClassName="text-xl md:text-2xl font-medium text-muted-foreground"
               animationType="slideUp"
-              gifSrc="/gifs/thumbup.gif"
-              duration={4500}
+              duration={3500}
               onComplete={handleTransitionComplete}
             />
           </FormStep>
