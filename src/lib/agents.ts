@@ -65,15 +65,5 @@ export const AGENTS: Agent[] = [
     fullImageSrc: "/agents/full/sara.png",
   },
 
-  {
-    id: "samir-saber",
-    firstName: "Samir",
-    lastName: "Saber",
-    title: "Licensed Agent",
-    email: "samir@planlifeusa.com",
-    phone: "(407) 555-1234",
-    status: "available",
-    headshotSrc: "/agents/headshot/samir.png",
-    fullImageSrc: "/agents/full/samir.png",
-  }
+
 ];

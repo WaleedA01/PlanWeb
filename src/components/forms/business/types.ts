@@ -5,6 +5,9 @@ export interface BusinessFormData {
   city: string;
   state: string;
   postalCode: string;
+  latitude?: number;
+  longitude?: number;
+  googleTypes?: string[]; // Business types from Google Places
 
   // Step 2: Business Type
   businessType: string;
@@ -41,6 +44,8 @@ export const initialBusinessFormData: BusinessFormData = {
   city: '',
   state: '',
   postalCode: '',
+  latitude: undefined,
+  longitude: undefined,
   businessType: '',
   products: [],
   isNewBusiness: null,

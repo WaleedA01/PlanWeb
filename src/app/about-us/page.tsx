@@ -1,7 +1,25 @@
+import FadeInSection from '@/components/animations/FadeInSection';
+import AboutHeroSection from '@/components/sections/about/AboutHeroSection';
+import OurStorySection from '@/components/sections/about/OurStorySection';
+import OurMissionSection from '@/components/sections/about/OurMissionSection';
+import MeetTeamSection from '@/components/sections/about/MeetTeamSection';
+
 export default function AboutUs() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold">About Us</h1>
+    <main>
+      <AboutHeroSection />
+      
+      <FadeInSection>
+        <OurStorySection />
+      </FadeInSection>
+
+      <FadeInSection delay={0.1}>
+        <OurMissionSection />
+      </FadeInSection>
+
+      <FadeInSection delay={0.1}>
+        <MeetTeamSection />
+      </FadeInSection>
     </main>
   );
 }

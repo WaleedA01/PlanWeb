@@ -76,6 +76,7 @@ export default function PlacesAutocomplete({
   };
 
   const handlePlaceSelect = async (placeId: string, description: string) => {
+    console.log('🔍 Fetching place details for:', { placeId, description });
     setInputValue(description);
     setShowDropdown(false);
     setPredictions([]);
@@ -83,9 +84,11 @@ export default function PlacesAutocomplete({
     try {
       const response = await fetch(`/api/places/details?placeId=${placeId}`);
       const data = await response.json();
+      console.log('✅ Place details received:', data);
+      console.log('📍 Coordinates from API:', { lat: data.latitude, lng: data.longitude });
       onPlaceSelect(data);
     } catch (error) {
-      console.error('Error fetching place details:', error);
+      console.error('❌ Error fetching place details:', error);
     }
   };
 

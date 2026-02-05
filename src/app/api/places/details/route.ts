@@ -4,6 +4,8 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const placeId = searchParams.get('placeId');
 
+  console.log('🏛️ Places API - Fetching details for placeId:', placeId);
+
   if (!placeId) {
     return NextResponse.json({ error: 'Place ID is required' }, { status: 400 });
   }
@@ -17,13 +19,17 @@ export async function GET(request: NextRequest) {
     );
 
     const data = await response.json();
+    console.log('📦 Google Places API response status:', data.status);
 
     if (data.status !== 'OK') {
+      console.error('❌ Google Places API error:', data.error_message);
       throw new Error(data.error_message || 'Failed to fetch place details');
     }
 
     const result = data.result;
     const addressComponents = result.address_components || [];
+
+    console.log('📍 Raw geometry from Google:', result.geometry?.location);
 
     const getComponent = (type: string) => 
       addressComponents.find((c: any) => c.types.includes(type))?.long_name || '';
@@ -55,9 +61,14 @@ export async function GET(request: NextRequest) {
       })),
     };
 
+    console.log('✅ Returning place details with coordinates:', { 
+      lat: placeDetails.latitude, 
+      lng: placeDetails.longitude 
+    });
+
     return NextResponse.json(placeDetails);
   } catch (error) {
-    console.error('Place Details Error:', error);
+    console.error('❌ Place Details Error:', error);
     return NextResponse.json({ error: 'Failed to fetch place details' }, { status: 500 });
   }
 }

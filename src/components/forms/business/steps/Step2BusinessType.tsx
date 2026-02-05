@@ -29,8 +29,8 @@ export default function Step2BusinessType({ data, onUpdate }: Step2Props) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Choose Your Business Type</h2>
-        <p className="text-muted-foreground">Search and select the category that best describes your business</p>
+        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Choose Your Business Type</h2>
+        <p className="text-base md:text-lg text-primary">Search and select the category that best describes your business</p>
       </div>
 
       {loading ? (

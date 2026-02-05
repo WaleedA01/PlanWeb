@@ -70,8 +70,8 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Contact Information</h2>
-        <p className="text-muted-foreground">How can we reach you?</p>
+        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Contact Information</h2>
+        <p className="text-base md:text-lg text-primary">How can we reach you?</p>
       </div>
 
       <div className="space-y-4">

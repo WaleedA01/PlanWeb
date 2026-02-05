@@ -74,7 +74,7 @@ function TestimonialCard({
   logo?: string;
 }) {
   return (
-    <div className="w-[280px] md:w-[350px] bg-card border border-border rounded-lg p-4 md:p-6 hover:border-primary hover:shadow-xl transition-all duration-300">
+    <div className="w-[320px] md:w-[400px] h-[320px] md:h-[360px] bg-card border border-border rounded-lg p-5 md:p-7 hover:border-primary hover:shadow-xl transition-all duration-300 flex flex-col">
       {/* Stars and Insurance Type */}
       <div className="flex justify-between items-start mb-2 md:mb-3">
         <div className="flex gap-1">
@@ -91,29 +91,27 @@ function TestimonialCard({
         <span className="text-[10px] md:text-xs text-primary font-medium">{insuranceType}</span>
       </div>
 
-      {/* Quote */}
-      <blockquote className="text-muted-foreground mb-3 md:mb-4 leading-relaxed text-xs md:text-sm italic">
+      {/* Quote - flex-grow to push footer down */}
+      <blockquote className="text-muted-foreground mb-3 md:mb-4 leading-relaxed text-xs md:text-sm italic flex-grow overflow-hidden">
         "{quote}"
       </blockquote>
 
-      {/* Author Info */}
-      <div className="flex items-center gap-2 md:gap-3 pt-3 md:pt-4 border-t border-border">
+      {/* Author Info - always at bottom */}
+      <div className="flex items-center gap-2 md:gap-3 pt-3 md:pt-4 border-t border-border mt-auto">
         {logo ? (
-          <img src={logo} alt={business} className="w-8 h-8 md:w-10 md:h-10 object-contain flex-shrink-0" />
+          <img src={logo} alt={business} className="w-14 h-14 md:w-16 md:h-16 object-contain flex-shrink-0 rounded-md" />
         ) : (
-          <div className="w-8 h-8 md:w-10 md:h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-semibold flex-shrink-0 text-xs md:text-sm">
+          <div className="w-14 h-14 md:w-16 md:h-16 bg-primary/10 rounded-md flex items-center justify-center text-primary font-semibold flex-shrink-0 text-base md:text-lg">
             {avatar}
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <div className="font-semibold text-secondary text-xs md:text-sm">
+          <div className="font-medium text-secondary text-xs md:text-sm">
             {name}
           </div>
-          <div className="text-[10px] md:text-xs text-muted-foreground">
-            {title}
-          </div>
-          <div className="text-[10px] md:text-xs text-primary">
-            {business}
+          <div className="text-xs md:text-sm">
+            <span className="text-primary font-medium">{business}</span>
+            <span className="text-muted-foreground text-[10px] md:text-xs"> • {title}</span>
           </div>
         </div>
       </div>

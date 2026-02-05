@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="relative mt-20 backdrop-blur-md bg-secondary/95 text-white border-t border-primary/20">
+    <footer className="relative backdrop-blur-md bg-secondary/95 text-white border-t border-primary/20">
       {/* Glow effect */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none"></div>
       

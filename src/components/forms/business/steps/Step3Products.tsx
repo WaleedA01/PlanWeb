@@ -19,8 +19,8 @@ export default function Step3Products({ data, onUpdate }: Step3Props) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Choose Products</h2>
-        <p className="text-muted-foreground">Select all insurance products you're interested in</p>
+        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Choose Products</h2>
+        <p className="text-base md:text-lg text-primary">Select all insurance products you're interested in</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">

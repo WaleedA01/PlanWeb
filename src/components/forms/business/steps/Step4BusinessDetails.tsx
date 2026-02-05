@@ -14,8 +14,8 @@ export default function Step4BusinessDetails({ data, onUpdate }: Step4Props) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Business Details</h2>
-        <p className="text-muted-foreground">Tell us more about your business</p>
+        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Business Details</h2>
+        <p className="text-base md:text-lg text-primary">Tell us more about your business</p>
       </div>
 
       <div className="space-y-4">

@@ -24,14 +24,25 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
     }
   }, []);
 
-  const handlePlaceSelect = (placeDetails: any) => {
-    onUpdate({
+  const handlePlaceSelect = async (placeDetails: any) => {
+    console.log('🔍 Place selected - Full details:', placeDetails);
+    console.log('📍 Coordinates:', { lat: placeDetails.latitude, lng: placeDetails.longitude });
+    
+    // Google Places API already provides lat/lng
+    const updates = {
       businessName: placeDetails.businessName || data.businessName,
       streetAddress: placeDetails.streetAddress,
       city: placeDetails.city,
       state: placeDetails.state,
       postalCode: placeDetails.postalCode,
-    });
+      latitude: placeDetails.latitude,
+      longitude: placeDetails.longitude,
+      googleTypes: placeDetails.types || [],
+    };
+    
+    console.log('📝 Updating form data with:', updates);
+    onUpdate(updates);
+    
     setSelectedPlace(placeDetails.businessName || placeDetails.formattedAddress);
     setShowForm(true);
     setShowManualEntry(false);
@@ -52,8 +63,8 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Enter Your Business Name or Address</h2>
-          <p className="text-muted-foreground">Find your business and we'll set things up for you!</p>
+          <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Enter Your Business Name or Address</h2>
+          <p className="text-base md:text-lg text-primary">Find your business and we'll set things up for you!</p>
         </div>
 
         <PlacesAutocomplete
@@ -70,8 +81,8 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Business Information</h2>
-        <p className="text-muted-foreground">Review and confirm your details</p>
+        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Business Information</h2>
+        <p className="text-base md:text-lg text-primary">Review and confirm your details</p>
       </div>
 
       <div className="space-y-4">
