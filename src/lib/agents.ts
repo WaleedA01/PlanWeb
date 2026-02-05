@@ -53,17 +53,16 @@ export const AGENTS: Agent[] = [
     headshotSrc: "/agents/headshot/justin.png",
     fullImageSrc: "/agents/full/justin.png",
   },
-  {
-    id: "sara-diaz",
-    firstName: "Sara",
-    lastName: "Diaz",
+{
+    id: "samir-saber",
+    firstName: "Samir",
+    lastName: "Saber",
     title: "Licensed Agent",
-    email: "sara@planlifeusa.com",
+    email: "samir@planlifeusa.com",
     phone: "(407) 555-1234",
     status: "available",
-    headshotSrc: "/agents/headshot/sara.png",
-    fullImageSrc: "/agents/full/sara.png",
-  },
-
+    headshotSrc: "/agents/headshot/samir.png",
+    fullImageSrc: "/agents/full/samir.png",
+  }
 
 ];
