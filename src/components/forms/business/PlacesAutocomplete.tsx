@@ -39,12 +39,9 @@ export default function PlacesAutocomplete({
   const [showDropdown, setShowDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-<<<<<<< Updated upstream
-=======
   const [nearbyBusinesses, setNearbyBusinesses] = useState<NearbyBusiness[]>([]);
   const [showNearbyBusinesses, setShowNearbyBusinesses] = useState(false);
   const [addressDetails, setAddressDetails] = useState<any>(null);
->>>>>>> Stashed changes
   const debounceTimer = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
