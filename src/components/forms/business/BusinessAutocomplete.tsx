@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
-import Fuse from 'fuse.js';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import Fuse, { type FuseResult, type FuseResultMatch } from 'fuse.js';
 import { BusinessClassification } from '@/lib/businessClassifications';
 import { getCategoryFromNAICS } from '@/lib/businessCategories';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ interface BusinessAutocompleteProps {
 export default function BusinessAutocomplete({ value, onChange, classifications }: BusinessAutocompleteProps) {
   const [inputValue, setInputValue] = useState(value);
   const [isOpen, setIsOpen] = useState(false);
-  const [results, setResults] = useState<Fuse.FuseResult<BusinessClassification>[]>([]);
+  const [results, setResults] = useState<FuseResult<BusinessClassification>[]>([]);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const justSelectedRef = useRef(false);
 
@@ -64,13 +64,13 @@ export default function BusinessAutocomplete({ value, onChange, classifications 
     setResults([]);
   };
 
-  const highlightMatch = (text: string, matches?: readonly Fuse.FuseResultMatch[]) => {
+  const highlightMatch = (text: string, matches?: readonly FuseResultMatch[]) => {
     if (!matches || matches.length === 0) return text;
     
     const match = matches[0];
     if (!match.indices || match.indices.length === 0) return text;
     
-    const parts: JSX.Element[] = [];
+    const parts: React.ReactElement[] = [];
     let lastIndex = 0;
     
     match.indices.forEach(([start, end], i) => {
