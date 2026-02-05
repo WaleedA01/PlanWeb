@@ -1,0 +1,22 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+        - echo "NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY" > .env
+        - echo "TURNSTILE_SECRET_KEY=$TURNSTILE_SECRET_KEY" >> .env
+        - echo "ZAPIER_WEBHOOK_PERSONAL=$ZAPIER_WEBHOOK_PERSONAL" >> .env
+        - echo "ZAPIER_WEBHOOK_BUSINESS=$ZAPIER_WEBHOOK_BUSINESS" >> .env
+        - echo "APP_ORIGIN=$APP_ORIGIN" >> .env
+        - echo "GOOGLE_PLACES_API=$GOOGLE_PLACES_API" >> .env
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*

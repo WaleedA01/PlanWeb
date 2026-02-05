@@ -4,6 +4,11 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const input = searchParams.get('input');
 
+  // Florida location bias (Orlando-centered)
+  const FL_CENTER_LAT = 28.5383;
+  const FL_CENTER_LNG = -81.3792;
+  const FL_RADIUS_METERS = 500000; // ~500km covers all of Florida
+
   if (!input) {
     return NextResponse.json({ predictions: [] });
   }
@@ -12,7 +17,12 @@ export async function GET(request: NextRequest) {
 
   try {
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${apiKey}`,
+      `https://maps.googleapis.com/maps/api/place/autocomplete/json?` +
+      `input=${encodeURIComponent(input)}` +
+      `&key=${apiKey}` +
+      `&location=${FL_CENTER_LAT},${FL_CENTER_LNG}` +
+      `&radius=${FL_RADIUS_METERS}` +
+      `&components=country:us`,
       { cache: 'no-store' }
     );
 
