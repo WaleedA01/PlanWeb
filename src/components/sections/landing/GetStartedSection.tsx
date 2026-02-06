@@ -89,9 +89,9 @@ export default function GetStartedSection() {
           <Button 
             asChild 
             size="lg" 
-            className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg shadow-lg"
+            className="bg-secondary hover:bg-secondary/90 text-white px-8 py-6 text-lg shadow-lg font-semibold"
           >
-            <Link href="/personal">Start Now - It's Free</Link>
+            <Link href="/business/form">Get Started</Link>
           </Button>
         </div>
       </div>

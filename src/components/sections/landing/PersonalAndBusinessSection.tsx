@@ -13,7 +13,7 @@ export default function PersonalAndBusinessSection() {
               {/* Image - Left */}
               <div className="hidden lg:block relative h-[500px] lg:h-[700px] lg:-mt-20">
                 <Image
-                  src="/agents/full/gus.png"
+                  src="/agents/full/oraib.png"
                   alt="Business Insurance"
                   fill
                   className="object-cover object-top rounded-l-2xl"

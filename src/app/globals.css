@@ -118,6 +118,14 @@
   }
 }
 
+.clip-diagonal-left {
+  clip-path: polygon(0 0, 55% 0, 45% 100%, 0 100%);
+}
+
+.clip-diagonal-right {
+  clip-path: polygon(45% 0, 100% 0, 100% 100%, 55% 100%);
+}
+
 @keyframes mapFadeIn {
   from {
     opacity: 0;

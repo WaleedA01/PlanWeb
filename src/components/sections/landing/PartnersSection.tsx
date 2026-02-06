@@ -1,19 +1,14 @@
 'use client';
 
 import LogoLoop, { LogoItem } from '@/components/LogoLoop';
+import { CARRIERS } from '@/lib/carriers';
 
 export default function PartnersSection() {
-  const carriers = [
-    { src: '/carriers/amtrust.png', alt: 'AmTrust', title: 'AmTrust' },
-    { src: '/carriers/berkshire.png', alt: 'Berkshire', title: 'Berkshire' },
-    { src: '/carriers/bristolwest.png', alt: 'Bristol West', title: 'Bristol West' },
-    { src: '/carriers/citizens.png', alt: 'Citizens', title: 'Citizens' },
-    { src: '/carriers/geico.png', alt: 'Geico', title: 'Geico' },
-    { src: '/carriers/hartford.png', alt: 'Hartford', title: 'Hartford' },
-    { src: '/carriers/libertymutual.png', alt: 'Liberty Mutual', title: 'Liberty Mutual' },
-    { src: '/carriers/progressive.png', alt: 'Progressive', title: 'Progressive' },
-    { src: '/carriers/safeco.png', alt: 'Safeco', title: 'Safeco' },
-  ];
+  const carriers = CARRIERS.map(carrier => ({
+    src: carrier.logoSrc,
+    alt: carrier.alt,
+    title: carrier.name,
+  }));
 
   const renderItem = (item: LogoItem) => (
     <div className="relative group/logo">
@@ -22,14 +17,14 @@ export default function PartnersSection() {
         alt={(item as any).alt}
         className="rounded-lg transition-transform"
       />
-      <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-secondary text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap opacity-0 group-hover/logo:opacity-100 transition-opacity pointer-events-none z-50 shadow-lg">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-secondary text-white px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap opacity-0 group-hover/logo:opacity-100 transition-opacity pointer-events-none z-50 shadow-lg">
         {(item as any).title}
       </div>
     </div>
   );
 
   return (
-    <section className="py-16 md:py-24 bg-secondary/5">
+    <section className="py-16 md:py-24 bg-secondary/5 overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -43,7 +38,7 @@ export default function PartnersSection() {
       </div>
 
       {/* Logo Loop */}
-      <div className="overflow-visible py-12">
+      <div className="overflow-x-hidden py-12">
         <LogoLoop
           logos={carriers}
           speed={50}
@@ -54,7 +49,6 @@ export default function PartnersSection() {
           fadeOut
           fadeOutColor="#f4f5f7"
           renderItem={renderItem}
-          className="!overflow-visible"
         />
       </div>
 

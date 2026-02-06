@@ -6,7 +6,7 @@ export default function TestimonialsSection() {
   const secondRow = testimonials.slice(7, 14);
 
   return (
-    <section className="py-16 md:py-24 bg-background">
+    <section className="py-16 md:py-24 bg-background overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
@@ -21,12 +21,12 @@ export default function TestimonialsSection() {
 
       {/* Testimonials Marquee - Full width outside container */}
       <div className="relative flex flex-col gap-4 mb-8 overflow-hidden">
-        <Marquee pauseOnHover className="[--duration:60s]">
+        <Marquee pauseOnHover className="[--duration:40s]">
           {firstRow.map((testimonial, index) => (
             <TestimonialCard key={index} {...testimonial} />
           ))}
         </Marquee>
-        <Marquee reverse pauseOnHover className="[--duration:60s]">
+        <Marquee reverse pauseOnHover className="[--duration:40s]">
           {secondRow.map((testimonial, index) => (
             <TestimonialCard key={index} {...testimonial} />
           ))}

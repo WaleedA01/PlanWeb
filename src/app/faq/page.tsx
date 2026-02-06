@@ -1,7 +1,20 @@
+import FadeInSection from '@/components/animations/FadeInSection';
+import FAQHeroSection from '@/components/sections/faq/FAQHeroSection';
+import FAQAccordionSection from '@/components/sections/faq/FAQAccordionSection';
+import FAQCTASection from '@/components/sections/faq/FAQCTASection';
+
 export default function FAQ() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold">FAQ</h1>
+    <main>
+      <FAQHeroSection />
+      
+      <FadeInSection>
+        <FAQAccordionSection />
+      </FadeInSection>
+
+      <FadeInSection delay={0.1}>
+        <FAQCTASection />
+      </FadeInSection>
     </main>
   );
 }

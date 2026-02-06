@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { BusinessFormData } from '../business/types';
 import { CheckCircle, Handshake } from 'lucide-react';
 import { AGENTS } from '@/lib/agents';
+import { CARRIERS } from '@/lib/carriers';
 import RecapScreen from './RecapScreen';
 import SplitText from '@/components/SplitText';
 import { OrbitingCircles } from '@/components/ui/orbiting-circles';
@@ -12,21 +13,9 @@ interface SuccessAnimationProps {
   data: BusinessFormData;
 }
 
-const CARRIERS = [
-  '/carriers/progressive.png',
-  '/carriers/geico.png',
-  '/carriers/hartford.png',
-  '/carriers/libertymutual.png',
-  '/carriers/safeco.png',
-  '/carriers/citizens.png',
-  '/carriers/progressive.png',
-  '/carriers/geico.png',
-  '/carriers/hartford.png',
-  '/carriers/libertymutual.png',
-];
-
-const CARRIERS_INNER = CARRIERS.slice(0, 5);
-const CARRIERS_OUTER = CARRIERS.slice(5);
+const CARRIER_LOGOS = CARRIERS.map(c => c.logoSrc);
+const CARRIERS_INNER = CARRIER_LOGOS.slice(0, 5);
+const CARRIERS_OUTER = CARRIER_LOGOS.slice(5);
 
 export default function SuccessAnimation({ data }: SuccessAnimationProps) {
   const [stage, setStage] = useState(-1); // Start at -1 for preloading
@@ -43,7 +32,7 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
   // Preload all images
   useEffect(() => {
     const imagesToLoad = [
-      ...CARRIERS,
+      ...CARRIER_LOGOS,
       selectedAgent?.fullImageSrc,
       selectedAgent?.headshotSrc,
     ].filter(Boolean) as string[];

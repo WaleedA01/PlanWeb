@@ -28,16 +28,16 @@ export default function HeroSection() {
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Mobile & Tablet Layout */}
-        <div className="lg:hidden flex flex-col items-center text-center py-8">
+        <div className="lg:hidden flex flex-col items-center text-center relative">
           {/* Text Content */}
-          <div className="mb-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-secondary mb-8 leading-tight">
+          <div className="mb-2 relative z-0">
+            <h1 className="text-6xl md:text-5xl font-bold text-secondary mb-4 leading-tight">
               Protect What Matters <span className="text-white underline">Most.</span>
             </h1>
           </div>
 
-          {/* Agent Image - ends exactly at button container */}
-          <div className="relative w-full max-w-md h-64 md:h-80 mb-0">
+          {/* Agent Image - overlays bottom of text */}
+          <div className="relative w-full max-w-md h-64 md:h-80 mb-0 -mt-4 z-10">
             <Image
               src="/agents/group/gusjusora.png"
               alt="Insurance Team"
@@ -48,12 +48,12 @@ export default function HeroSection() {
           </div>
 
           {/* CTA Buttons in container - starts exactly from image */}
-          <div className="w-full max-w-md bg-primary/50 backdrop-blur-sm rounded-lg p-4 sm:p-6">
+          <div className="w-full max-w-md bg-white rounded-lg p-4 sm:p-6 mb-4">
             <div className="flex flex-col gap-3">
               <Button 
                 asChild 
                 size="lg" 
-                className="w-full text-xl sm:text-2xl px-6 sm:px-10 py-6 sm:py-8 bg-secondary hover:bg-secondary/90 text-white shadow-lg font-bold"
+                className="w-full text-2xl sm:text-2xl px-6 sm:px-10 py-6 sm:py-8 bg-secondary hover:bg-secondary/90 text-white shadow-lg font-bold"
               >
                 <Link href="/business/form">Get Started</Link>
               </Button>
@@ -61,7 +61,7 @@ export default function HeroSection() {
                 asChild 
                 size="sm" 
                 variant="outline" 
-                className="w-full text-sm px-4 py-3 border border-secondary text-secondary hover:bg-secondary hover:text-white transition-colors"
+                className="w-full text-base px-4 py-3 border border-secondary text-secondary hover:bg-primary hover:text-white transition-colors"
               >
                 <Link href="/contact">Speak to an Agent</Link>
               </Button>
@@ -92,7 +92,7 @@ export default function HeroSection() {
                     asChild 
                     size="sm" 
                     variant="outline" 
-                    className="text-sm px-6 py-3 border border-secondary text-secondary hover:bg-secondary hover:text-white w-full transition-colors"
+                    className="text-sm px-6 py-3 border border-secondary text-secondary hover:bg-primary hover:text-white w-full transition-colors"
                   >
                     <Link href="/contact">Speak to an Agent</Link>
                   </Button>
@@ -107,9 +107,9 @@ export default function HeroSection() {
       </div>
 
       {/* Bottom wave decoration */}
-      <div className="absolute bottom-0 left-0 right-0 z-20">
-        <svg viewBox="0 0 1440 120" fill="none" className="w-full h-auto">
-          <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="hsl(var(--background))" />
+      <div className="absolute bottom-0 left-0 right-0 z-20  -mb-0.5">
+        <svg viewBox="0 0 1440 150" fill="none" className="w-full h-auto">
+          <path d="M0 150L60 140C120 130 240 110 360 100C480 90 600 90 720 95C840 100 960 110 1080 115C1200 120 1320 120 1380 120L1440 120V150H1380C1320 150 1200 150 1080 150C960 150 840 150 720 150C600 150 480 150 360 150C240 150 120 150 60 150H0Z" fill="hsl(var(--background))" />
         </svg>
       </div>
     </section>

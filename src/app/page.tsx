@@ -14,11 +14,10 @@ export default function Home() {
       {/* Hero - No fade, immediately visible */}
       <HeroSection />
 
+      {/* Get Started - No fade, immediately visible */}
+      <GetStartedSection />
 
       {/* All other sections fade in on scroll */}
-      <FadeInSection>
-        <GetStartedSection />
-      </FadeInSection>
 
             {/* Personal and Business Section */}
       <FadeInSection>
