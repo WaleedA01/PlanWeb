@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BusinessFormData, initialBusinessFormData } from './types';
 import FormContainer from '../shared/FormContainer';
 import FormStep from '../shared/FormStep';
@@ -28,6 +28,10 @@ export default function BusinessForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitResult, setSubmitResult] = useState<any>(null);
 
+  const [qrToken, setQrToken] = useState<string | null>(null);
+  const [agentLocked, setAgentLocked] = useState(false);
+  const [lockedAgentName, setLockedAgentName] = useState<string | null>(null);
+
   // Load saved progress on mount
   useEffect(() => {
     const saved = localStorage.getItem('businessFormProgress');
@@ -40,6 +44,39 @@ export default function BusinessForm() {
         console.error('Failed to load saved progress:', e);
       }
     }
+  }, []);
+
+  // Resolve QR token (if present) and lock agent attribution
+  useEffect(() => {
+    // Only run in browser
+    if (typeof window === 'undefined') return;
+
+    const params = new URLSearchParams(window.location.search);
+    const qr = params.get('qr');
+    if (!qr) return;
+
+    setQrToken(qr);
+
+    (async () => {
+      try {
+        const res = await fetch(`/api/qr/resolve?qr=${encodeURIComponent(qr)}`);
+        const data = await res.json().catch(() => null);
+
+        if (data?.locked && data?.agentId) {
+          setAgentLocked(true);
+          setLockedAgentName(data?.agentName ?? null);
+
+          // Override any saved/local selection with the locked agent
+          setFormData((prev) => ({
+            ...prev,
+            selectedAgentId: data.agentId,
+          }));
+        }
+      } catch (e) {
+        // If resolve fails, we simply don't lock
+        console.error('Failed to resolve QR token:', e);
+      }
+    })();
   }, []);
 
   // Save progress whenever formData or currentStep changes
@@ -100,6 +137,13 @@ export default function BusinessForm() {
   const BusinessIcon = getBusinessIcon();
 
   const updateFormData = (updates: Partial<BusinessFormData>) => {
+    // If QR locked, ignore any attempts to change agent selection
+    if (agentLocked && 'selectedAgentId' in updates) {
+      const next = { ...(updates as any) };
+      delete (next as any).selectedAgentId;
+      updates = next;
+    }
+
     console.log('🔄 Form data update requested:', updates);
     setFormData((prev) => {
       const newData = { ...prev, ...updates };
@@ -157,6 +201,7 @@ export default function BusinessForm() {
           formType: 'business',
           answers,
           turnstileToken,
+          qr: qrToken,
         }),
       });
 
@@ -298,6 +343,12 @@ export default function BusinessForm() {
 
           <FormStep isActive={currentStep === 5}>
             <Step5ContactInfo data={formData} onUpdate={updateFormData} />
+
+            {agentLocked && lockedAgentName && (
+              <div className="mt-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
+                Assigned agent is locked: <span className="font-semibold">{lockedAgentName}</span>
+              </div>
+            )}
 
             <div className="mt-6 space-y-3">
               <TurnstileWidget
