@@ -80,10 +80,10 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
         <p className="text-base md:text-lg text-primary">How can we reach you?</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="firstName">First Name</Label>
+            <Label htmlFor="firstName" className="text-lg">First Name</Label>
             <Input
               id="firstName"
               value={data.firstName}
@@ -92,7 +92,7 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
             />
           </div>
           <div>
-            <Label htmlFor="lastName">Last Name</Label>
+            <Label htmlFor="lastName" className="text-lg">Last Name</Label>
             <Input
               id="lastName"
               value={data.lastName}
@@ -103,7 +103,7 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
         </div>
 
         <div>
-          <Label className="mb-3 block">How would you like us to contact you?</Label>
+          <Label className="mb-3 block text-lg">How would you like us to contact you?</Label>
           <RadioGroup
             value={data.preferredContactMethod}
             onValueChange={(value) => onUpdate({ preferredContactMethod: value })}
@@ -126,7 +126,7 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
         </div>
 
         <div>
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-lg">Email</Label>
           <Input
             id="email"
             type="email"
@@ -137,7 +137,7 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
         </div>
 
         <div>
-          <Label htmlFor="phoneNumber">Phone Number</Label>
+          <Label htmlFor="phoneNumber" className="text-lg">Phone Number</Label>
           <Input
             id="phoneNumber"
             type="tel"
@@ -148,7 +148,7 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
         </div>
 
         <div className="relative">
-          <Label>Select Agent</Label>
+          <Label className="text-lg">Select Agent</Label>
           <button
             type="button"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -211,7 +211,7 @@ export default function Step5ContactInfo({ data, onUpdate }: Step5Props) {
         </div>
 
         <div>
-          <Label htmlFor="additionalInfo">Anything else you'd like the agent to know?</Label>
+          <Label htmlFor="additionalInfo" className="text-lg">Anything else you'd like the agent to know?</Label>
           <Textarea
             id="additionalInfo"
             value={data.additionalInfo}

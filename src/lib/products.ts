@@ -100,8 +100,8 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'other',
-    name: 'Other / I\'m not sure',
+    name: 'Other',
     icon: MoreHorizontal,
-    description: 'Not sure which coverage you need? Select this option and our insurance experts will help identify the right products for your business.'
+    description: 'Select this option if you need coverage not listed above, and our insurance experts will help identify the right products for your business.'
   }
 ];

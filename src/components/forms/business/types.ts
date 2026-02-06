@@ -19,6 +19,7 @@ export interface BusinessFormData {
   isNewBusiness: boolean | null;
   yearBusinessStarted: string;
   numEmployees: string;
+  annualSales: string;
   nextExpirationDate: string;
   expectedCoverageDate: string;
 
@@ -51,6 +52,7 @@ export const initialBusinessFormData: BusinessFormData = {
   isNewBusiness: null,
   yearBusinessStarted: '',
   numEmployees: '',
+  annualSales: '',
   nextExpirationDate: '',
   expectedCoverageDate: '',
   firstName: '',

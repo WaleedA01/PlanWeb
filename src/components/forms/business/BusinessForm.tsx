@@ -15,8 +15,10 @@ import Step5ContactInfo from './steps/Step5ContactInfo';
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { Shield, Building2, CheckCircle2, UtensilsCrossed, Store, Wrench, Briefcase, Home, Car, Heart, GraduationCap, Scissors, Dumbbell, Coffee, ShoppingBag, Hammer } from 'lucide-react';
 import BusinessMap from './BusinessMap';
+import { loadBusinessClassifications } from '@/lib/businessClassifications';
 
 export default function BusinessForm() {
+  const [isPreloading, setIsPreloading] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<BusinessFormData>(initialBusinessFormData);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -31,6 +33,23 @@ export default function BusinessForm() {
   const [qrToken, setQrToken] = useState<string | null>(null);
   const [agentLocked, setAgentLocked] = useState(false);
   const [lockedAgentName, setLockedAgentName] = useState<string | null>(null);
+
+  // Preload data before showing form
+  useEffect(() => {
+    const preloadData = async () => {
+      try {
+        await Promise.all([
+          loadBusinessClassifications(),
+          fetch('/api/agents').then(res => res.json())
+        ]);
+      } catch (error) {
+        console.error('Error preloading data:', error);
+      } finally {
+        setIsPreloading(false);
+      }
+    };
+    preloadData();
+  }, []);
 
   // Load saved progress on mount
   useEffect(() => {
@@ -258,6 +277,17 @@ export default function BusinessForm() {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
   }, [isSubmitted]);
+
+  if (isPreloading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isSubmitted) {
     return <SuccessAnimation data={formData} />;

@@ -84,9 +84,9 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
         <p className="text-base md:text-lg text-primary">Review and confirm your details</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
-          <Label htmlFor="businessName">Business Name</Label>
+          <Label htmlFor="businessName" className="text-lg">Business Name</Label>
           <Input
             id="businessName"
             value={data.businessName}
@@ -96,7 +96,7 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
         </div>
 
         <div>
-          <Label htmlFor="streetAddress">Street Address</Label>
+          <Label htmlFor="streetAddress" className="text-lg">Street Address</Label>
           <Input
             id="streetAddress"
             value={data.streetAddress}
@@ -107,7 +107,7 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="city">City</Label>
+            <Label htmlFor="city" className="text-lg">City</Label>
             <Input
               id="city"
               value={data.city}
@@ -116,7 +116,7 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
             />
           </div>
           <div>
-            <Label htmlFor="state">State</Label>
+            <Label htmlFor="state" className="text-lg">State</Label>
             <Input
               id="state"
               value={data.state}
@@ -127,7 +127,7 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
         </div>
 
         <div>
-          <Label htmlFor="postalCode">Postal Code</Label>
+          <Label htmlFor="postalCode" className="text-lg">Postal Code</Label>
           <Input
             id="postalCode"
             value={data.postalCode}
