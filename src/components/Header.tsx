@@ -21,10 +21,6 @@ export default function Header() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-8">
-              <Link href="/" className="text-foreground hover:text-primary transition-colors relative group">
-                Home
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-              </Link>
               <Link href="/about-us" className="text-foreground hover:text-primary transition-colors relative group">
                 About Us
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
@@ -43,6 +39,10 @@ export default function Header() {
               </Link>
               <Link href="/team" className="text-foreground hover:text-primary transition-colors relative group">
                 Team
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+              </Link>
+              <Link href="/careers" className="text-foreground hover:text-primary transition-colors relative group">
+                Careers
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
               </Link>
               <Link href="/contact" className="text-foreground hover:text-primary transition-colors relative group">
@@ -101,46 +101,46 @@ export default function Header() {
             {/* Navigation Links */}
             <nav className="flex flex-col items-center gap-8 text-center animate-in slide-in-from-bottom duration-500">
               <Link 
-                href="/" 
-                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.1s_forwards] opacity-0"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link 
                 href="/about-us" 
-                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.2s_forwards] opacity-0"
+                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.1s_forwards] opacity-0"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 About Us
               </Link>
               <Link 
                 href="/services" 
-                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.3s_forwards] opacity-0"
+                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.2s_forwards] opacity-0"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Services
               </Link>
               <Link 
                 href="/personal" 
-                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.4s_forwards] opacity-0"
+                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.3s_forwards] opacity-0"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Personal
               </Link>
               <Link 
                 href="/business" 
-                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.5s_forwards] opacity-0"
+                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.4s_forwards] opacity-0"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Business
               </Link>
               <Link 
                 href="/team" 
-                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.6s_forwards] opacity-0"
+                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.5s_forwards] opacity-0"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Team
+              </Link>
+              <Link 
+                href="/careers" 
+                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.6s_forwards] opacity-0"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Careers
               </Link>
               <Link 
                 href="/contact" 

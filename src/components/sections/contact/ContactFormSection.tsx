@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { COMPANY_INFO, getPhoneLink, getEmailLink } from '@/lib/company-info';
 
 export default function ContactFormSection() {
   const [formData, setFormData] = useState({
@@ -178,8 +179,8 @@ export default function ContactFormSection() {
                   </div>
                   <div>
                     <p className="font-semibold mb-1">Email</p>
-                    <a href="mailto:info@planlifeusa.com" className="text-white/90 hover:text-white transition-colors">
-                      info@planlifeusa.com
+                    <a href={getEmailLink()} className="text-white/90 hover:text-white transition-colors">
+                      {COMPANY_INFO.contact.email}
                     </a>
                   </div>
                 </div>
@@ -191,8 +192,8 @@ export default function ContactFormSection() {
                   </div>
                   <div>
                     <p className="font-semibold mb-1">Phone</p>
-                    <a href="tel:+14074930049" className="text-white/90 hover:text-white transition-colors">
-                      (407) 493-0049
+                    <a href={getPhoneLink()} className="text-white/90 hover:text-white transition-colors">
+                      {COMPANY_INFO.contact.phone}
                     </a>
                   </div>
                 </div>
@@ -205,7 +206,7 @@ export default function ContactFormSection() {
                   <div>
                     <p className="font-semibold mb-1">Location</p>
                     <p className="text-white/90">
-                      Orlando, FL
+                      {COMPANY_INFO.address.city}, {COMPANY_INFO.address.state}
                     </p>
                   </div>
                 </div>
@@ -215,9 +216,9 @@ export default function ContactFormSection() {
               <div className="mt-8 pt-8 border-t border-white/20">
                 <p className="font-semibold mb-2">Business Hours</p>
                 <p className="text-white/90 text-sm">
-                  Monday - Friday: 9:00 AM - 6:00 PM<br />
-                  Saturday: 10:00 AM - 4:00 PM<br />
-                  Sunday: Closed
+                  {COMPANY_INFO.contact.hours.weekdays}<br />
+                  {COMPANY_INFO.contact.hours.saturday}<br />
+                  {COMPANY_INFO.contact.hours.sunday}
                 </p>
               </div>
             </div>

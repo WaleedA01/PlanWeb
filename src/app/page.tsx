@@ -4,7 +4,6 @@ import PersonalAndBusinessSection from '@/components/sections/landing/PersonalAn
 import GetStartedSection from '@/components/sections/landing/GetStartedSection';
 import PartnersSection from '@/components/sections/landing/PartnersSection';
 import WhyPlanLifeSection from '@/components/sections/landing/WhyPlanLifeSection';
-import WeSpecializeSection from '@/components/sections/landing/WeSpecializeSection';
 import TestimonialsSection from '@/components/sections/landing/TestimonialsSection';
 import NotSureSection from '@/components/sections/landing/NotSureSection';
 
@@ -30,10 +29,6 @@ export default function Home() {
 
       <FadeInSection delay={0.1}>
         <WhyPlanLifeSection />
-      </FadeInSection>
-
-      <FadeInSection delay={0.1}>
-        <WeSpecializeSection />
       </FadeInSection>
 
       <FadeInSection delay={0.1}>

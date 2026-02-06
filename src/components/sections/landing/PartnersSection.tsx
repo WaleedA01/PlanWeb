@@ -1,14 +1,27 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import LogoLoop, { LogoItem } from '@/components/LogoLoop';
 import { CARRIERS } from '@/lib/carriers';
 
 export default function PartnersSection() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const carriers = CARRIERS.map(carrier => ({
     src: carrier.logoSrc,
     alt: carrier.alt,
     title: carrier.name,
   }));
+
+  const firstBelt = carriers.slice(0, 10);
+  const secondBelt = carriers.slice(10);
 
   const renderItem = (item: LogoItem) => (
     <div className="relative group/logo">
@@ -37,13 +50,28 @@ export default function PartnersSection() {
         </div>
       </div>
 
-      {/* Logo Loop */}
-      <div className="overflow-x-hidden py-12">
+      {/* Logo Loops */}
+      <div className="overflow-x-hidden py-6 space-y-4">
+        {/* First Belt - Left to Right */}
         <LogoLoop
-          logos={carriers}
-          speed={50}
-          logoHeight={120}
-          gap={64}
+          logos={firstBelt}
+          speed={30}
+          logoHeight={isMobile ? 75 : 140}
+          gap={isMobile ? 32 : 64}
+          pauseOnHover
+          scaleOnHover
+          fadeOut
+          fadeOutColor="#f4f5f7"
+          renderItem={renderItem}
+        />
+        
+        {/* Second Belt - Right to Left */}
+        <LogoLoop
+          logos={secondBelt}
+          speed={30}
+          direction="right"
+          logoHeight={isMobile ? 60 : 120}
+          gap={isMobile ? 32 : 64}
           pauseOnHover
           scaleOnHover
           fadeOut
