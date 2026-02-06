@@ -85,7 +85,7 @@ export default function ServicesHeroSection() {
           {/* Side by Side Cards */}
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards]">
             {/* Business Card */}
-            <Link href="/business" className="group">
+            <div className="group relative">
               <div className="relative bg-secondary/95 backdrop-blur-sm rounded-3xl p-12 hover:bg-secondary transition-all duration-300 hover:scale-105 hover:shadow-2xl h-full border-4 border-secondary">
                 <div className="absolute -top-6 -left-6 w-20 h-20 bg-primary rounded-2xl flex items-center justify-center shadow-xl rotate-12 group-hover:rotate-0 transition-transform">
                   <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -96,17 +96,19 @@ export default function ServicesHeroSection() {
                 <p className="text-white/90 mb-8 text-lg leading-relaxed">
                   Protect your company with comprehensive coverage including liability, property, workers compensation, and specialized business policies.
                 </p>
-                <div className="flex items-center text-primary font-semibold text-lg group-hover:gap-3 gap-2 transition-all">
-                  Get Started
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
+                <Button asChild size="lg" className="w-full text-2xl px-12 py-8 bg-primary hover:bg-primary/90 text-white shadow-[0_0_30px_rgba(13,169,228,0.6)] hover:shadow-[0_0_40px_rgba(13,169,228,0.8)] transition-all justify-end">
+                  <Link href="/business/form" className="flex items-center gap-3">
+                    Get Started
+                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </Button>
               </div>
-            </Link>
+            </div>
 
             {/* Personal Card */}
-            <Link href="/personal" className="group">
+            <div className="group relative">
               <div className="relative bg-white/95 backdrop-blur-sm rounded-3xl p-12 hover:bg-white transition-all duration-300 hover:scale-105 hover:shadow-2xl h-full border-4 border-white">
                 <div className="absolute -top-6 -right-6 w-20 h-20 bg-secondary rounded-2xl flex items-center justify-center shadow-xl -rotate-12 group-hover:rotate-0 transition-transform">
                   <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -117,14 +119,16 @@ export default function ServicesHeroSection() {
                 <p className="text-secondary/80 mb-8 text-lg leading-relaxed">
                   Safeguard what matters most with personalized coverage for your home, auto, life, health, and everything in between.
                 </p>
-                <div className="flex items-center text-primary font-semibold text-lg group-hover:gap-3 gap-2 transition-all">
-                  Get Started
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
+                <Button asChild size="lg" className="w-full text-2xl px-12 py-8 bg-primary hover:bg-primary/90 text-white shadow-[0_0_30px_rgba(13,169,228,0.6)] hover:shadow-[0_0_40px_rgba(13,169,228,0.8)] transition-all justify-end">
+                  <Link href="/personal/form" className="flex items-center gap-3">
+                    Get Started
+                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </Button>
               </div>
-            </Link>
+            </div>
           </div>
         </div>
       </div>
