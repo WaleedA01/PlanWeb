@@ -55,9 +55,6 @@ export default function Step3Products({ data, onUpdate }: Step3Props) {
       </div>
 
       <div className="space-y-2">
-        {/* We Recommend Label */}
-        <div className="text-sm font-semibold text-primary uppercase tracking-wide">We Recommend:</div>
-
         {/* Expert Help Button - Always visible */}
         <button
           type="button"
@@ -75,8 +72,8 @@ export default function Step3Products({ data, onUpdate }: Step3Props) {
           <Image 
             src="/logo-square.png" 
             alt="" 
-            width={24}
-            height={24}
+            width={20}
+            height={20}
             className="object-contain"
           />
           <span className="text-sm font-semibold">Recommended</span>
@@ -89,7 +86,7 @@ export default function Step3Products({ data, onUpdate }: Step3Props) {
             </svg>
           </div>
         )}
-        <div className="space-y-1 pt-8 pr-4">
+        <div className="space-y-1 pr-32">
           <h3 className={`text-xl md:text-2xl font-semibold ${
             isExpertSelected ? 'text-white' : 'text-secondary'
           }`}>Help me find the coverages I need</h3>

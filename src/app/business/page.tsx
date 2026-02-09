@@ -8,11 +8,11 @@ export default function BusinessPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 bg-gradient-to-br from-[#2a3f52] via-[#1a5a6f] to-[#0da9e4] bg-[length:200%_200%] animate-[gradientShift_8s_ease_infinite] overflow-hidden">
+      <section className="relative py-20 md:py-32 bg-gradient-to-br from-[#0da9e4] via-[#3db8e8] to-[#7dd3f0] bg-[length:200%_200%] animate-[gradientShift_8s_ease_infinite] overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse delay-700"></div>
+          <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse delay-700"></div>
         </div>
 
         {/* Floating Icons */}
@@ -83,9 +83,9 @@ export default function BusinessPage() {
         </div>
 
         {/* Bottom wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" fill="none" className="w-full h-auto">
-            <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="hsl(var(--background))" />
+        <div className="absolute bottom-0 left-0 right-0 -mb-0.5">
+          <svg viewBox="0 0 1440 150" fill="none" className="w-full h-auto">
+            <path d="M0 150L60 140C120 130 240 110 360 100C480 90 600 90 720 95C840 100 960 110 1080 115C1200 120 1320 120 1380 120L1440 120V150H1380C1320 150 1200 150 1080 150C960 150 840 150 720 150C600 150 480 150 360 150C240 150 120 150 60 150H0Z" fill="hsl(var(--background))" />
           </svg>
         </div>
       </section>

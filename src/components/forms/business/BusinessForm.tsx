@@ -33,15 +33,18 @@ export default function BusinessForm() {
   const [qrToken, setQrToken] = useState<string | null>(null);
   const [agentLocked, setAgentLocked] = useState(false);
   const [lockedAgentName, setLockedAgentName] = useState<string | null>(null);
+  
+  const [businessClassifications, setBusinessClassifications] = useState<any[]>([]);
 
   // Preload data before showing form
   useEffect(() => {
     const preloadData = async () => {
       try {
-        await Promise.all([
+        const [classifications] = await Promise.all([
           loadBusinessClassifications(),
           fetch('/api/agents').then(res => res.json())
         ]);
+        setBusinessClassifications(classifications);
       } catch (error) {
         console.error('Error preloading data:', error);
       } finally {
@@ -250,7 +253,7 @@ export default function BusinessForm() {
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return formData.businessName && formData.streetAddress && formData.city && formData.state && formData.postalCode;
+        return formData.firstName && formData.lastName && formData.businessName && formData.streetAddress && formData.city && formData.state && formData.postalCode;
       case 2:
         return formData.businessType !== '';
       case 3:
@@ -258,14 +261,13 @@ export default function BusinessForm() {
       case 4:
         return formData.isNewBusiness !== null && formData.numEmployees !== '';
       case 5:
+        const emailRequired = formData.preferredContactMethod === 'email' || formData.preferredContactMethod === 'either';
+        const phoneRequired = formData.preferredContactMethod === 'phone' || formData.preferredContactMethod === 'either';
         return (
-          formData.firstName &&
-          formData.lastName &&
-          formData.email &&
-          formData.phoneNumber &&
           formData.preferredContactMethod &&
-          formData.selectedAgentId &&
-          !!turnstileToken
+          !!turnstileToken &&
+          (emailRequired ? !!formData.email : true) &&
+          (phoneRequired ? !!formData.phoneNumber : true)
         );
       default:
         return false;
@@ -342,6 +344,14 @@ export default function BusinessForm() {
           isLastStep={currentStep === 5}
           canProceed={!!canProceed() && !isSubmitting}
           hideNavigation={showTransition}
+          turnstileWidget={
+            !turnstileToken ? (
+              <TurnstileWidget
+                key={turnstileKey}
+                onToken={(token: string) => setTurnstileToken(token)}
+              />
+            ) : null
+          }
         >
           <FormStep isActive={currentStep === 1 && !showTransition}>
             <Step1BusinessInfo data={formData} onUpdate={updateFormData} />
@@ -360,7 +370,7 @@ export default function BusinessForm() {
           </FormStep>
 
           <FormStep isActive={currentStep === 2 && !showTransition}>
-            <Step2BusinessType data={formData} onUpdate={updateFormData} />
+            <Step2BusinessType data={formData} onUpdate={updateFormData} classifications={businessClassifications} />
           </FormStep>
 
           <FormStep isActive={currentStep === 3}>
@@ -372,36 +382,28 @@ export default function BusinessForm() {
           </FormStep>
 
           <FormStep isActive={currentStep === 5}>
-            <Step5ContactInfo data={formData} onUpdate={updateFormData} />
+            <Step5ContactInfo 
+              data={formData} 
+              onUpdate={updateFormData}
+              agentLocked={agentLocked}
+              lockedAgentName={lockedAgentName}
+            />
 
-            {agentLocked && lockedAgentName && (
-              <div className="mt-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
-                Assigned agent is locked: <span className="font-semibold">{lockedAgentName}</span>
+            {submitError && (
+              <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {submitError}
               </div>
             )}
 
-            <div className="mt-6 space-y-3">
-              <TurnstileWidget
-                key={turnstileKey}
-                onToken={(token: string) => setTurnstileToken(token)}
-              />
-
-              {submitError && (
-                <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                  {submitError}
-                </div>
-              )}
-
-              {submitResult && (
-                <pre className="max-h-64 overflow-auto rounded-md border bg-gray-50 p-3 text-xs">
+            {submitResult && (
+              <pre className="mt-6 max-h-64 overflow-auto rounded-md border bg-gray-50 p-3 text-xs">
 {JSON.stringify(submitResult, null, 2)}
-                </pre>
-              )}
+              </pre>
+            )}
 
-              {isSubmitting && (
-                <div className="text-sm text-gray-600">Submitting…</div>
-              )}
-            </div>
+            {isSubmitting && (
+              <div className="mt-6 text-sm text-gray-600">Submitting…</div>
+            )}
           </FormStep>
         </FormContainer>
       </div>

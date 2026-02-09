@@ -62,8 +62,24 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Enter Your Business Name or Address</h2>
+          <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Let's get to know you</h2>
           <p className="text-base md:text-lg text-primary">Find your business and we'll set things up for you!</p>
+        </div>
+
+        <div>
+          <Label className="text-lg mb-2 block">Business Owner</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              placeholder="First Name"
+              value={data.firstName}
+              onChange={(e) => onUpdate({ firstName: e.target.value })}
+            />
+            <Input
+              placeholder="Last Name"
+              value={data.lastName}
+              onChange={(e) => onUpdate({ lastName: e.target.value })}
+            />
+          </div>
         </div>
 
         <PlacesAutocomplete
@@ -85,6 +101,28 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
       </div>
 
       <div className="space-y-6">
+        <div>
+          <Label className="text-lg mb-2 block">Business Owner</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Input
+                id="firstName"
+                value={data.firstName}
+                onChange={(e) => onUpdate({ firstName: e.target.value })}
+                placeholder="First Name"
+              />
+            </div>
+            <div>
+              <Input
+                id="lastName"
+                value={data.lastName}
+                onChange={(e) => onUpdate({ lastName: e.target.value })}
+                placeholder="Last Name"
+              />
+            </div>
+          </div>
+        </div>
+
         <div>
           <Label htmlFor="businessName" className="text-lg">Business Name</Label>
           <Input
