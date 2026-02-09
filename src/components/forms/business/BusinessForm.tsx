@@ -68,20 +68,25 @@ export default function BusinessForm() {
     }
   }, []);
 
-  // Resolve QR token (if present) and lock agent attribution
+  // Resolve QR context (URL token if present, otherwise HttpOnly cookie via the API) and lock agent attribution
   useEffect(() => {
     // Only run in browser
     if (typeof window === 'undefined') return;
 
     const params = new URLSearchParams(window.location.search);
     const qr = params.get('qr');
-    if (!qr) return;
 
-    setQrToken(qr);
+    // If token is present in URL, keep it for submission/debugging.
+    // If not present, the resolver will fall back to the HttpOnly cookie (pl_qr).
+    if (qr) setQrToken(qr);
 
     (async () => {
       try {
-        const res = await fetch(`/api/qr/resolve?qr=${encodeURIComponent(qr)}`);
+        const url = qr
+          ? `/api/qr/resolve?qr=${encodeURIComponent(qr)}`
+          : `/api/qr/resolve`;
+
+        const res = await fetch(url);
         const data = await res.json().catch(() => null);
 
         if (data?.locked && data?.agentId) {
@@ -93,10 +98,14 @@ export default function BusinessForm() {
             ...prev,
             selectedAgentId: data.agentId,
           }));
+        } else {
+          // If not locked, ensure we don't keep stale lock state
+          setAgentLocked(false);
+          setLockedAgentName(null);
         }
       } catch (e) {
         // If resolve fails, we simply don't lock
-        console.error('Failed to resolve QR token:', e);
+        console.error('Failed to resolve QR context:', e);
       }
     })();
   }, []);

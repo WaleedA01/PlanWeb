@@ -1,13 +1,11 @@
-
-
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { getAgentById, getAgentFullName } from "@/lib/agents/getAgents";
 
 const QR_SECRET = process.env.QR_SIGNING_SECRET;
 
 function verifyToken(token: string) {
-  if (!QR_SECRET) throw new Error("QR_SIGNING_SECRET is not set");
+  if (!QR_SECRET) return null;
 
   const [b64, sig] = token.split(".");
   if (!b64 || !sig) return null;
@@ -37,9 +35,9 @@ function verifyToken(token: string) {
   }
 }
 
-export function GET(req: Request) {
+export function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const qr = searchParams.get("qr");
+  const qr = searchParams.get("qr") ?? req.cookies.get("pl_qr")?.value ?? null;
 
   if (!qr) {
     return NextResponse.json({ locked: false });
