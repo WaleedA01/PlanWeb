@@ -18,11 +18,11 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
   const [selectedPlace, setSelectedPlace] = useState('');
 
   useEffect(() => {
-    if (data.businessName || data.streetAddress) {
+    if (data.streetAddress && data.city && data.state) {
       setShowForm(true);
       setSelectedPlace(data.businessName || data.streetAddress);
     }
-  }, [data.businessName, data.streetAddress]);
+  }, [data.businessName, data.streetAddress, data.city, data.state]);
 
   const handlePlaceSelect = async (placeDetails: any) => {
     console.log('🔍 Place selected - Full details:', placeDetails);
