@@ -88,7 +88,7 @@ export default function Step2PurchaseInfo({ data, onUpdate }: Step2Props) {
               />
             </div>
             <div>
-              <Label htmlFor="coverageDate" className="text-lg">When do you need coverage by?</Label>
+              <Label htmlFor="coverageDate" className="text-lg">When is your current policy expiration date?</Label>
               <Input
                 id="coverageDate"
                 type="date"

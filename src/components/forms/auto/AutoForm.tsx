@@ -15,11 +15,7 @@ import SuccessAnimation from '../shared/SuccessAnimation';
 import { TurnstileWidget } from '@/components/TurnstileWidget';
 import { Car } from 'lucide-react';
 
-interface AutoFormProps {
-  qrToken?: string;
-}
-
-export default function AutoForm({ qrToken }: AutoFormProps) {
+export default function AutoForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -28,7 +24,7 @@ export default function AutoForm({ qrToken }: AutoFormProps) {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileKey, setTurnstileKey] = useState(0);
   const [agentLocked, setAgentLocked] = useState(false);
-  const [lockedAgentName, setLockedAgentName] = useState('');
+  const [lockedAgentName, setLockedAgentName] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<AutoFormData>({
     firstName: '',
@@ -59,36 +55,65 @@ export default function AutoForm({ qrToken }: AutoFormProps) {
     const saved = localStorage.getItem('autoFormProgress');
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
-        setFormData({ ...formData, ...parsed });
+        const { formData: savedData, currentStep: savedStep } = JSON.parse(saved);
+        setFormData(savedData);
+        setCurrentStep(savedStep);
       } catch (e) {
-        console.error('Failed to parse saved form data');
+        console.error('Failed to load saved progress:', e);
       }
     }
   }, []);
 
   useEffect(() => {
-    if (currentStep > 1) {
-      localStorage.setItem('autoFormProgress', JSON.stringify(formData));
+    if (!isSubmitted) {
+      localStorage.setItem('autoFormProgress', JSON.stringify({ formData, currentStep }));
     }
-  }, [formData, currentStep]);
+  }, [formData, currentStep, isSubmitted]);
+
+  const [qrToken, setQrToken] = useState<string | null>(null);
 
   useEffect(() => {
-    if (qrToken) {
-      fetch(`/api/qr/validate?token=${qrToken}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.valid && data.agentId) {
-            setAgentLocked(true);
-            setLockedAgentName(data.agentName || 'Your Agent');
-            setFormData((prev) => ({ ...prev, selectedAgentId: data.agentId }));
-          }
-        })
-        .catch(() => {});
-    }
-  }, [qrToken]);
+    if (typeof window === 'undefined') return;
+
+    const params = new URLSearchParams(window.location.search);
+    const qr = params.get('qr');
+
+    if (qr) setQrToken(qr);
+
+    (async () => {
+      try {
+        const url = qr
+          ? `/api/qr/resolve?qr=${encodeURIComponent(qr)}`
+          : `/api/qr/resolve`;
+
+        const res = await fetch(url);
+        const data = await res.json().catch(() => null);
+
+        if (data?.locked && data?.agentId) {
+          setAgentLocked(true);
+          setLockedAgentName(data?.agentName ?? null);
+
+          setFormData((prev) => ({
+            ...prev,
+            selectedAgentId: data.agentId,
+          }));
+        } else {
+          setAgentLocked(false);
+          setLockedAgentName(null);
+        }
+      } catch (e) {
+        console.error('Failed to resolve QR context:', e);
+      }
+    })();
+  }, []);
 
   const updateFormData = (updates: Partial<AutoFormData>) => {
+    if (agentLocked && 'selectedAgentId' in updates) {
+      const next = { ...(updates as any) };
+      delete (next as any).selectedAgentId;
+      updates = next;
+    }
+
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
@@ -288,7 +313,7 @@ export default function AutoForm({ qrToken }: AutoFormProps) {
               data={formData} 
               onUpdate={updateFormData}
               agentLocked={agentLocked}
-              lockedAgentName={lockedAgentName}
+              lockedAgentName={lockedAgentName ?? undefined}
             />
 
             {submitError && (

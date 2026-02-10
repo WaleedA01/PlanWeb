@@ -152,7 +152,7 @@ export default function RecapScreen({ data }: RecapScreenProps) {
         )}
 
         {/* Products */}
-        {step >= 4 && (
+        {step >= 4 && data.products && data.products.length > 0 && (
           <div className="bg-card border rounded-xl shadow-sm p-8 mb-6 animate-[fadeInUp_0.6s_ease-out_forwards]">
             <h3 className="text-xl font-semibold mb-4 text-secondary">Selected Products</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">

@@ -44,31 +44,38 @@ export default function HomeForm() {
     }
   }, []);
 
-  // Resolve QR token (if present) and lock agent attribution
+  // Resolve QR context (URL token if present, otherwise HttpOnly cookie via the API) and lock agent attribution
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const params = new URLSearchParams(window.location.search);
     const qr = params.get('qr');
-    if (!qr) return;
 
-    setQrToken(qr);
+    if (qr) setQrToken(qr);
 
     (async () => {
       try {
-        const res = await fetch(`/api/qr/resolve?qr=${encodeURIComponent(qr)}`);
+        const url = qr
+          ? `/api/qr/resolve?qr=${encodeURIComponent(qr)}`
+          : `/api/qr/resolve`;
+
+        const res = await fetch(url);
         const data = await res.json().catch(() => null);
 
         if (data?.locked && data?.agentId) {
           setAgentLocked(true);
           setLockedAgentName(data?.agentName ?? null);
+
           setFormData((prev) => ({
             ...prev,
             selectedAgentId: data.agentId,
           }));
+        } else {
+          setAgentLocked(false);
+          setLockedAgentName(null);
         }
       } catch (e) {
-        console.error('Failed to resolve QR token:', e);
+        console.error('Failed to resolve QR context:', e);
       }
     })();
   }, []);

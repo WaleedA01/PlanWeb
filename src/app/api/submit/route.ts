@@ -44,10 +44,32 @@ export async function POST(req: Request) {
 
   // 5) Determine form type + answers
   const formType = resolveFormType(body);
+  const rawFormType = str((body as any).formType).toLowerCase();
   const answers = (body.answers && typeof body.answers === "object" ? body.answers : (body as any)) as Record<
     string,
     unknown
   >;
+
+  // 5a) Build tags based on form type and QR presence
+  const tags: string[] = ['Online Lead'];
+  
+  // Add form-specific tag
+  if (rawFormType === 'business') {
+    tags.push('Business');
+  } else if (rawFormType === 'auto') {
+    tags.push('Auto');
+  } else if (rawFormType === 'home') {
+    tags.push('Home');
+  }
+  
+  // Add QR tag if QR token present
+  const qrToken = str((body as any).qr);
+  if (qrToken) {
+    tags.push('QR Code');
+  }
+  
+  // Set tags in answers
+  (answers as any).tags = tags.join('; ');
 
   // 5b) Resolve agent server-side (avoid client spoofing)
   const agentIdRaw = str((answers as any).agentId || (answers as any).selectedAgentId);

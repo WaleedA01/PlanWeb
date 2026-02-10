@@ -1,10 +1,20 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { AutoFormData } from '../types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Mail, Phone, Users } from 'lucide-react';
+
+type Agent = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  title: string;
+  headshotSrc: string;
+  status: 'available' | 'unavailable' | 'inactive';
+};
 
 interface Step5Props {
   data: AutoFormData;
@@ -14,6 +24,19 @@ interface Step5Props {
 }
 
 export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAgentName }: Step5Props) {
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+
+  useEffect(() => {
+    if (agentLocked && data.selectedAgentId) {
+      fetch('/api/agents')
+        .then(res => res.json())
+        .then(json => {
+          const agent = json.agents?.find((a: Agent) => a.id === data.selectedAgentId);
+          if (agent) setSelectedAgent(agent);
+        })
+        .catch(console.error);
+    }
+  }, [agentLocked, data.selectedAgentId]);
   const contactMethods = [
     { value: 'email', label: 'Email', icon: Mail },
     { value: 'phone', label: 'Phone', icon: Phone },
@@ -127,9 +150,28 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
           </div>
         </div>
 
+        {agentLocked && selectedAgent && (
+          <div className="rounded-xl border-2 border-primary bg-primary/5 p-6">
+            <Label className="text-lg mb-3 block">Your Agent</Label>
+            <div className="flex items-center gap-4">
+              <img
+                src={selectedAgent.headshotSrc}
+                alt={`${selectedAgent.firstName} ${selectedAgent.lastName}`}
+                className="w-16 h-16 rounded-lg object-cover"
+              />
+              <div>
+                <div className="font-semibold text-xl text-secondary">{selectedAgent.firstName} {selectedAgent.lastName}</div>
+                <div className="text-sm text-muted-foreground">{selectedAgent.title}</div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div>
           <Label htmlFor="additionalNotes" className="text-lg">
-            Anything else you'd like the agent to know?
+            {agentLocked && selectedAgent 
+              ? `Anything else you'd like ${selectedAgent.firstName} to know?`
+              : "Anything else you'd like the agent to know?"}
           </Label>
           <Textarea
             id="additionalNotes"

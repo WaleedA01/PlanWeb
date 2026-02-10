@@ -14,10 +14,13 @@ export type RouteResult =
  * - personal (all personal LOBs)
  */
 export function routeAndMap(
-  formType: LeadCategory,
+  formType: LeadCategory | string,
   answers: Record<string, unknown>
 ): RouteResult {
-  if (formType === "business") {
+  const ft = String(formType || "").toLowerCase();
+  const category: LeadCategory = ft === "business" ? "business" : "personal";
+
+  if (category === "business") {
     const biz = mapBusiness(answers);
     if (!biz.ok) return { ok: false, error: biz.error };
     return { ok: true, category: "business", payload: biz.payload };

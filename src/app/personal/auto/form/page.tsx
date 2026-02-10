@@ -5,10 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import AutoForm from '@/components/forms/auto/AutoForm';
 
 function AutoFormContent() {
-  const searchParams = useSearchParams();
-  const qrToken = searchParams.get('qr') || undefined;
-
-  return <AutoForm qrToken={qrToken} />;
+  return <AutoForm />;
 }
 
 export default function AutoFormPage() {
