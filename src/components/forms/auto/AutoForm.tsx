@@ -9,8 +9,7 @@ import Step4Documents from './steps/Step4Documents';
 import Step5ContactInfo from './steps/Step5ContactInfo';
 import FormContainer from '../shared/FormContainer';
 import FormStep from '../shared/FormStep';
-import BusinessMap from '../business/BusinessMap';
-import CarShowroom from './CarShowroom';
+import PersonalMap from '../personal/PersonalMap';
 import SuccessAnimation from '../shared/SuccessAnimation';
 import { TurnstileWidget } from '@/components/TurnstileWidget';
 import { Car } from 'lucide-react';
@@ -119,8 +118,7 @@ export default function AutoForm() {
 
   const hasVehicleDetails = formData.vehicles.length > 0 && formData.vehicles[0] && 
     formData.vehicles[0].make && formData.vehicles[0].model && formData.vehicles[0].year;
-  const showMap = formData.latitude && formData.longitude && !hasVehicleDetails;
-  const showCar = formData.latitude && formData.longitude && hasVehicleDetails;
+  const showMap = formData.latitude && formData.longitude;
   const firstVehicle = formData.vehicles[0] || { make: '', model: '', year: '' };
 
   const handleNext = () => {
@@ -243,25 +241,14 @@ export default function AutoForm() {
               WebkitMaskComposite: 'source-in'
             }}
           >
-            <BusinessMap latitude={formData.latitude!} longitude={formData.longitude!} />
-          </div>
-        )}
-        
-        {showCar && firstVehicle.make && (
-          <div 
-            key={`${firstVehicle.make}-${firstVehicle.model}-${firstVehicle.year}`}
-            className="absolute top-0 right-0 w-3/4 h-1/2 opacity-80 animate-[mapFadeIn_0.8s_ease-out_0.3s_forwards] overflow-hidden"
-            style={{
-              maskImage: 'linear-gradient(to right, transparent 0%, black 20%, black 100%), linear-gradient(to top, transparent 0%, black 80%, black 100%)',
-              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 20%, black 100%), linear-gradient(to top, transparent 0%, black 80%, black 100%)',
-              maskComposite: 'intersect',
-              WebkitMaskComposite: 'source-in'
-            }}
-          >
-            <CarShowroom 
-              make={firstVehicle.make} 
-              model={firstVehicle.model} 
-              year={firstVehicle.year}
+            <PersonalMap 
+              latitude={formData.latitude!} 
+              longitude={formData.longitude!}
+              show3DObject={true}
+              objectType="car"
+              carMake={hasVehicleDetails ? firstVehicle.make : undefined}
+              carModel={hasVehicleDetails ? firstVehicle.model : undefined}
+              carYear={hasVehicleDetails ? firstVehicle.year : undefined}
             />
           </div>
         )}

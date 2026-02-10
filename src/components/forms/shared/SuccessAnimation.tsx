@@ -10,7 +10,7 @@ import SplitText from '@/components/SplitText';
 import { OrbitingCircles } from '@/components/ui/orbiting-circles';
 
 interface SuccessAnimationProps {
-  data: any;
+  data: BusinessFormData | any;
 }
 
 const CARRIER_LOGOS = CARRIERS.map(c => c.logoSrc);

@@ -47,7 +47,7 @@ export default function BusinessInsuranceSection() {
           {/* CTA */}
           <div className="text-center">
             <Button asChild size="lg" className="bg-secondary hover:bg-secondary/90 text-white px-12 py-6 text-lg">
-              <Link href="/business">Get Business Quote →</Link>
+              <Link href="/business/form">Get Business Quote →</Link>
             </Button>
           </div>
         </div>

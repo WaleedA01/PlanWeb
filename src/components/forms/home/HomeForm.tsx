@@ -12,7 +12,7 @@ import Step3PropertyFeatures from './steps/Step3PropertyFeatures';
 import Step4ContactInfo from './steps/Step4ContactInfo';
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { Home } from 'lucide-react';
-import BusinessMap from '../business/BusinessMap';
+import PersonalMap from '../personal/PersonalMap';
 
 export default function HomeForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -221,7 +221,12 @@ export default function HomeForm() {
               WebkitMaskComposite: 'source-in'
             }}
           >
-            <BusinessMap latitude={formData.latitude} longitude={formData.longitude} />
+            <PersonalMap 
+              latitude={formData.latitude} 
+              longitude={formData.longitude}
+              show3DObject={true}
+              objectType="house"
+            />
           </div>
         )}
         <div className="flex-1 flex flex-col justify-center space-y-8 -mt-40 relative z-20">

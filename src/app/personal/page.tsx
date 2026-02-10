@@ -25,7 +25,7 @@ export default function PersonalPage() {
 
           {/* Main Cards - Auto & Home */}
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6 mb-6">
-            <Link href="/personal/auto" className="group">
+            <Link href="/personal/auto/form" className="group">
               <div className="bg-white rounded-3xl p-10 border-4 border-white hover:shadow-2xl transition-all hover:scale-105 h-full relative overflow-hidden">
                 <div className="absolute top-4 right-4 opacity-5">
                   <svg className="w-40 h-40 text-secondary" fill="currentColor" viewBox="0 0 20 20">
@@ -52,7 +52,7 @@ export default function PersonalPage() {
               </div>
             </Link>
 
-            <Link href="/personal/home" className="group">
+            <Link href="/personal/home/form" className="group">
               <div className="bg-secondary backdrop-blur-sm rounded-3xl p-10 border-4 border-secondary hover:shadow-2xl transition-all hover:scale-105 h-full relative overflow-hidden">
                 <div className="absolute top-4 right-4 opacity-10">
                   <svg className="w-40 h-40 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -78,78 +78,36 @@ export default function PersonalPage() {
             </Link>
           </div>
 
-          {/* Secondary Cards */}
-          <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
-            <Link href="/contact" className="group">
-              <div className="bg-primary backdrop-blur-sm rounded-3xl p-8 border-4 border-primary hover:shadow-2xl transition-all hover:scale-105 h-full relative overflow-hidden">
-                <div className="absolute top-4 right-4 opacity-10">
-                  <svg className="w-32 h-32 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3 relative z-10">
-                  <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                  </svg>
-                  Life Insurance
-                </h3>
-                <p className="text-white/90 mb-4 relative z-10">
-                  Secure your family's financial future
-                </p>
-                <div className="flex items-center text-white font-semibold group-hover:gap-2 gap-1 transition-all relative z-10">
-                  Get Started
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </Link>
-
-            <Link href="/contact" className="group">
-              <div className="bg-primary backdrop-blur-sm rounded-3xl p-8 border-4 border-primary hover:shadow-2xl transition-all hover:scale-105 h-full relative overflow-hidden">
-                <div className="absolute top-4 right-4 opacity-10">
-                  <svg className="w-32 h-32 text-white" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2m6.364.636l-1.414 1.414M21 12h-2M18.364 17.364l-1.414-1.414M12 19v2m-6.364-3.636l1.414-1.414M3 12h2M5.636 6.636L7.05 5.222M12 8a4 4 0 100 8 4 4 0 000-8z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3C7.029 3 3 7.029 3 12s4.029 9 9 9 9-4.029 9-9-4.029-9-9-9z" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3 relative z-10">
-                  <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2m6.364.636l-1.414 1.414M21 12h-2M18.364 17.364l-1.414-1.414M12 19v2m-6.364-3.636l1.414-1.414M3 12h2M5.636 6.636L7.05 5.222M12 8a4 4 0 100 8 4 4 0 000-8z" />
-                  </svg>
-                  Umbrella Insurance
-                </h3>
-                <p className="text-white/90 mb-4 relative z-10">
-                  Extra liability protection beyond standard policies
-                </p>
-                <div className="flex items-center text-white font-semibold group-hover:gap-2 gap-1 transition-all relative z-10">
-                  Get Started
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </Link>
-
+          {/* Secondary Card - Combined */}
+          <div className="max-w-6xl mx-auto">
             <Link href="/personal/other" className="group">
-              <div className="bg-primary backdrop-blur-sm rounded-3xl p-8 border-4 border-primary hover:shadow-2xl transition-all hover:scale-105 h-full relative overflow-hidden">
-                <div className="absolute top-4 right-4 opacity-10">
-                  <svg className="w-32 h-32 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <div className="bg-primary backdrop-blur-sm rounded-3xl p-10 border-4 border-primary hover:shadow-2xl transition-all hover:scale-105 relative overflow-hidden">
+                {/* Background Icons - Right Aligned */}
+                <div className="absolute top-1/2 -translate-y-1/2 right-[20%] opacity-10">
+                  <svg className="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="absolute top-1/2 -translate-y-1/2 right-[12%] opacity-10">
+                  <svg className="w-24 h-24 text-white" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2m6.364.636l-1.414 1.414M21 12h-2M18.364 17.364l-1.414-1.414M12 19v2m-6.364-3.636l1.414-1.414M3 12h2M5.636 6.636L7.05 5.222M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                  </svg>
+                </div>
+                <div className="absolute top-1/2 -translate-y-1/2 right-[4%] opacity-10">
+                  <svg className="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3 relative z-10">
-                  <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                  </svg>
-                  Other
+                
+                <h3 className="text-3xl font-bold text-white mb-4 relative z-10">
+                  Life, Umbrella and Other
                 </h3>
-                <p className="text-white/90 mb-4 relative z-10">
-                  Boat, RV, renters, and specialty coverage
+                <p className="text-white/90 mb-6 text-lg relative z-10">
+                  Boat, RV, renters, life, umbrella, and specialty coverage
                 </p>
-                <div className="flex items-center text-white font-semibold group-hover:gap-2 gap-1 transition-all relative z-10">
+                <div className="flex items-center text-white font-semibold text-lg group-hover:gap-3 gap-2 transition-all relative z-10">
                   Get Started
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
