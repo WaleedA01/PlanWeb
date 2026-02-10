@@ -268,7 +268,10 @@ export default function BusinessForm() {
       case 3:
         return formData.products.length > 0;
       case 4:
-        return formData.isNewBusiness !== null && formData.numEmployees !== '';
+        if (formData.isNewBusiness === null) return false;
+        if (formData.isNewBusiness === true && !formData.expectedCoverageDate) return false;
+        if (formData.isNewBusiness === false && !formData.yearBusinessStarted) return false;
+        return formData.numEmployees !== '' && formData.annualSales !== '';
       case 5:
         const emailRequired = formData.preferredContactMethod === 'email' || formData.preferredContactMethod === 'either';
         const phoneRequired = formData.preferredContactMethod === 'phone' || formData.preferredContactMethod === 'either';
@@ -368,7 +371,7 @@ export default function BusinessForm() {
 
           <FormStep isActive={showTransition}>
             <AnimatedTransition
-              line1="Nice to meet you!"
+              line1={`Nice to meet you, ${formData.firstName}!`}
               line2="Tell us more about your business!"
               line1ClassName="text-5xl md:text-6xl font-bold text-primary"
               line2ClassName="text-xl md:text-2xl font-medium text-muted-foreground"

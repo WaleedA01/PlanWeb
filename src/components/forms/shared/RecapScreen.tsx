@@ -154,25 +154,57 @@ export default function RecapScreen({ data }: RecapScreenProps) {
         {/* Products */}
         {step >= 4 && data.products && data.products.length > 0 && (
           <div className="bg-card border rounded-xl shadow-sm p-8 mb-6 animate-[fadeInUp_0.6s_ease-out_forwards]">
-            <h3 className="text-xl font-semibold mb-4 text-secondary">Selected Products</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {data.products.map((productName, index) => {
-                const product = PRODUCTS.find(p => p.name === productName);
-                if (!product) return null;
-                return (
-                  <div
-                    key={product.id}
-                    className="border-2 border-primary bg-primary text-white rounded-xl p-4 animate-[fadeInUp_0.4s_ease-out_forwards]"
-                    style={{ animationDelay: `${index * 0.1}s`, opacity: 0 }}
-                  >
-                    <div className="flex flex-col items-center text-center space-y-2">
-                      <product.icon className="w-8 h-8" />
-                      <div className="text-xs font-medium leading-tight">{product.name}</div>
+            {data.products.includes('Expert Consultation') ? (
+              <div className="space-y-6">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-semibold text-secondary">Coverage Selection</h3>
+                </div>
+                <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-6 border border-primary/20">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center mt-1">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-lg text-secondary mb-2">
+                        You selected <span className="font-bold text-primary">Help me choose</span>
+                      </p>
+                      <p className="text-muted-foreground">
+                        An agent will help you choose products tailored to your needs, and make insurance simple and comprehensive.
+                      </p>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <h3 className="text-xl font-semibold mb-4 text-secondary">My Products</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {data.products.map((productName, index) => {
+                    const product = PRODUCTS.find(p => p.name === productName);
+                    if (!product) return null;
+                    return (
+                      <div
+                        key={product.id}
+                        className="border-2 border-primary bg-primary text-white rounded-xl p-4 animate-[fadeInUp_0.4s_ease-out_forwards]"
+                        style={{ animationDelay: `${index * 0.1}s`, opacity: 0 }}
+                      >
+                        <div className="flex flex-col items-center text-center space-y-2">
+                          <product.icon className="w-8 h-8" />
+                          <div className="text-xs font-medium leading-tight">{product.name}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -201,7 +233,7 @@ export default function RecapScreen({ data }: RecapScreenProps) {
               </div>
             </div>
 
-            {selectedAgent && (
+            {selectedAgent ? (
               <div className="bg-card border rounded-xl shadow-sm p-6 animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
                 <h3 className="text-lg font-semibold mb-4 text-secondary">Your Dedicated Agent</h3>
                 <div className="flex items-center gap-4">
@@ -217,6 +249,18 @@ export default function RecapScreen({ data }: RecapScreenProps) {
                     <p className="text-sm text-muted-foreground mt-1">{selectedAgent.title}</p>
                     <p className="text-sm text-primary font-medium mt-2">Will reach out within 1-2 business days</p>
                   </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-card border rounded-xl shadow-sm p-6 animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
+                <h3 className="text-lg font-semibold mb-4 text-secondary">Our agents are on it!</h3>
+                <div className="space-y-4">
+                  <img
+                    src="/agents/group/gusjusora.png"
+                    alt="Our team of agents"
+                    className="w-full h-auto rounded-lg"
+                  />
+                  <p className="text-sm text-primary font-medium">The soonest available agent will reach out within 1-2 business days</p>
                 </div>
               </div>
             )}

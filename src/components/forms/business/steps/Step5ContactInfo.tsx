@@ -5,7 +5,7 @@ import { BusinessFormData } from '../types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, Phone } from 'lucide-react';
+import { Mail, Phone, MessageSquare } from 'lucide-react';
 
 type Agent = {
   id: string;
@@ -48,11 +48,12 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
       <div className="space-y-6">
         <div>
           <Label className="mb-3 block text-lg">How would you like us to contact you?</Label>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { value: 'email', label: 'Email', icon: Mail, showBoth: false },
-              { value: 'phone', label: 'Phone', icon: Phone, showBoth: false },
-              { value: 'either', label: 'Either', icon: null, showBoth: true },
+              { value: 'email', label: 'Email', icon: Mail },
+              { value: 'phone', label: 'Phone', icon: Phone },
+              { value: 'text', label: 'Text (SMS)', icon: MessageSquare },
+              { value: 'either', label: 'Any', icons: [Mail, Phone, MessageSquare] },
             ].map((method) => {
               const isSelected = data.preferredContactMethod === method.value;
               return (
@@ -74,13 +75,14 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
                     </div>
                   )}
                   <div className="flex flex-col items-center text-center space-y-2">
-                    {method.showBoth ? (
+                    {'icons' in method ? (
                       <div className="flex items-center gap-2">
-                        <Mail className={`w-10 h-10 ${isSelected ? 'text-white' : 'text-primary'}`} />
-                        <Phone className={`w-10 h-10 ${isSelected ? 'text-white' : 'text-primary'}`} />
+                        {method.icons.map((Icon, i) => (
+                          <Icon key={i} className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-primary'}`} />
+                        ))}
                       </div>
                     ) : (
-                      method.icon && <method.icon className={`w-10 h-10 ${isSelected ? 'text-white' : 'text-primary'}`} />
+                      <method.icon className={`w-10 h-10 ${isSelected ? 'text-white' : 'text-primary'}`} />
                     )}
                     <div className={`text-base font-medium ${isSelected ? 'text-white' : 'text-secondary'}`}>
                       {method.label}
@@ -107,7 +109,7 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phoneNumber" className="text-lg">Phone Number <span className="text-sm text-muted-foreground">(Optional)</span></Label>
+                  <Label htmlFor="phoneNumber" className="text-lg">Phone Number</Label>
                   <Input
                     id="phoneNumber"
                     type="tel"
@@ -119,7 +121,7 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
               </>
             )}
 
-            {data.preferredContactMethod === 'phone' && (
+            {(data.preferredContactMethod === 'phone' || data.preferredContactMethod === 'text') && (
               <>
                 <div>
                   <Label htmlFor="phoneNumber" className="text-lg">Phone Number</Label>
@@ -132,7 +134,7 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email" className="text-lg">Email <span className="text-sm text-muted-foreground">(Optional)</span></Label>
+                  <Label htmlFor="email" className="text-lg">Email</Label>
                   <Input
                     id="email"
                     type="email"

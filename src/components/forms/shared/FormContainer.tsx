@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import StepIndicator from './StepIndicator';
+import DataPrivacy from './DataPrivacy';
 
 interface FormContainerProps {
   children: ReactNode;
@@ -76,6 +77,7 @@ export default function FormContainer({
               {turnstileWidget}
             </div>
           )}
+          <DataPrivacy />
         </>
       )}
     </div>

@@ -5,7 +5,7 @@ import { AutoFormData } from '../types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, Phone, Users } from 'lucide-react';
+import { Mail, Phone, Users, MessageSquare } from 'lucide-react';
 
 type Agent = {
   id: string;
@@ -40,7 +40,8 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
   const contactMethods = [
     { value: 'email', label: 'Email', icon: Mail },
     { value: 'phone', label: 'Phone', icon: Phone },
-    { value: 'either', label: 'Either', icon: Users },
+    { value: 'text', label: 'Text (SMS)', icon: MessageSquare },
+    { value: 'either', label: 'Any', icons: [Mail, Phone, MessageSquare] },
   ];
 
   const driverCounts = [
@@ -59,7 +60,7 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
       <div className="space-y-6">
         <div>
           <Label className="mb-3 block text-lg">How would you like us to contact you?</Label>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {contactMethods.map((method) => {
               const isSelected = data.preferredContactMethod === method.value;
               return (
@@ -81,7 +82,15 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
                     </div>
                   )}
                   <div className="flex flex-col items-center text-center space-y-2">
-                    <method.icon className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-primary'}`} />
+                    {'icons' in method ? (
+                      <div className="flex items-center gap-2">
+                        {method.icons.map((Icon, i) => (
+                          <Icon key={i} className={`w-6 h-6 ${isSelected ? 'text-white' : 'text-primary'}`} />
+                        ))}
+                      </div>
+                    ) : (
+                      <method.icon className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-primary'}`} />
+                    )}
                     <div className={`text-base font-medium ${isSelected ? 'text-white' : 'text-secondary'}`}>
                       {method.label}
                     </div>

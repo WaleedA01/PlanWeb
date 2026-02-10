@@ -1,7 +1,11 @@
+'use client';
+
 import Link from "next/link";
 import { COMPANY_INFO, getPhoneLink, getEmailLink } from '@/lib/company-info';
+import { useState } from 'react';
 
 export default function Footer() {
+  const [creditsOpen, setCreditsOpen] = useState(false);
   return (
     <footer className="relative backdrop-blur-md bg-secondary/95 text-white border-t border-primary/20">
       {/* Glow effect */}
@@ -113,8 +117,45 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-primary/20 mt-8 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; {new Date().getFullYear()} {COMPANY_INFO.name}. All rights reserved.</p>
+        <div className="border-t border-primary/20 mt-8 pt-8">
+          <div className="text-center text-sm text-gray-400 mb-4">
+            <p>&copy; {new Date().getFullYear()} {COMPANY_INFO.name}. All rights reserved.</p>
+          </div>
+          
+          {/* Credits - Collapsible */}
+          <div className="text-center text-xs">
+            <button
+              onClick={() => setCreditsOpen(!creditsOpen)}
+              className="text-gray-400 hover:text-gray-300 transition-colors flex items-center justify-center gap-2 mx-auto"
+            >
+              <span>3D Model Credits</span>
+              <svg
+                className={`w-4 h-4 transition-transform ${creditsOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {creditsOpen && (
+              <div className="mt-3 text-gray-500 animate-in fade-in duration-200">
+                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+                  <span>Red Car by J-Toastie [CC-BY] via Poly Pizza</span>
+                  <span>•</span>
+                  <span>Car by Quaternius</span>
+                  <span>•</span>
+                  <span>Sports Car by Quaternius</span>
+                  <span>•</span>
+                  <span>Pickup Truck by Quaternius</span>
+                  <span>•</span>
+                  <span>House by Poly by Google [CC-BY] via Poly Pizza</span>
+                  <span>•</span>
+                  <span>Truck by sugamo [CC-BY] via Poly Pizza</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </footer>

@@ -238,41 +238,68 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
   }
 
   // Stage 2: Agent introduction
-  if (stage === 2 && selectedAgent) {
-    return (
-      <div className="min-h-screen flex items-start justify-center bg-background pt-32">
-        <div className={`text-center space-y-8 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
-          <div className="block max-w-2xl mx-auto px-4">
-            <SplitText
-              text={`${selectedAgent.firstName} will reach out to you within 1-2 business days with the best coverages tailored to you`}
-              tag="p"
-              className="text-2xl font-semibold text-secondary"
-              delay={20}
-              duration={0.8}
-              threshold={0}
-            />
-          </div>
-          <div className="flex justify-center px-4">
-            <div className="bg-gradient-to-br from-primary via-[#3db8e8] to-[#7dd3f0] border border-border rounded-2xl overflow-visible shadow-2xl h-80 w-96 relative">
-              <div className="absolute top-6 right-6 z-10 text-right">
-                <h3 className="text-white drop-shadow-lg leading-tight">
-                  <span className="text-4xl font-bold">{selectedAgent.firstName}</span><br />
-                  <span className="text-2xl font-thin">{selectedAgent.lastName}</span>
-                </h3>
-                <p className="text-white/90 text-sm mt-1 drop-shadow-md">{selectedAgent.title}</p>
-              </div>
-              <div className="absolute inset-0 -top-12 -left-32">
-                <img
-                  src={selectedAgent.fullImageSrc}
-                  alt={`${selectedAgent.firstName} ${selectedAgent.lastName}`}
-                  className="w-full h-full object-contain object-top rounded-2xl"
-                />
+  if (stage === 2) {
+    if (selectedAgent) {
+      return (
+        <div className="min-h-screen flex items-start justify-center bg-background pt-32">
+          <div className={`text-center space-y-8 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="block max-w-2xl mx-auto px-4">
+              <SplitText
+                text={`${selectedAgent.firstName} will reach out to you within 1-2 business days with the best coverages tailored to you`}
+                tag="p"
+                className="text-2xl font-semibold text-secondary"
+                delay={20}
+                duration={0.8}
+                threshold={0}
+              />
+            </div>
+            <div className="flex justify-center px-4">
+              <div className="bg-gradient-to-br from-primary via-[#3db8e8] to-[#7dd3f0] border border-border rounded-2xl overflow-visible shadow-2xl h-80 w-96 relative">
+                <div className="absolute top-6 right-6 z-10 text-right">
+                  <h3 className="text-white drop-shadow-lg leading-tight">
+                    <span className="text-4xl font-bold">{selectedAgent.firstName}</span><br />
+                    <span className="text-2xl font-thin">{selectedAgent.lastName}</span>
+                  </h3>
+                  <p className="text-white/90 text-sm mt-1 drop-shadow-md">{selectedAgent.title}</p>
+                </div>
+                <div className="absolute inset-0 -top-12 -left-32">
+                  <img
+                    src={selectedAgent.fullImageSrc}
+                    alt={`${selectedAgent.firstName} ${selectedAgent.lastName}`}
+                    className="w-full h-full object-contain object-top rounded-2xl"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      // Show multiple agents when none selected
+      return (
+        <div className="min-h-screen flex items-start justify-center bg-background pt-32">
+          <div className={`text-center space-y-8 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="block max-w-2xl mx-auto px-4">
+              <SplitText
+                text="The soonest available agent will reach out to you within 1-2 business days with the best coverages tailored to you"
+                tag="p"
+                className="text-2xl font-semibold text-secondary"
+                delay={20}
+                duration={0.8}
+                threshold={0}
+              />
+            </div>
+            <div className="flex justify-center px-4">
+              <img
+                src="/agents/group/gusjusora.png"
+                alt="Our team of agents"
+                className="w-full max-w-2xl h-auto rounded-2xl shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
   }
 
   // Stage 3: Coverage decision

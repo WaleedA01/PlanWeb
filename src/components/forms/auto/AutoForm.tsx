@@ -116,10 +116,10 @@ export default function AutoForm() {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
-  const hasVehicleDetails = formData.vehicles.length > 0 && formData.vehicles[0] && 
+  const hasVehicleDetails = formData.vehicles?.length > 0 && formData.vehicles[0] && 
     formData.vehicles[0].make && formData.vehicles[0].model && formData.vehicles[0].year;
   const showMap = formData.latitude && formData.longitude;
-  const firstVehicle = formData.vehicles[0] || { make: '', model: '', year: '' };
+  const firstVehicle = formData.vehicles?.[0] || { make: '', model: '', year: '' };
 
   const handleNext = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
