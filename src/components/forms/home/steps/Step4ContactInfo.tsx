@@ -75,7 +75,7 @@ export default function Step4ContactInfo({ data, onUpdate, agentLocked, lockedAg
                     </div>
                   )}
                   <div className="flex flex-col items-center text-center space-y-2">
-                    {'icons' in method ? (
+                    {'icons' in method && method.icons ? (
                       <div className="flex items-center gap-2">
                         {method.icons.map((Icon, i) => (
                           <Icon key={i} className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-primary'}`} />
