@@ -2,6 +2,7 @@ export interface HomeFormData {
   // Step 1: Personal Info & Address
   firstName: string;
   lastName: string;
+  dateOfBirth: string;
   streetAddress: string;
   city: string;
   state: string;
@@ -17,6 +18,7 @@ export interface HomeFormData {
 
   // Step 3: Property Features
   propertyFeatures: string[];
+  propertyUsage: string;
 
   // Step 4: Contact Info
   email: string;
@@ -33,6 +35,7 @@ export interface HomeFormData {
 export const initialHomeFormData: HomeFormData = {
   firstName: '',
   lastName: '',
+  dateOfBirth: '',
   streetAddress: '',
   city: '',
   state: '',
@@ -44,6 +47,7 @@ export const initialHomeFormData: HomeFormData = {
   closeDate: '',
   coverageDate: '',
   propertyFeatures: [],
+  propertyUsage: '',
   email: '',
   phoneNumber: '',
   preferredContactMethod: '',
