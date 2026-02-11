@@ -112,13 +112,13 @@ export default function AddressAutocomplete({
       />
       
       {showDropdown && (
-        <div className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-[100] w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
           {predictions.length > 0 ? (
             predictions.map((prediction) => (
               <button
                 key={prediction.placeId}
                 onClick={() => handlePlaceSelect(prediction.placeId, prediction.description)}
-                className="w-full px-4 py-3 text-left hover:bg-gray-100 border-b last:border-b-0 transition-colors"
+                className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b last:border-b-0 transition-colors"
               >
                 <div className="font-medium text-sm">{prediction.mainText}</div>
                 <div className="text-xs text-gray-500">{prediction.secondaryText}</div>

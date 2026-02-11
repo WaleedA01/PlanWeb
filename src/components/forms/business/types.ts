@@ -31,7 +31,7 @@ export interface BusinessFormData {
   selectedAgentId: string;
   expectedDate: string;
   preferredContactMethod: string;
-  additionalInfo: string;
+  additionalNotes: string;
 
   // Server routing / metadata (not user-entered fields)
   leadSource?: string;
@@ -62,7 +62,7 @@ export const initialBusinessFormData: BusinessFormData = {
   selectedAgentId: '',
   expectedDate: '',
   preferredContactMethod: '',
-  additionalInfo: '',
+  additionalNotes: '',
   leadSource: '',
   tags: '',
   agent: '',

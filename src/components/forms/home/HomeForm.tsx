@@ -9,7 +9,7 @@ import AnimatedTransition from '../shared/AnimatedTransition';
 import Step1PersonalInfo from './steps/Step1PersonalInfo';
 import Step2PurchaseInfo from './steps/Step2PurchaseInfo';
 import Step3PropertyFeatures from './steps/Step3PropertyFeatures';
-import Step4ContactInfo from './steps/Step4ContactInfo';
+import ContactInfoStep, { validateContactInfo } from '../shared/ContactInfoStep';
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { Home } from 'lucide-react';
 import PersonalMap from '../personal/PersonalMap';
@@ -183,14 +183,7 @@ export default function HomeForm() {
       case 3:
         return true; // Property features are optional
       case 4:
-        const emailRequired = formData.preferredContactMethod === 'email' || formData.preferredContactMethod === 'either';
-        const phoneRequired = formData.preferredContactMethod === 'phone' || formData.preferredContactMethod === 'either';
-        return (
-          formData.preferredContactMethod &&
-          !!turnstileToken &&
-          (emailRequired ? !!formData.email : true) &&
-          (phoneRequired ? !!formData.phoneNumber : true)
-        );
+        return validateContactInfo(formData) && !!turnstileToken;
       default:
         return false;
     }
@@ -294,7 +287,7 @@ export default function HomeForm() {
           </FormStep>
 
           <FormStep isActive={currentStep === 4}>
-            <Step4ContactInfo 
+            <ContactInfoStep 
               data={formData} 
               onUpdate={updateFormData}
               agentLocked={agentLocked}

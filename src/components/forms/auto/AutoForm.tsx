@@ -6,7 +6,7 @@ import Step1PersonalInfo from './steps/Step1PersonalInfo';
 import Step2VehicleStatus from './steps/Step2VehicleStatus';
 import Step3VehicleDetails from './steps/Step3VehicleDetails';
 import Step4Documents from './steps/Step4Documents';
-import Step5ContactInfo from './steps/Step5ContactInfo';
+import ContactInfoStep, { validateContactInfo } from '../shared/ContactInfoStep';
 import FormContainer from '../shared/FormContainer';
 import FormStep from '../shared/FormStep';
 import PersonalMap from '../personal/PersonalMap';
@@ -200,14 +200,7 @@ export default function AutoForm() {
       case 4:
         return true;
       case 5:
-        const emailRequired = formData.preferredContactMethod === 'email' || formData.preferredContactMethod === 'either';
-        const phoneRequired = formData.preferredContactMethod === 'phone' || formData.preferredContactMethod === 'text' || formData.preferredContactMethod === 'either';
-        return (
-          formData.preferredContactMethod &&
-          !!turnstileToken &&
-          (emailRequired ? !!formData.email : true) &&
-          (phoneRequired ? !!formData.phoneNumber : true)
-        );
+        return validateContactInfo(formData) && !!turnstileToken;
       default:
         return false;
     }
@@ -239,7 +232,8 @@ export default function AutoForm() {
             <PersonalMap 
               latitude={formData.latitude!} 
               longitude={formData.longitude!}
-              show3DObject={false}
+              show3DObject={true}
+              objectType="car"
             />
           </div>
         )}
@@ -288,7 +282,7 @@ export default function AutoForm() {
           </FormStep>
 
           <FormStep isActive={currentStep === 5}>
-            <Step5ContactInfo 
+            <ContactInfoStep 
               data={formData} 
               onUpdate={updateFormData}
               agentLocked={agentLocked}

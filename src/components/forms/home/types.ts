@@ -24,7 +24,7 @@ export interface HomeFormData {
   email: string;
   phoneNumber: string;
   preferredContactMethod: string;
-  additionalInfo: string;
+  additionalNotes: string;
 
   // Server routing / metadata
   selectedAgentId: string;
@@ -51,7 +51,7 @@ export const initialHomeFormData: HomeFormData = {
   email: '',
   phoneNumber: '',
   preferredContactMethod: '',
-  additionalInfo: '',
+  additionalNotes: '',
   selectedAgentId: '',
   leadSource: '',
   tags: '',

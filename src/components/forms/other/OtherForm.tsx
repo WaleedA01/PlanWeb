@@ -136,8 +136,17 @@ export default function OtherForm() {
   };
 
   const canProceed = () => {
-    const emailRequired = formData.preferredContactMethod === 'email' || formData.preferredContactMethod === 'either';
-    const phoneRequired = formData.preferredContactMethod === 'phone' || formData.preferredContactMethod === 'either';
+    // Validate email if provided
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      return false;
+    }
+    
+    // Validate phone if provided
+    if (formData.phoneNumber) {
+      const cleaned = formData.phoneNumber.replace(/\D/g, '');
+      if (cleaned.length !== 10) return false;
+    }
+    
     return (
       formData.firstName &&
       formData.lastName &&
@@ -148,9 +157,7 @@ export default function OtherForm() {
       formData.postalCode &&
       formData.productInterest &&
       formData.preferredContactMethod &&
-      !!turnstileToken &&
-      (emailRequired ? !!formData.email : true) &&
-      (phoneRequired ? !!formData.phoneNumber : true)
+      !!turnstileToken
     );
   };
 

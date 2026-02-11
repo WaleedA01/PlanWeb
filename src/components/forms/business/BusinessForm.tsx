@@ -11,7 +11,7 @@ import Step1BusinessInfo from './steps/Step1BusinessInfo';
 import Step2BusinessType from './steps/Step2BusinessType';
 import Step3Products from './steps/Step3Products';
 import Step4BusinessDetails from './steps/Step4BusinessDetails';
-import Step5ContactInfo from './steps/Step5ContactInfo';
+import ContactInfoStep, { validateContactInfo } from '../shared/ContactInfoStep';
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { Shield, Building2, CheckCircle2, UtensilsCrossed, Store, Wrench, Briefcase, Home, Car, Heart, GraduationCap, Scissors, Dumbbell, Coffee, ShoppingBag, Hammer } from 'lucide-react';
 import BusinessMap from './BusinessMap';
@@ -273,14 +273,7 @@ export default function BusinessForm() {
         if (formData.isNewBusiness === false && !formData.yearBusinessStarted) return false;
         return formData.numEmployees !== '' && formData.annualSales !== '';
       case 5:
-        const emailRequired = formData.preferredContactMethod === 'email' || formData.preferredContactMethod === 'either';
-        const phoneRequired = formData.preferredContactMethod === 'phone' || formData.preferredContactMethod === 'either';
-        return (
-          formData.preferredContactMethod &&
-          !!turnstileToken &&
-          (emailRequired ? !!formData.email : true) &&
-          (phoneRequired ? !!formData.phoneNumber : true)
-        );
+        return validateContactInfo(formData) && !!turnstileToken;
       default:
         return false;
     }
@@ -394,7 +387,7 @@ export default function BusinessForm() {
           </FormStep>
 
           <FormStep isActive={currentStep === 5}>
-            <Step5ContactInfo 
+            <ContactInfoStep 
               data={formData} 
               onUpdate={updateFormData}
               agentLocked={agentLocked}

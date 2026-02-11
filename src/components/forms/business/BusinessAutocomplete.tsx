@@ -105,7 +105,7 @@ export default function BusinessAutocomplete({ value, onChange, classifications 
       </div>
       
       {isOpen && (
-        <div className="absolute z-50 w-full mt-2 bg-background border border-border rounded-lg shadow-xl max-h-72 overflow-hidden">
+        <div className="absolute z-[100] w-full mt-2 bg-white border border-border rounded-lg shadow-xl max-h-72 overflow-hidden">
           <div className="overflow-auto max-h-72">
             {results.length > 0 ? (
               results.map((result, index) => {

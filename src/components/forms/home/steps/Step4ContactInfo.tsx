@@ -191,15 +191,15 @@ export default function Step4ContactInfo({ data, onUpdate, agentLocked, lockedAg
         )}
 
         <div>
-          <Label htmlFor="additionalInfo" className="text-lg">
+          <Label htmlFor="additionalNotes" className="text-lg">
             {agentLocked && selectedAgent 
               ? `Anything else you'd like ${selectedAgent.firstName} to know?`
               : "Anything else you'd like us to know?"}
           </Label>
           <Textarea
-            id="additionalInfo"
-            value={data.additionalInfo}
-            onChange={(e) => onUpdate({ additionalInfo: e.target.value })}
+            id="additionalNotes"
+            value={data.additionalNotes}
+            onChange={(e) => onUpdate({ additionalNotes: e.target.value })}
             placeholder="Additional information..."
             rows={4}
           />
