@@ -36,7 +36,6 @@ export interface AutoFormData {
   email: string;
   phoneNumber: string;
   additionalNotes: string;
-  numDrivers: '1' | '2-3' | '4+' | '';
 
   // Meta
   selectedAgentId: string;
