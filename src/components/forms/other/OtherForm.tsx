@@ -150,7 +150,6 @@ export default function OtherForm() {
     return (
       formData.firstName &&
       formData.lastName &&
-      formData.dateOfBirth &&
       formData.streetAddress &&
       formData.city &&
       formData.state &&

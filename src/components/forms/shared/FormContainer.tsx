@@ -38,12 +38,12 @@ export default function FormContainer({
       {totalSteps > 1 && <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />}
 
       {/* Form Content */}
-      <div className="min-h-[400px] mb-8">{children}</div>
+      <div className="min-h-[400px] mb-32">{children}</div>
 
       {/* Navigation Buttons */}
       {!hideNavigation && (
         <>
-          <div className="flex justify-between gap-4">
+          <div className={`flex justify-between gap-4 ${!canProceed ? 'pointer-events-none' : ''}`}>
             <Button
               type="button"
               variant="outline"
@@ -81,7 +81,9 @@ export default function FormContainer({
               {turnstileWidget}
             </div>
           )}
-          <DataPrivacy />
+          <div className="mt-12">
+            <DataPrivacy />
+          </div>
         </>
       )}
     </div>

@@ -269,21 +269,6 @@ export default function ContactInfoStep<T extends ContactFormData>({
             </div>
           </div>
         )}
-
-        <div>
-          <Label htmlFor="additionalNotes" className="text-lg">
-            {agentLocked && selectedAgent 
-              ? `Anything else you'd like ${selectedAgent.firstName} to know?`
-              : "Anything else you'd like the agent to know?"}
-          </Label>
-          <Textarea
-            id="additionalNotes"
-            value={data.additionalNotes}
-            onChange={(e) => onUpdate({ additionalNotes: e.target.value } as Partial<T>)}
-            placeholder="Any additional information..."
-            rows={4}
-          />
-        </div>
       </div>
     </div>
   );

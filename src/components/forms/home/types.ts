@@ -15,6 +15,7 @@ export interface HomeFormData {
   currentInsurer: string;
   closeDate: string;
   coverageDate: string;
+  policyFiles?: File[];
 
   // Step 3: Property Features
   propertyFeatures: string[];
@@ -46,6 +47,7 @@ export const initialHomeFormData: HomeFormData = {
   currentInsurer: '',
   closeDate: '',
   coverageDate: '',
+  policyFiles: [],
   propertyFeatures: [],
   propertyUsage: '',
   email: '',

@@ -203,6 +203,22 @@ export function buildPersonalComments(answers: Record<string, unknown>): string 
     parts.push(`Preferred contact method: ${limit(str(contactPref), 80)}`);
   }
 
+  // Product interest (other form)
+  const productInterest = str((answers as any).productInterest);
+  if (productInterest) {
+    const productMap: Record<string, string> = {
+      'life': 'Life Insurance',
+      'health': 'Health Insurance',
+      'disability': 'Disability Insurance',
+      'umbrella': 'Umbrella Insurance',
+      'renters': 'Renters Insurance',
+      'flood': 'Flood Insurance',
+      'other': 'Other'
+    };
+    const displayValue = productMap[productInterest] || productInterest;
+    parts.push(`Which product are you interested in?: ${displayValue}`);
+  }
+
   // Additional notes from client
   const additionalNotes = firstNonEmpty(
     (answers as any).additionalNotes,

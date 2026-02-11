@@ -2,21 +2,13 @@
 
 import { HomeFormData } from '../types';
 import { Label } from '@/components/ui/label';
-import { Waves, Sun, Shield, Home, Bell, Flame, HomeIcon, Key, Palmtree, DoorOpen } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { HomeIcon, Key, Palmtree, DoorOpen } from 'lucide-react';
 
 interface Step3Props {
   data: HomeFormData;
   onUpdate: (updates: Partial<HomeFormData>) => void;
 }
-
-const PROPERTY_FEATURES = [
-  { id: 'pool', label: 'Pool on property', icon: Waves },
-  { id: 'solar', label: 'Solar Panels', icon: Sun },
-  { id: 'gated', label: 'Gated Community', icon: Shield },
-  { id: 'screen', label: 'Screen Enclosure', icon: Home },
-  { id: 'burglar', label: 'Burglar Alarm', icon: Bell },
-  { id: 'smoke', label: 'Smoke Alarm', icon: Flame },
-];
 
 const PROPERTY_USAGE = [
   { value: 'primary', label: 'Primary Residence', icon: HomeIcon },
@@ -27,14 +19,6 @@ const PROPERTY_USAGE = [
 ];
 
 export default function Step3PropertyFeatures({ data, onUpdate }: Step3Props) {
-  const toggleFeature = (featureId: string) => {
-    const currentFeatures = data.propertyFeatures || [];
-    const newFeatures = currentFeatures.includes(featureId)
-      ? currentFeatures.filter((f) => f !== featureId)
-      : [...currentFeatures, featureId];
-    onUpdate({ propertyFeatures: newFeatures });
-  };
-
   return (
     <div className="space-y-8">
       <div className="text-center">
@@ -78,38 +62,14 @@ export default function Step3PropertyFeatures({ data, onUpdate }: Step3Props) {
       </div>
 
       <div>
-        <Label className="mb-3 block text-lg">Property Features (Select all that apply)</Label>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {PROPERTY_FEATURES.map((feature) => {
-            const isSelected = data.propertyFeatures?.includes(feature.id);
-            return (
-              <button
-                key={feature.id}
-                type="button"
-                onClick={() => toggleFeature(feature.id)}
-                className={`relative p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
-                  isSelected
-                    ? 'border-primary bg-primary text-white shadow-md'
-                    : 'border-border hover:border-primary/50'
-                }`}
-              >
-                {isSelected && (
-                  <div className="absolute top-2 right-2 w-5 h-5 bg-white rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                )}
-                <div className="flex flex-col items-center text-center space-y-3">
-                  <feature.icon className={`w-10 h-10 ${isSelected ? 'text-white' : 'text-primary'}`} />
-                  <div className={`text-sm font-medium leading-tight ${isSelected ? 'text-white' : 'text-secondary'}`}>
-                    {feature.label}
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+        <Label htmlFor="additionalNotes" className="text-lg">Additional Information</Label>
+        <Textarea
+          id="additionalNotes"
+          value={data.additionalNotes}
+          onChange={(e) => onUpdate({ additionalNotes: e.target.value })}
+          placeholder="Any additional information..."
+          rows={4}
+        />
       </div>
     </div>
   );

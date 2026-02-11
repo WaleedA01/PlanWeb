@@ -179,7 +179,7 @@ export default function HomeForm() {
       case 2:
         if (formData.isNewPurchase === null) return false;
         if (formData.isNewPurchase === true) return !!formData.closeDate;
-        return !!formData.currentInsurer && !!formData.coverageDate;
+        return true;
       case 3:
         return true; // Property features are optional
       case 4:

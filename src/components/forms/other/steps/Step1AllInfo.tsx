@@ -115,16 +115,6 @@ export default function Step1AllInfo({ data, onUpdate, agentLocked, lockedAgentN
           </div>
         </div>
 
-        <div>
-          <Label htmlFor="dateOfBirth" className="text-lg">Date of Birth</Label>
-          <Input
-            id="dateOfBirth"
-            type="date"
-            value={data.dateOfBirth}
-            onChange={(e) => onUpdate({ dateOfBirth: e.target.value })}
-          />
-        </div>
-
         <AddressAutocomplete
           value={data.streetAddress}
           onPlaceSelect={(placeDetails) => {

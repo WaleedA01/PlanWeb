@@ -1,7 +1,6 @@
 export interface OtherFormData {
   firstName: string;
   lastName: string;
-  dateOfBirth: string;
   streetAddress: string;
   city: string;
   state: string;
@@ -20,7 +19,6 @@ export interface OtherFormData {
 export const initialOtherFormData: OtherFormData = {
   firstName: '',
   lastName: '',
-  dateOfBirth: '',
   streetAddress: '',
   city: '',
   state: '',
