@@ -104,7 +104,43 @@ export function buildPersonalComments(answers: Record<string, unknown>): string 
 
   const purchaseLines: string[] = [];
   
-  // Auto-specific
+  // Coverage urgency (auto)
+  const coverageUrgency = str((answers as any).coverageUrgency);
+  if (coverageUrgency) {
+    const urgencyMap: Record<string, string> = {
+      'now': 'Need coverage now',
+      'week': 'Need coverage within the week',
+      'shopping': "I'm shopping around"
+    };
+    const displayValue = urgencyMap[coverageUrgency] || coverageUrgency;
+    purchaseLines.push(`- How soon do you need coverage?: ${displayValue}`);
+  }
+
+  // Number of vehicles (auto)
+  const numVehicles = str((answers as any).numVehicles);
+  if (numVehicles) {
+    purchaseLines.push(`- Number of vehicles: ${numVehicles}`);
+  }
+
+  // Number of drivers (auto)
+  const numDriversNew = str((answers as any).numDrivers);
+  if (numDriversNew) {
+    purchaseLines.push(`- Number of drivers: ${numDriversNew}`);
+  }
+
+  // Currently insured (auto)
+  const isCurrentlyInsured = (answers as any).isCurrentlyInsured;
+  if (isCurrentlyInsured !== null && isCurrentlyInsured !== undefined) {
+    const insuredYN = yesNo(isCurrentlyInsured);
+    if (insuredYN) {
+      purchaseLines.push(`- Currently insured?: ${insuredYN}`);
+      if (insuredYN === "Yes" && currentInsurer) {
+        purchaseLines.push(`- Current insurer: ${limit(str(currentInsurer), 80)}`);
+      }
+    }
+  }
+  
+  // Auto-specific (legacy)
   if (vehicleYN) {
     purchaseLines.push(`- Is this a new vehicle?: ${vehicleYN}`);
     if (vehicleYN === "No" && currentInsurer) {
@@ -130,14 +166,15 @@ export function buildPersonalComments(answers: Record<string, unknown>): string 
     parts.push(purchaseLines.join("\n"));
   }
 
-  // Expected drivers
+  // Expected drivers (legacy)
   const drivers = firstNonEmpty(
     (answers as any).numDrivers,
     (answers as any).driverCount,
     (answers as any).howManyDrivers,
     (answers as any).expectedDrivers
   );
-  if (str(drivers)) {
+  // Only show if not already shown above
+  if (str(drivers) && !numDriversNew) {
     parts.push(`Expected drivers on policy: ${limit(str(drivers), 40)}`);
   }
 

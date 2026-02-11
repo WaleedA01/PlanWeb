@@ -18,10 +18,16 @@ export function mapPersonal(
   const firstName = limit(str(answers.firstName), 60);
   const lastName = limit(str(answers.lastName), 60);
   const email = limit(str(answers.email), 120);
+  const preferredContactMethod = str(answers.preferredContactMethod);
 
   if (!firstName) return { ok: false, error: "Missing firstName" };
   if (!lastName) return { ok: false, error: "Missing lastName" };
-  if (!email || !email.includes("@")) return { ok: false, error: "Invalid email" };
+  
+  // Email is required only if contact method is 'email' or 'either'
+  const emailRequired = preferredContactMethod === 'email' || preferredContactMethod === 'either';
+  if (emailRequired && (!email || !email.includes("@"))) {
+    return { ok: false, error: "Invalid email" };
+  }
 
   const phone = firstNonEmpty(answers.phone, answers.phoneNumber);
   const postalCode = firstNonEmpty(answers.postalCode, answers.zip, answers.zipCode);

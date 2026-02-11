@@ -74,16 +74,6 @@ export default function Step1PersonalInfo({ data, onUpdate }: Step1Props) {
           </div>
         </div>
 
-        <div>
-          <Label htmlFor="dateOfBirth" className="text-lg">Date of Birth</Label>
-          <Input
-            id="dateOfBirth"
-            type="date"
-            value={data.dateOfBirth}
-            onChange={(e) => onUpdate({ dateOfBirth: e.target.value })}
-          />
-        </div>
-
         <AddressAutocomplete
           value={selectedPlace}
           onPlaceSelect={handlePlaceSelect}
@@ -123,16 +113,6 @@ export default function Step1PersonalInfo({ data, onUpdate }: Step1Props) {
               />
             </div>
           </div>
-        </div>
-
-        <div>
-          <Label htmlFor="dateOfBirth" className="text-lg">Date of Birth</Label>
-          <Input
-            id="dateOfBirth"
-            type="date"
-            value={data.dateOfBirth}
-            onChange={(e) => onUpdate({ dateOfBirth: e.target.value })}
-          />
         </div>
 
         <div>

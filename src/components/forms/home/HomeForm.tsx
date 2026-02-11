@@ -175,7 +175,7 @@ export default function HomeForm() {
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return formData.firstName && formData.lastName && formData.dateOfBirth && formData.streetAddress && formData.city && formData.state && formData.postalCode;
+        return formData.firstName && formData.lastName && formData.streetAddress && formData.city && formData.state && formData.postalCode;
       case 2:
         if (formData.isNewPurchase === null) return false;
         if (formData.isNewPurchase === true) return !!formData.closeDate;
