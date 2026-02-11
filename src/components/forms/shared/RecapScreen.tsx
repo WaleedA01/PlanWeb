@@ -145,7 +145,7 @@ export default function RecapScreen({ data }: RecapScreenProps) {
                   ? "Congrats on opening a new business!" 
                   : data.yearBusinessStarted 
                     ? `Congrats on ${new Date().getFullYear() - parseInt(data.yearBusinessStarted)} years of business!`
-                    : "Congrats on your business!"}
+                    : data.businessName}
               </p>
             )}
           </div>

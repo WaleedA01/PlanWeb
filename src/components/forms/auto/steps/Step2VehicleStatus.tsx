@@ -1,44 +1,44 @@
 'use client';
 
 import { AutoFormData } from '../types';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Car, ShoppingCart } from 'lucide-react';
-import { CARRIERS } from '@/lib/carriers';
-import { Combobox } from '@/components/ui/combobox';
+import { Clock, Calendar, Search } from 'lucide-react';
+import { Tooltip } from '@/components/ui/tooltip';
+import { HelpCircle } from 'lucide-react';
 
 interface Step2Props {
   data: AutoFormData;
   onUpdate: (updates: Partial<AutoFormData>) => void;
 }
 
-const INSURERS = [
-  { id: 'none', name: 'Not Currently Insured' },
-  ...CARRIERS.map(c => ({ id: c.id, name: c.name })),
+const COVERAGE_URGENCY = [
+  { value: 'now', label: 'Need coverage now', icon: Clock },
+  { value: 'week', label: 'Need coverage within the week', icon: Calendar },
+  { value: 'shopping', label: "I'm shopping around", icon: Search },
 ];
+
+const VEHICLE_COUNTS = ['1', '2', '3', '4', '5+'];
+const DRIVER_COUNTS = ['1', '2', '3', '4', '5+'];
 
 export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Vehicle Information</h2>
-        <p className="text-base md:text-lg text-primary">Tell us about your vehicle</p>
+        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Coverage Details</h2>
+        <p className="text-base md:text-lg text-primary">Help us understand your needs</p>
       </div>
 
       <div className="space-y-6">
         <div>
-          <Label className="mb-3 block text-lg">Is this a new vehicle?</Label>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { value: true, label: 'Yes', icon: ShoppingCart },
-              { value: false, label: 'No', icon: Car },
-            ].map((option) => {
-              const isSelected = data.isNewVehicle === option.value;
+          <Label className="mb-3 block text-lg">How soon do you need coverage?</Label>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {COVERAGE_URGENCY.map((option) => {
+              const isSelected = data.coverageUrgency === option.value;
               return (
                 <button
-                  key={option.label}
+                  key={option.value}
                   type="button"
-                  onClick={() => onUpdate({ isNewVehicle: option.value })}
+                  onClick={() => onUpdate({ coverageUrgency: option.value })}
                   className={`relative p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
@@ -64,41 +64,60 @@ export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
           </div>
         </div>
 
-        {data.isNewVehicle === false && (
-          <div className="animate-in fade-in duration-500">
-            <Label htmlFor="currentInsurer" className="text-lg">Who are you currently insured with?</Label>
-            <Combobox
-              value={data.currentInsurer}
-              onValueChange={(value: string) => onUpdate({ currentInsurer: value })}
-              options={INSURERS.map((insurer) => ({ value: insurer.name, label: insurer.name }))}
-              placeholder="Select or type to search..."
-            />
+        <div>
+          <Label className="mb-3 block text-lg">Select number of vehicles</Label>
+          <div className="grid grid-cols-5 gap-3">
+            {VEHICLE_COUNTS.map((count) => {
+              const isSelected = data.numVehicles === count;
+              return (
+                <button
+                  key={count}
+                  type="button"
+                  onClick={() => onUpdate({ numVehicles: count })}
+                  className={`relative p-4 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
+                    isSelected
+                      ? 'border-primary bg-primary text-white shadow-md'
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                >
+                  <div className={`text-2xl font-bold text-center ${isSelected ? 'text-white' : 'text-secondary'}`}>
+                    {count}
+                  </div>
+                </button>
+              );
+            })}
           </div>
-        )}
+        </div>
 
-        {data.isNewVehicle === true && (
-          <div className="animate-in fade-in duration-500">
-            <Label htmlFor="coverageDate" className="text-lg">When do you need coverage by?</Label>
-            <Input
-              id="coverageDate"
-              type="date"
-              value={data.coverageDate}
-              onChange={(e) => onUpdate({ coverageDate: e.target.value })}
-            />
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Label className="text-lg mb-0">Select number of drivers</Label>
+            <Tooltip content="Including yourself">
+              <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
+            </Tooltip>
           </div>
-        )}
-
-        {data.isNewVehicle === false && (
-          <div className="animate-in fade-in duration-500">
-            <Label htmlFor="policyExpirationDate" className="text-lg">When is your policy expiring?</Label>
-            <Input
-              id="policyExpirationDate"
-              type="date"
-              value={data.policyExpirationDate}
-              onChange={(e) => onUpdate({ policyExpirationDate: e.target.value })}
-            />
+          <div className="grid grid-cols-5 gap-3">
+            {DRIVER_COUNTS.map((count) => {
+              const isSelected = data.numDrivers === count;
+              return (
+                <button
+                  key={count}
+                  type="button"
+                  onClick={() => onUpdate({ numDrivers: count })}
+                  className={`relative p-4 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
+                    isSelected
+                      ? 'border-primary bg-primary text-white shadow-md'
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                >
+                  <div className={`text-2xl font-bold text-center ${isSelected ? 'text-white' : 'text-secondary'}`}>
+                    {count}
+                  </div>
+                </button>
+              );
+            })}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

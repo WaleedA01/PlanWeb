@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Tooltip } from '@/components/ui/tooltip';
+import { HelpCircle } from 'lucide-react';
 
 interface PlaceResult {
   placeId: string;
@@ -18,6 +20,7 @@ interface AddressAutocompleteProps {
   onManualEntry: () => void;
   label?: string;
   placeholder?: string;
+  tooltip?: string;
 }
 
 export default function AddressAutocomplete({
@@ -25,7 +28,8 @@ export default function AddressAutocomplete({
   onPlaceSelect,
   onManualEntry,
   label = "Address",
-  placeholder = "Enter your address..."
+  placeholder = "Enter your address...",
+  tooltip
 }: AddressAutocompleteProps) {
   const [inputValue, setInputValue] = useState(value || '');
   const [predictions, setPredictions] = useState<PlaceResult[]>([]);
@@ -91,7 +95,14 @@ export default function AddressAutocomplete({
 
   return (
     <div className="relative">
-      <Label>{label}</Label>
+      <div className="flex items-center gap-2 mb-2">
+        <Label className="mb-0">{label}</Label>
+        {tooltip && (
+          <Tooltip content={tooltip}>
+            <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
+          </Tooltip>
+        )}
+      </div>
       <Input
         value={inputValue}
         onChange={handleInputChange}

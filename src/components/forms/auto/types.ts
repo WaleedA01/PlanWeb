@@ -10,7 +10,6 @@ export interface AutoFormData {
   // Step 1
   firstName: string;
   lastName: string;
-  dateOfBirth: string;
   streetAddress: string;
   city: string;
   state: string;
@@ -19,10 +18,9 @@ export interface AutoFormData {
   longitude: number | null;
 
   // Step 2
-  isNewVehicle: boolean | null;
-  currentInsurer: string;
-  coverageDate: string;
-  policyExpirationDate: string;
+  coverageUrgency: 'now' | 'week' | 'shopping' | '';
+  numVehicles: '1' | '2' | '3' | '4' | '5+' | '';
+  numDrivers: '1' | '2' | '3' | '4' | '5+' | '';
 
   // Step 3
   vehicles: Vehicle[];
