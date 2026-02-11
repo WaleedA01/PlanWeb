@@ -37,7 +37,8 @@ export default function AutoForm() {
     coverageUrgency: '',
     numVehicles: '',
     numDrivers: '',
-    vehicles: [],
+    isCurrentlyInsured: null,
+    currentInsurer: '',
     uploadedFiles: [],
     preferredContactMethod: '',
     email: '',
@@ -113,10 +114,7 @@ export default function AutoForm() {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
-  const hasVehicleDetails = formData.vehicles?.length > 0 && formData.vehicles[0] && 
-    formData.vehicles[0].make && formData.vehicles[0].model && formData.vehicles[0].year;
   const showMap = formData.latitude && formData.longitude;
-  const firstVehicle = formData.vehicles?.[0] || { make: '', model: '', year: '' };
 
   const handleNext = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -191,9 +189,11 @@ export default function AutoForm() {
       case 2:
         return formData.coverageUrgency && formData.numVehicles && formData.numDrivers;
       case 3:
-        return formData.vehicles.length > 0 && formData.vehicles.every(v => 
-          (v.vin && v.vin.length === 17) || (v.make && v.model && v.year)
-        );
+        if (formData.isCurrentlyInsured === null) return false;
+        if (formData.isCurrentlyInsured === true) {
+          return !!formData.currentInsurer;
+        }
+        return true;
       case 4:
         return true;
       case 5:
@@ -236,11 +236,7 @@ export default function AutoForm() {
             <PersonalMap 
               latitude={formData.latitude!} 
               longitude={formData.longitude!}
-              show3DObject={true}
-              objectType="car"
-              carMake={hasVehicleDetails ? firstVehicle.make : undefined}
-              carModel={hasVehicleDetails ? firstVehicle.model : undefined}
-              carYear={hasVehicleDetails ? firstVehicle.year : undefined}
+              show3DObject={false}
             />
           </div>
         )}

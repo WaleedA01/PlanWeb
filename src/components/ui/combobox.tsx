@@ -57,7 +57,7 @@ export function Combobox({ value, onValueChange, options, placeholder = "Select.
         />
       </div>
       {open && filtered.length > 0 && (
-        <div className="absolute z-50 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95">
+        <div className="absolute z-[100] mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95">
           <div className="max-h-60 overflow-auto p-1">
             {filtered.map((option) => (
               <div

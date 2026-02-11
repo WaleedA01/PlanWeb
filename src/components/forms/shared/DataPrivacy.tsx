@@ -23,7 +23,7 @@ export default function DataPrivacy() {
         </button>
         
         {isHovered && (
-          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-80 p-4 bg-popover border rounded-lg shadow-lg text-foreground z-50 text-center">
+          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-80 p-4 bg-popover border rounded-lg shadow-lg text-foreground z-[100] text-center">
             <p className="font-bold text-primary mb-2">PlanLife will never sell your data.</p>
             <p className="text-muted-foreground text-sm">
               We are a local Florida agency, you will be working directly with your agent. Your info will always be protected and never shared with any third parties.

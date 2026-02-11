@@ -23,7 +23,8 @@ export interface AutoFormData {
   numDrivers: '1' | '2' | '3' | '4' | '5+' | '';
 
   // Step 3
-  vehicles: Vehicle[];
+  isCurrentlyInsured: boolean | null;
+  currentInsurer: string;
 
   // Step 4
   uploadedFiles: File[];
