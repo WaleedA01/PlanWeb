@@ -74,22 +74,13 @@ export default function Step1PersonalInfo({ data, onUpdate }: Step1Props) {
           </div>
         </div>
 
-        <div>
-          <Label htmlFor="dateOfBirth" className="text-lg">Date of Birth</Label>
-          <Input
-            id="dateOfBirth"
-            type="date"
-            value={data.dateOfBirth}
-            onChange={(e) => onUpdate({ dateOfBirth: e.target.value })}
-          />
-        </div>
-
         <AddressAutocomplete
           value={selectedPlace}
           onPlaceSelect={handlePlaceSelect}
           onManualEntry={handleManualEntry}
-          label="What's your address?"
+          label="Enter your Home/Garaging Address"
           placeholder="Enter your address..."
+          tooltip="Enter the address where your vehicle is parked overnight."
         />
       </div>
     );
@@ -117,16 +108,6 @@ export default function Step1PersonalInfo({ data, onUpdate }: Step1Props) {
               placeholder="Last Name"
             />
           </div>
-        </div>
-
-        <div>
-          <Label htmlFor="dateOfBirth" className="text-lg">Date of Birth</Label>
-          <Input
-            id="dateOfBirth"
-            type="date"
-            value={data.dateOfBirth}
-            onChange={(e) => onUpdate({ dateOfBirth: e.target.value })}
-          />
         </div>
 
         <div>

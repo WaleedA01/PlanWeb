@@ -28,24 +28,21 @@ export default function AutoForm() {
   const [formData, setFormData] = useState<AutoFormData>({
     firstName: '',
     lastName: '',
-    dateOfBirth: '',
     streetAddress: '',
     city: '',
     state: '',
     postalCode: '',
     latitude: null,
     longitude: null,
-    isNewVehicle: null,
-    currentInsurer: '',
-    coverageDate: '',
-    policyExpirationDate: '',
+    coverageUrgency: '',
+    numVehicles: '',
+    numDrivers: '',
     vehicles: [],
     uploadedFiles: [],
     preferredContactMethod: '',
     email: '',
     phoneNumber: '',
     additionalNotes: '',
-    numDrivers: '',
     selectedAgentId: '',
     leadSource: 'Auto Questionnaire',
   });
@@ -190,13 +187,9 @@ export default function AutoForm() {
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return formData.firstName && formData.lastName && formData.dateOfBirth && formData.streetAddress && formData.city && formData.state && formData.postalCode;
+        return formData.firstName && formData.lastName && formData.streetAddress && formData.city && formData.state && formData.postalCode;
       case 2:
-        if (formData.isNewVehicle === null) return false;
-        if (formData.isNewVehicle === false) {
-          return formData.currentInsurer && formData.policyExpirationDate;
-        }
-        return formData.coverageDate;
+        return formData.coverageUrgency && formData.numVehicles && formData.numDrivers;
       case 3:
         return formData.vehicles.length > 0 && formData.vehicles.every(v => 
           (v.vin && v.vin.length === 17) || (v.make && v.model && v.year)
@@ -208,7 +201,6 @@ export default function AutoForm() {
         const phoneRequired = formData.preferredContactMethod === 'phone' || formData.preferredContactMethod === 'text' || formData.preferredContactMethod === 'either';
         return (
           formData.preferredContactMethod &&
-          formData.numDrivers &&
           !!turnstileToken &&
           (emailRequired ? !!formData.email : true) &&
           (phoneRequired ? !!formData.phoneNumber : true)
