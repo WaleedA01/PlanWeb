@@ -39,6 +39,8 @@ export default function AutoForm() {
     numDrivers: '',
     isCurrentlyInsured: null,
     currentInsurer: '',
+    policyFiles: [],
+    licenseFiles: [],
     uploadedFiles: [],
     preferredContactMethod: '',
     email: '',
@@ -115,6 +117,7 @@ export default function AutoForm() {
   };
 
   const showMap = formData.latitude && formData.longitude;
+  const hasDocuments = (formData.policyFiles?.length > 0) || (formData.licenseFiles?.length > 0);
 
   const handleNext = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -258,6 +261,7 @@ export default function AutoForm() {
           onSubmit={handleSubmit}
           isLastStep={currentStep === 5}
           canProceed={!!canProceed() && !isSubmitting}
+          hasDocuments={hasDocuments}
           turnstileWidget={
             !turnstileToken ? (
               <TurnstileWidget

@@ -27,6 +27,8 @@ export interface AutoFormData {
   currentInsurer: string;
 
   // Step 4
+  policyFiles: File[];
+  licenseFiles: File[];
   uploadedFiles: File[];
 
   // Step 5

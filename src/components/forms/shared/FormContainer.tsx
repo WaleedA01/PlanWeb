@@ -16,6 +16,7 @@ interface FormContainerProps {
   canProceed?: boolean;
   hideNavigation?: boolean;
   turnstileWidget?: ReactNode;
+  hasDocuments?: boolean;
 }
 
 export default function FormContainer({
@@ -29,6 +30,7 @@ export default function FormContainer({
   canProceed = true,
   hideNavigation = false,
   turnstileWidget,
+  hasDocuments = false,
 }: FormContainerProps) {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -65,9 +67,11 @@ export default function FormContainer({
                 type="button"
                 onClick={onNext}
                 disabled={!canProceed}
-                className="px-8 bg-primary hover:bg-primary/90"
+                className={`bg-primary hover:bg-primary/90 ${
+                  currentStep === 4 && !hasDocuments ? 'px-16 py-6 text-lg' : 'px-8'
+                }`}
               >
-                Next
+                {currentStep === 4 && !hasDocuments ? 'Skip →' : 'Next'}
               </Button>
             )}
           </div>
