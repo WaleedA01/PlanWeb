@@ -205,7 +205,7 @@ export default function AutoForm() {
         return true;
       case 5:
         const emailRequired = formData.preferredContactMethod === 'email' || formData.preferredContactMethod === 'either';
-        const phoneRequired = formData.preferredContactMethod === 'phone' || formData.preferredContactMethod === 'either';
+        const phoneRequired = formData.preferredContactMethod === 'phone' || formData.preferredContactMethod === 'text' || formData.preferredContactMethod === 'either';
         return (
           formData.preferredContactMethod &&
           formData.numDrivers &&

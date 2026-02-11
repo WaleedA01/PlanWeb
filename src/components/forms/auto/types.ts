@@ -31,7 +31,7 @@ export interface AutoFormData {
   uploadedFiles: File[];
 
   // Step 5
-  preferredContactMethod: 'email' | 'phone' | 'either' | '';
+  preferredContactMethod: 'email' | 'phone' | 'text' | 'either' | '';
   email: string;
   phoneNumber: string;
   additionalNotes: string;

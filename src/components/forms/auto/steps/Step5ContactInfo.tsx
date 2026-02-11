@@ -82,7 +82,7 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
                     </div>
                   )}
                   <div className="flex flex-col items-center text-center space-y-2">
-                    {'icons' in method ? (
+                    {'icons' in method && method.icons ? (
                       <div className="flex items-center gap-2">
                         {method.icons.map((Icon, i) => (
                           <Icon key={i} className={`w-6 h-6 ${isSelected ? 'text-white' : 'text-primary'}`} />
@@ -101,30 +101,79 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
           </div>
         </div>
 
-        {(data.preferredContactMethod === 'email' || data.preferredContactMethod === 'either') && (
-          <div className="animate-in fade-in duration-500">
-            <Label htmlFor="email" className="text-lg">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={data.email}
-              onChange={(e) => onUpdate({ email: e.target.value })}
-              placeholder="your@email.com"
-            />
-          </div>
+        {data.preferredContactMethod === 'email' && (
+          <>
+            <div className="animate-in fade-in duration-500">
+              <Label htmlFor="email" className="text-lg">Email *</Label>
+              <Input
+                id="email"
+                type="email"
+                value={data.email}
+                onChange={(e) => onUpdate({ email: e.target.value })}
+                placeholder="your@email.com"
+              />
+            </div>
+            <div className="animate-in fade-in duration-500">
+              <Label htmlFor="phoneNumber" className="text-lg">Phone Number</Label>
+              <Input
+                id="phoneNumber"
+                type="tel"
+                value={data.phoneNumber}
+                onChange={(e) => onUpdate({ phoneNumber: e.target.value })}
+                placeholder="(555) 123-4567"
+              />
+            </div>
+          </>
         )}
 
-        {(data.preferredContactMethod === 'phone' || data.preferredContactMethod === 'either') && (
-          <div className="animate-in fade-in duration-500">
-            <Label htmlFor="phoneNumber" className="text-lg">Phone Number</Label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              value={data.phoneNumber}
-              onChange={(e) => onUpdate({ phoneNumber: e.target.value })}
-              placeholder="(555) 123-4567"
-            />
-          </div>
+        {(data.preferredContactMethod === 'phone' || data.preferredContactMethod === 'text') && (
+          <>
+            <div className="animate-in fade-in duration-500">
+              <Label htmlFor="phoneNumber" className="text-lg">Phone Number *</Label>
+              <Input
+                id="phoneNumber"
+                type="tel"
+                value={data.phoneNumber}
+                onChange={(e) => onUpdate({ phoneNumber: e.target.value })}
+                placeholder="(555) 123-4567"
+              />
+            </div>
+            <div className="animate-in fade-in duration-500">
+              <Label htmlFor="email" className="text-lg">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={data.email}
+                onChange={(e) => onUpdate({ email: e.target.value })}
+                placeholder="your@email.com"
+              />
+            </div>
+          </>
+        )}
+
+        {data.preferredContactMethod === 'either' && (
+          <>
+            <div className="animate-in fade-in duration-500">
+              <Label htmlFor="email" className="text-lg">Email *</Label>
+              <Input
+                id="email"
+                type="email"
+                value={data.email}
+                onChange={(e) => onUpdate({ email: e.target.value })}
+                placeholder="your@email.com"
+              />
+            </div>
+            <div className="animate-in fade-in duration-500">
+              <Label htmlFor="phoneNumber" className="text-lg">Phone Number *</Label>
+              <Input
+                id="phoneNumber"
+                type="tel"
+                value={data.phoneNumber}
+                onChange={(e) => onUpdate({ phoneNumber: e.target.value })}
+                placeholder="(555) 123-4567"
+              />
+            </div>
+          </>
         )}
 
         <div>
