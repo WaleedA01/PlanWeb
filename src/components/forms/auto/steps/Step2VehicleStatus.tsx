@@ -11,14 +11,14 @@ interface Step2Props {
   onUpdate: (updates: Partial<AutoFormData>) => void;
 }
 
-const COVERAGE_URGENCY = [
+const COVERAGE_URGENCY: Array<{ value: 'now' | 'week' | 'shopping'; label: string; icon: any }> = [
   { value: 'now', label: 'Need coverage now', icon: Clock },
   { value: 'week', label: 'Need coverage within the week', icon: Calendar },
   { value: 'shopping', label: "I'm shopping around", icon: Search },
 ];
 
-const VEHICLE_COUNTS = ['1', '2', '3', '4', '5+'];
-const DRIVER_COUNTS = ['1', '2', '3', '4', '5+'];
+const VEHICLE_COUNTS: Array<'1' | '2' | '3' | '4' | '5+'> = ['1', '2', '3', '4', '5+'];
+const DRIVER_COUNTS: Array<'1' | '2' | '3' | '4' | '5+'> = ['1', '2', '3', '4', '5+'];
 
 export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
   return (
@@ -38,7 +38,7 @@ export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
                 <button
                   key={option.value}
                   type="button"
-                  onClick={() => onUpdate({ coverageUrgency: option.value })}
+                  onClick={() => onUpdate({ coverageUrgency: option.value as 'now' | 'week' | 'shopping' })}
                   className={`relative p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
@@ -73,7 +73,7 @@ export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
                 <button
                   key={count}
                   type="button"
-                  onClick={() => onUpdate({ numVehicles: count })}
+                  onClick={() => onUpdate({ numVehicles: count as '1' | '2' | '3' | '4' | '5+' })}
                   className={`relative p-4 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
@@ -103,7 +103,7 @@ export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
                 <button
                   key={count}
                   type="button"
-                  onClick={() => onUpdate({ numDrivers: count })}
+                  onClick={() => onUpdate({ numDrivers: count as '1' | '2' | '3' | '4' | '5+' })}
                   className={`relative p-4 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
