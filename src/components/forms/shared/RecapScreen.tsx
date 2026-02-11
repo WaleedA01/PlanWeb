@@ -260,7 +260,7 @@ export default function RecapScreen({ data }: RecapScreenProps) {
                     alt="Our team of agents"
                     className="w-full h-auto rounded-lg"
                   />
-                  <p className="text-sm text-primary font-medium">The soonest available agent will reach out within 1-2 business days</p>
+                  <p className="text-sm text-primary font-medium">We'll reach out to you shortly</p>
                 </div>
               </div>
             )}
@@ -308,7 +308,7 @@ export default function RecapScreen({ data }: RecapScreenProps) {
         {step >= 8 && (
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-[fadeInUp_0.6s_ease-out_forwards]">
             <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
-              <Link href="/contact">Speak to an Agent</Link>
+              <Link href="/contact">Call Us Now</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
               <Link href="/">Return to Home</Link>

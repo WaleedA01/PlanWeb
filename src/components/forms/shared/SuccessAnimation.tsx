@@ -161,14 +161,79 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
     );
   }
 
-  // Stage 1: Carrier connection animation
+  // Stage 1: Agent introduction
   if (stage === 1) {
+    if (selectedAgent) {
+      return (
+        <div className="min-h-screen flex items-start justify-center bg-background pt-32">
+          <div className={`text-center space-y-8 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="block max-w-2xl mx-auto px-4">
+              <SplitText
+                text={`${selectedAgent.firstName} will reach out to you shortly.`}
+                tag="p"
+                className="text-2xl font-semibold text-secondary"
+                delay={20}
+                duration={0.8}
+                threshold={0}
+              />
+            </div>
+            <div className="flex justify-center px-4">
+              <div className="bg-gradient-to-br from-primary via-[#3db8e8] to-[#7dd3f0] border border-border rounded-2xl overflow-visible shadow-2xl h-80 w-96 relative">
+                <div className="absolute top-6 right-6 z-10 text-right">
+                  <h3 className="text-white drop-shadow-lg leading-tight">
+                    <span className="text-4xl font-bold">{selectedAgent.firstName}</span><br />
+                    <span className="text-2xl font-thin">{selectedAgent.lastName}</span>
+                  </h3>
+                  <p className="text-white/90 text-sm mt-1 drop-shadow-md">{selectedAgent.title}</p>
+                </div>
+                <div className="absolute inset-0 -top-12 -left-32">
+                  <img
+                    src={selectedAgent.fullImageSrc}
+                    alt={`${selectedAgent.firstName} ${selectedAgent.lastName}`}
+                    className="w-full h-full object-contain object-top rounded-2xl"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      // Show multiple agents when none selected
+      return (
+        <div className="min-h-screen flex items-start justify-center bg-background pt-32">
+          <div className={`text-center space-y-8 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="block max-w-2xl mx-auto px-4">
+              <SplitText
+                text="We'll reach out to you shortly."
+                tag="p"
+                className="text-2xl font-semibold text-secondary"
+                delay={20}
+                duration={0.8}
+                threshold={0}
+              />
+            </div>
+            <div className="flex justify-center px-4">
+              <img
+                src="/agents/group/gusjusora.png"
+                alt="Our team of agents"
+                className="w-full max-w-2xl h-auto rounded-2xl shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  // Stage 2: Carrier connection animation
+  if (stage === 2) {
     return (
       <div className="min-h-screen flex items-start justify-center bg-background pt-32">
         <div className={`text-center space-y-12 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
           <div className="block">
             <SplitText
-              text="We're contacting top carriers to find you the best coverage."
+              text="We'll shop for the best coverage that meets your needs."
               tag="p"
               className="text-2xl font-semibold text-secondary max-w-2xl mx-auto"
               delay={20}
@@ -245,7 +310,7 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
           <div className={`text-center space-y-8 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
             <div className="block max-w-2xl mx-auto px-4">
               <SplitText
-                text={`${selectedAgent.firstName} will reach out to you ASAP and get to work on the best coverage tailored to your needs.`}
+                text={`${selectedAgent.firstName} will reach out to you shortly.`}
                 tag="p"
                 className="text-2xl font-semibold text-secondary"
                 delay={20}
@@ -281,7 +346,7 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
           <div className={`text-center space-y-8 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
             <div className="block max-w-2xl mx-auto px-4">
               <SplitText
-                text="The soonest available agent will reach out to you ASAP and get to work on the best coverage tailored to your needs."
+                text="The soonest available agent will reach out to you shortly."
                 tag="p"
                 className="text-2xl font-semibold text-secondary"
                 delay={20}
@@ -312,7 +377,7 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
           </div>
           <div className="block">
             <SplitText
-              text="You pick your preferred coverage"
+              text="We'll help you pick the right one"
               tag="h2"
               className="text-4xl font-bold text-secondary"
               delay={30}
@@ -322,7 +387,7 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
           </div>
           <div className="block">
             <SplitText
-              text="and we'll close the deal for you"
+              text="and get you covered."
               tag="p"
               className="text-2xl text-primary font-semibold"
               delay={20}
