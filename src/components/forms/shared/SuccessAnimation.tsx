@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { BusinessFormData } from '../business/types';
 import { CheckCircle, Handshake } from 'lucide-react';
 import { AGENTS } from '@/lib/agents';
-import { CARRIERS } from '@/lib/carriers';
+import { getAnimationCarriers } from '@/lib/carriers';
 import RecapScreen from './RecapScreen';
 import SplitText from '@/components/SplitText';
 import { OrbitingCircles } from '@/components/ui/orbiting-circles';
@@ -13,7 +13,7 @@ interface SuccessAnimationProps {
   data: BusinessFormData | any;
 }
 
-const CARRIER_LOGOS = CARRIERS.map(c => c.logoSrc);
+const CARRIER_LOGOS = getAnimationCarriers().map(c => c.logoSrc);
 const CARRIERS_INNER = CARRIER_LOGOS.slice(0, 5);
 const CARRIERS_OUTER = CARRIER_LOGOS.slice(5);
 
@@ -245,7 +245,7 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
           <div className={`text-center space-y-8 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
             <div className="block max-w-2xl mx-auto px-4">
               <SplitText
-                text={`${selectedAgent.firstName} will reach out to you within 1-2 business days with the best coverages tailored to you`}
+                text={`${selectedAgent.firstName} will reach out to you ASAP and get to work on the best coverage tailored to your needs.`}
                 tag="p"
                 className="text-2xl font-semibold text-secondary"
                 delay={20}
@@ -281,7 +281,7 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
           <div className={`text-center space-y-8 transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
             <div className="block max-w-2xl mx-auto px-4">
               <SplitText
-                text="The soonest available agent will reach out to you within 1-2 business days with the best coverages tailored to you"
+                text="The soonest available agent will reach out to you ASAP and get to work on the best coverage tailored to your needs."
                 tag="p"
                 className="text-2xl font-semibold text-secondary"
                 delay={20}

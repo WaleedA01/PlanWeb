@@ -4,7 +4,7 @@ import { AutoFormData } from '../types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Car, ShoppingCart } from 'lucide-react';
-import { CARRIERS } from '@/lib/carriers';
+import { getCarrierNames } from '@/lib/carriers';
 import { Combobox } from '@/components/ui/combobox';
 
 interface Step2Props {
@@ -12,9 +12,9 @@ interface Step2Props {
   onUpdate: (updates: Partial<AutoFormData>) => void;
 }
 
-const INSURERS = [
-  { id: 'none', name: 'Not Currently Insured' },
-  ...CARRIERS.map(c => ({ id: c.id, name: c.name })),
+const AUTO_INSURERS = [
+  'Not Currently Insured',
+  ...getCarrierNames('auto'),
 ];
 
 export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
@@ -70,7 +70,7 @@ export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
             <Combobox
               value={data.currentInsurer}
               onValueChange={(value: string) => onUpdate({ currentInsurer: value })}
-              options={INSURERS.map((insurer) => ({ value: insurer.name, label: insurer.name }))}
+              options={AUTO_INSURERS.map((name) => ({ value: name, label: name }))}
               placeholder="Select or type to search..."
             />
           </div>
