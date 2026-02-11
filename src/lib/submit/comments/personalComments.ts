@@ -141,6 +141,20 @@ export function buildPersonalComments(answers: Record<string, unknown>): string 
     parts.push(`Expected drivers on policy: ${limit(str(drivers), 40)}`);
   }
 
+  // Property usage (home)
+  const propertyUsage = str((answers as any).propertyUsage);
+  if (propertyUsage) {
+    const usageMap: Record<string, string> = {
+      'primary': 'Primary Residence',
+      'rental-long': 'Rental (Long Term)',
+      'rental-short': 'Rental (Short Term)',
+      'vacation': 'Vacation Home',
+      'vacant': 'Vacant'
+    };
+    const displayValue = usageMap[propertyUsage] || propertyUsage;
+    parts.push(`Property Usage: ${displayValue}`);
+  }
+
   // Preferred contact method
   const contactPref = firstNonEmpty(
     (answers as any).preferredContactMethod,

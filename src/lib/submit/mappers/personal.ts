@@ -54,6 +54,18 @@ export function mapPersonal(
     alarmType = 'Central Burglar Only';
   }
 
+  // Map property usage to AgencyZoom format
+  const rawPropertyUsage = str(answers.propertyUsage);
+  let propertyUsageForAZ = '';
+  if (rawPropertyUsage) {
+    const lower = rawPropertyUsage.toLowerCase();
+    if (lower.includes('rental')) {
+      propertyUsageForAZ = 'Rented';
+    } else {
+      propertyUsageForAZ = 'Owned';
+    }
+  }
+
   const personalLine = firstNonEmpty(
     answers.personalLine,
     answers.lineOfBusiness,
@@ -79,6 +91,7 @@ export function mapPersonal(
     agent: limit(str(answers.agent), 80),
 
     // Home property features
+    propertyUsage: propertyUsageForAZ,
     gatedCommunity: hasGated ? 'Yes' : 'No',
     solarPanels: hasSolar ? 'Yes' : 'No',
     pool: hasPool ? 'Yes' : 'No',
