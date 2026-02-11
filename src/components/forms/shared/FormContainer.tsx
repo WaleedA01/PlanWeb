@@ -33,7 +33,7 @@ export default function FormContainer({
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       {/* Step Indicator */}
-      <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />
+      {totalSteps > 1 && <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />}
 
       {/* Form Content */}
       <div className="min-h-[400px] mb-8">{children}</div>

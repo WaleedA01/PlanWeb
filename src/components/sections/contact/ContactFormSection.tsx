@@ -73,40 +73,49 @@ export default function ContactFormSection() {
                   <label className="block text-sm font-medium text-secondary mb-3">
                     Preferred Contact Method *
                   </label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="contactMethod"
-                        value="email"
-                        checked={formData.contactMethod === 'email'}
-                        onChange={(e) => setFormData({ ...formData, contactMethod: e.target.value })}
-                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                      />
-                      <span className="text-secondary">Email</span>
-                    </label>
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="contactMethod"
-                        value="phone"
-                        checked={formData.contactMethod === 'phone'}
-                        onChange={(e) => setFormData({ ...formData, contactMethod: e.target.value })}
-                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                      />
-                      <span className="text-secondary">Phone</span>
-                    </label>
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="contactMethod"
-                        value="either"
-                        checked={formData.contactMethod === 'either'}
-                        onChange={(e) => setFormData({ ...formData, contactMethod: e.target.value })}
-                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                      />
-                      <span className="text-secondary">Either</span>
-                    </label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                      { value: 'email', label: 'Email', icon: Mail },
+                      { value: 'phone', label: 'Phone', icon: Phone },
+                      { value: 'text', label: 'Text (SMS)', icon: Phone },
+                      { value: 'either', label: 'Any', icons: [Mail, Phone] },
+                    ].map((method) => {
+                      const isSelected = formData.contactMethod === method.value;
+                      return (
+                        <button
+                          key={method.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, contactMethod: method.value })}
+                          className={`relative p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
+                            isSelected
+                              ? 'border-primary bg-primary text-white shadow-md'
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                        >
+                          {isSelected && (
+                            <div className="absolute top-2 right-2 w-5 h-5 bg-white rounded-full flex items-center justify-center">
+                              <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                          )}
+                          <div className="flex flex-col items-center text-center space-y-2">
+                            {'icons' in method ? (
+                              <div className="flex items-center gap-2">
+                                {method.icons.map((Icon, i) => (
+                                  <Icon key={i} className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-primary'}`} />
+                                ))}
+                              </div>
+                            ) : (
+                              <method.icon className={`w-10 h-10 ${isSelected ? 'text-white' : 'text-primary'}`} />
+                            )}
+                            <div className={`text-base font-medium ${isSelected ? 'text-white' : 'text-secondary'}`}>
+                              {method.label}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
