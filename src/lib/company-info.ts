@@ -8,7 +8,7 @@ export const COMPANY_INFO = {
   contact: {
     phone: '(407) 557-3100',
     phoneRaw: '4075573100', // For tel: links
-    email: 'info@planlifeinsurance.com',
+    email: 'plsupport@planlifeusa.com',
     
     // Business hours
     hours: {
