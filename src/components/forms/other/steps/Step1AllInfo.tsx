@@ -88,28 +88,6 @@ export default function Step1AllInfo({ data, onUpdate, agentLocked, lockedAgentN
     }
   };
 
-  const handleDateChange = (value: string) => {
-    onUpdate({ dateOfBirth: value });
-    
-    if (value && !isValidDateOfBirth(value)) {
-      const date = new Date(value);
-      const now = new Date();
-      const age = now.getFullYear() - date.getFullYear();
-      
-      if (date > now) {
-        setDateError('Date of birth cannot be in the future');
-      } else if (age < 18) {
-        setDateError('You must be at least 18 years old');
-      } else if (age > 120) {
-        setDateError('Please enter a valid date of birth');
-      } else {
-        setDateError('Please enter a valid date');
-      }
-    } else {
-      setDateError('');
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -139,21 +117,6 @@ export default function Step1AllInfo({ data, onUpdate, agentLocked, lockedAgentN
           </div>
         </div>
 
-<<<<<<< Updated upstream
-=======
-        <div>
-          <Label htmlFor="dateOfBirth" className="text-lg">Date of Birth</Label>
-          <Input
-            id="dateOfBirth"
-            type="date"
-            value={data.dateOfBirth}
-            onChange={(e) => handleDateChange(e.target.value)}
-            className={dateError ? 'border-red-500' : ''}
-          />
-          {dateError && <p className="text-sm text-red-500 mt-1">{dateError}</p>}
-        </div>
-
->>>>>>> Stashed changes
         <AddressAutocomplete
           value={data.streetAddress}
           onPlaceSelect={(placeDetails) => {
