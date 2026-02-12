@@ -24,6 +24,7 @@ export default function AutoForm() {
   const [turnstileKey, setTurnstileKey] = useState(0);
   const [agentLocked, setAgentLocked] = useState(false);
   const [lockedAgentName, setLockedAgentName] = useState<string | null>(null);
+  const [showValidation, setShowValidation] = useState(false);
 
   const [formData, setFormData] = useState<AutoFormData>({
     firstName: '',
@@ -121,8 +122,45 @@ export default function AutoForm() {
 
   const handleNext = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    if (currentStep !== 4 && !canProceed()) {
+      setShowValidation(true);
+      setSubmitError(getValidationError());
+      return;
+    }
+    
+    setShowValidation(false);
+    setSubmitError(null);
     if (currentStep < 5) {
       setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const getValidationError = (): string => {
+    switch (currentStep) {
+      case 1:
+        if (!formData.firstName) return 'Please enter your first name';
+        if (!formData.lastName) return 'Please enter your last name';
+        if (!formData.streetAddress) return 'Please enter your street address';
+        if (!formData.city) return 'Please enter your city';
+        if (!formData.state) return 'Please enter your state';
+        if (!formData.postalCode) return 'Please enter your ZIP code';
+        return 'Please complete all required fields';
+      case 2:
+        if (!formData.coverageUrgency) return 'Please select coverage urgency';
+        if (!formData.numVehicles) return 'Please enter number of vehicles';
+        if (!formData.numDrivers) return 'Please enter number of drivers';
+        return 'Please complete all required fields';
+      case 3:
+        if (formData.isCurrentlyInsured === null) return 'Please indicate if you are currently insured';
+        if (formData.isCurrentlyInsured === true && !formData.currentInsurer) return 'Please enter your current insurer';
+        return 'Please complete all required fields';
+      case 5:
+        if (!formData.preferredContactMethod) return 'Please select a contact method';
+        if (!turnstileToken) return 'Please complete the verification';
+        return 'Please complete all required contact information';
+      default:
+        return 'Please complete all required fields';
     }
   };
 
@@ -135,6 +173,14 @@ export default function AutoForm() {
 
   const handleSubmit = async () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    if (!canProceed()) {
+      setShowValidation(true);
+      setSubmitError(getValidationError());
+      return;
+    }
+    
+    setShowValidation(false);
     setSubmitError(null);
     setSubmitResult(null);
 
@@ -297,15 +343,15 @@ export default function AutoForm() {
           }
         >
           <FormStep isActive={currentStep === 1}>
-            <Step1PersonalInfo data={formData} onUpdate={updateFormData} />
+            <Step1PersonalInfo data={formData} onUpdate={updateFormData} showValidation={showValidation} />
           </FormStep>
 
           <FormStep isActive={currentStep === 2}>
-            <Step2VehicleStatus data={formData} onUpdate={updateFormData} />
+            <Step2VehicleStatus data={formData} onUpdate={updateFormData} showValidation={showValidation} />
           </FormStep>
 
           <FormStep isActive={currentStep === 3}>
-            <Step3VehicleDetails data={formData} onUpdate={updateFormData} />
+            <Step3VehicleDetails data={formData} onUpdate={updateFormData} showValidation={showValidation} />
           </FormStep>
 
           <FormStep isActive={currentStep === 4}>
@@ -318,18 +364,14 @@ export default function AutoForm() {
               onUpdate={updateFormData}
               agentLocked={agentLocked}
               lockedAgentName={lockedAgentName ?? undefined}
+              showValidation={showValidation}
             />
 
             {submitError && (
-              <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                {submitError}
+              <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <p className="font-medium">Unable to proceed:</p>
+                <p>{submitError}</p>
               </div>
-            )}
-
-            {submitResult && (
-              <pre className="mt-6 max-h-64 overflow-auto rounded-md border bg-gray-50 p-3 text-xs">
-{JSON.stringify(submitResult, null, 2)}
-              </pre>
             )}
 
             {isSubmitting && (

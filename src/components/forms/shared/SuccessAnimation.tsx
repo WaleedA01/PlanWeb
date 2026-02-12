@@ -178,7 +178,7 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
               />
             </div>
             <div className="flex justify-center px-4">
-              <div className="bg-gradient-to-br from-primary via-[#3db8e8] to-[#7dd3f0] border border-border rounded-2xl overflow-visible shadow-2xl h-80 w-96 relative">
+              <div className="bg-gradient-to-br from-[#0da9e4] via-[#3db8e8] to-[#7dd3f0] border border-border rounded-2xl overflow-visible shadow-2xl h-80 w-96 relative">
                 <div className="absolute top-6 right-6 z-10 text-right">
                   <h3 className="text-white drop-shadow-lg leading-tight">
                     <span className="text-4xl font-bold">{selectedAgent.firstName}</span><br />

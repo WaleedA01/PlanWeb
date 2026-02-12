@@ -9,11 +9,15 @@ import { Combobox } from '@/components/ui/combobox';
 interface Step3Props {
   data: AutoFormData;
   onUpdate: (updates: Partial<AutoFormData>) => void;
+  showValidation?: boolean;
 }
 
 const AUTO_INSURERS = getCarrierNames('auto');
 
-export default function Step3VehicleDetails({ data, onUpdate }: Step3Props) {
+export default function Step3VehicleDetails({ data, onUpdate, showValidation = false }: Step3Props) {
+  const hasInsuredError = showValidation && data.isCurrentlyInsured === null;
+  const hasInsurerError = showValidation && data.isCurrentlyInsured === true && !data.currentInsurer;
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -23,7 +27,9 @@ export default function Step3VehicleDetails({ data, onUpdate }: Step3Props) {
 
       <div className="space-y-6">
         <div>
-          <Label className="mb-3 block text-lg">Are you currently insured?</Label>
+          <Label className={`mb-3 block text-lg ${hasInsuredError ? 'text-red-500' : ''}`}>
+            Are you currently insured? {hasInsuredError && <span className="text-red-500">*</span>}
+          </Label>
           <div className="grid grid-cols-2 gap-4">
             {[
               { value: true, label: 'Yes', icon: Shield },
@@ -38,6 +44,8 @@ export default function Step3VehicleDetails({ data, onUpdate }: Step3Props) {
                   className={`relative p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
+                      : hasInsuredError
+                      ? 'border-red-500 hover:border-red-600'
                       : 'border-border hover:border-primary/50'
                   }`}
                 >
@@ -62,12 +70,15 @@ export default function Step3VehicleDetails({ data, onUpdate }: Step3Props) {
 
         {data.isCurrentlyInsured === true && (
           <div className="animate-in fade-in duration-500">
-            <Label htmlFor="currentInsurer" className="text-lg">Who are you insured with?</Label>
+            <Label htmlFor="currentInsurer" className={`text-lg ${hasInsurerError ? 'text-red-500' : ''}`}>
+              Who are you insured with? {hasInsurerError && <span className="text-red-500">*</span>}
+            </Label>
             <Combobox
               value={data.currentInsurer}
               onValueChange={(value: string) => onUpdate({ currentInsurer: value })}
               options={AUTO_INSURERS.map((name) => ({ value: name, label: name }))}
               placeholder="Select or type to search..."
+              className={hasInsurerError ? 'border-red-500' : ''}
             />
           </div>
         )}

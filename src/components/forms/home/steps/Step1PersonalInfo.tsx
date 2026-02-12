@@ -9,9 +9,17 @@ import AddressAutocomplete from '../../personal/AddressAutocomplete';
 interface Step1Props {
   data: HomeFormData;
   onUpdate: (updates: Partial<HomeFormData>) => void;
+  showValidation?: boolean;
 }
 
-export default function Step1PersonalInfo({ data, onUpdate }: Step1Props) {
+export default function Step1PersonalInfo({ data, onUpdate, showValidation }: Step1Props) {
+  const hasFirstNameError = showValidation && !data.firstName;
+  const hasLastNameError = showValidation && !data.lastName;
+  const hasStreetError = showValidation && !data.streetAddress;
+  const hasCityError = showValidation && !data.city;
+  const hasStateError = showValidation && !data.state;
+  const hasPostalError = showValidation && !data.postalCode;
+  const hasAddressError = hasStreetError || hasCityError || hasStateError || hasPostalError;
   const [showForm, setShowForm] = useState(false);
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState('');
@@ -59,17 +67,21 @@ export default function Step1PersonalInfo({ data, onUpdate }: Step1Props) {
         </div>
 
         <div>
-          <Label className="text-lg mb-2 block">Your Name</Label>
+          <Label className={`text-lg mb-2 block ${(hasFirstNameError || hasLastNameError) ? 'text-red-600' : ''}`}>
+            Your Name {(hasFirstNameError || hasLastNameError) && '*'}
+          </Label>
           <div className="grid grid-cols-2 gap-4">
             <Input
               placeholder="First Name"
               value={data.firstName}
               onChange={(e) => onUpdate({ firstName: e.target.value })}
+              className={hasFirstNameError ? 'border-red-500' : ''}
             />
             <Input
               placeholder="Last Name"
               value={data.lastName}
               onChange={(e) => onUpdate({ lastName: e.target.value })}
+              className={hasLastNameError ? 'border-red-500' : ''}
             />
           </div>
         </div>
@@ -80,6 +92,7 @@ export default function Step1PersonalInfo({ data, onUpdate }: Step1Props) {
           onManualEntry={handleManualEntry}
           label="Property Address"
           placeholder="Enter your address..."
+          hasError={hasAddressError}
         />
       </div>
     );
@@ -94,7 +107,9 @@ export default function Step1PersonalInfo({ data, onUpdate }: Step1Props) {
 
       <div className="space-y-6">
         <div>
-          <Label className="text-lg mb-2 block">Your Name</Label>
+          <Label className={`text-lg mb-2 block ${(hasFirstNameError || hasLastNameError) ? 'text-red-600' : ''}`}>
+            Your Name {(hasFirstNameError || hasLastNameError) && '*'}
+          </Label>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Input
@@ -102,6 +117,7 @@ export default function Step1PersonalInfo({ data, onUpdate }: Step1Props) {
                 value={data.firstName}
                 onChange={(e) => onUpdate({ firstName: e.target.value })}
                 placeholder="First Name"
+                className={hasFirstNameError ? 'border-red-500' : ''}
               />
             </div>
             <div>
@@ -110,49 +126,62 @@ export default function Step1PersonalInfo({ data, onUpdate }: Step1Props) {
                 value={data.lastName}
                 onChange={(e) => onUpdate({ lastName: e.target.value })}
                 placeholder="Last Name"
+                className={hasLastNameError ? 'border-red-500' : ''}
               />
             </div>
           </div>
         </div>
 
         <div>
-          <Label htmlFor="streetAddress" className="text-lg">Street Address</Label>
+          <Label htmlFor="streetAddress" className={`text-lg ${hasStreetError ? 'text-red-600' : ''}`}>
+            Street Address {hasStreetError && '*'}
+          </Label>
           <Input
             id="streetAddress"
             value={data.streetAddress}
             onChange={(e) => onUpdate({ streetAddress: e.target.value })}
             placeholder="123 Main St"
+            className={hasStreetError ? 'border-red-500' : ''}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="city" className="text-lg">City</Label>
+            <Label htmlFor="city" className={`text-lg ${hasCityError ? 'text-red-600' : ''}`}>
+              City {hasCityError && '*'}
+            </Label>
             <Input
               id="city"
               value={data.city}
               onChange={(e) => onUpdate({ city: e.target.value })}
               placeholder="City"
+              className={hasCityError ? 'border-red-500' : ''}
             />
           </div>
           <div>
-            <Label htmlFor="state" className="text-lg">State</Label>
+            <Label htmlFor="state" className={`text-lg ${hasStateError ? 'text-red-600' : ''}`}>
+              State {hasStateError && '*'}
+            </Label>
             <Input
               id="state"
               value={data.state}
               onChange={(e) => onUpdate({ state: e.target.value })}
               placeholder="FL"
+              className={hasStateError ? 'border-red-500' : ''}
             />
           </div>
         </div>
 
         <div>
-          <Label htmlFor="postalCode" className="text-lg">Postal Code</Label>
+          <Label htmlFor="postalCode" className={`text-lg ${hasPostalError ? 'text-red-600' : ''}`}>
+            Postal Code {hasPostalError && '*'}
+          </Label>
           <Input
             id="postalCode"
             value={data.postalCode}
             onChange={(e) => onUpdate({ postalCode: e.target.value })}
             placeholder="33101"
+            className={hasPostalError ? 'border-red-500' : ''}
           />
         </div>
 

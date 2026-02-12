@@ -25,6 +25,7 @@ export default function HomeForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitResult, setSubmitResult] = useState<any>(null);
+  const [showValidation, setShowValidation] = useState(false);
 
   const [qrToken, setQrToken] = useState<string | null>(null);
   const [agentLocked, setAgentLocked] = useState(false);
@@ -99,10 +100,45 @@ export default function HomeForm() {
 
   const handleNext = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    if (!canProceed()) {
+      setShowValidation(true);
+      setSubmitError(getValidationError());
+      return;
+    }
+    
+    setShowValidation(false);
+    setSubmitError(null);
     if (currentStep === 1) {
       setShowTransition(true);
     } else if (currentStep < 4) {
       setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const getValidationError = (): string => {
+    switch (currentStep) {
+      case 1:
+        if (!formData.firstName) return 'Please enter your first name';
+        if (!formData.lastName) return 'Please enter your last name';
+        if (!formData.streetAddress) return 'Please enter your street address';
+        if (!formData.city) return 'Please enter your city';
+        if (!formData.state) return 'Please enter your state';
+        if (!formData.postalCode) return 'Please enter your ZIP code';
+        return 'Please complete all required fields';
+      case 2:
+        if (formData.isNewPurchase === null) return 'Please indicate if this is a new purchase';
+        if (formData.isNewPurchase === true && !formData.closeDate) return 'Please enter expected close date';
+        return 'Please complete all required fields';
+      case 3:
+        if (!formData.propertyUsage) return 'Please select a property usage';
+        return 'Please complete all required fields';
+      case 4:
+        if (!formData.preferredContactMethod) return 'Please select a contact method';
+        if (!turnstileToken) return 'Please complete the verification';
+        return 'Please complete all required contact information';
+      default:
+        return 'Please complete all required fields';
     }
   };
 
@@ -120,6 +156,14 @@ export default function HomeForm() {
 
   const handleSubmit = async () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    if (!canProceed()) {
+      setShowValidation(true);
+      setSubmitError(getValidationError());
+      return;
+    }
+    
+    setShowValidation(false);
     setSubmitError(null);
     setSubmitResult(null);
 
@@ -167,7 +211,7 @@ export default function HomeForm() {
       localStorage.removeItem('homeFormProgress');
 
       // BACKGROUND: Send files via email (non-blocking)
-      const hasFiles = (formData.policyFiles?.length > 0);
+      const hasFiles = (formData.policyFiles?.length ?? 0) > 0;
       if (hasFiles) {
         const fileFormData = new FormData();
         
@@ -208,7 +252,7 @@ export default function HomeForm() {
         if (formData.isNewPurchase === true) return !!formData.closeDate;
         return true;
       case 3:
-        return true; // Property features are optional
+        return !!formData.propertyUsage;
       case 4:
         return validateContactInfo(formData) && !!turnstileToken;
       default:
@@ -290,7 +334,7 @@ export default function HomeForm() {
           }
         >
           <FormStep isActive={currentStep === 1 && !showTransition}>
-            <Step1PersonalInfo data={formData} onUpdate={updateFormData} />
+            <Step1PersonalInfo data={formData} onUpdate={updateFormData} showValidation={showValidation} />
           </FormStep>
 
           <FormStep isActive={showTransition}>
@@ -306,11 +350,11 @@ export default function HomeForm() {
           </FormStep>
 
           <FormStep isActive={currentStep === 2 && !showTransition}>
-            <Step2PurchaseInfo data={formData} onUpdate={updateFormData} />
+            <Step2PurchaseInfo data={formData} onUpdate={updateFormData} showValidation={showValidation} />
           </FormStep>
 
           <FormStep isActive={currentStep === 3}>
-            <Step3PropertyFeatures data={formData} onUpdate={updateFormData} />
+            <Step3PropertyFeatures data={formData} onUpdate={updateFormData} showValidation={showValidation} />
           </FormStep>
 
           <FormStep isActive={currentStep === 4}>
@@ -319,18 +363,14 @@ export default function HomeForm() {
               onUpdate={updateFormData}
               agentLocked={agentLocked}
               lockedAgentName={lockedAgentName}
+              showValidation={showValidation}
             />
 
             {submitError && (
-              <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                {submitError}
+              <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <p className="font-medium">Unable to proceed:</p>
+                <p>{submitError}</p>
               </div>
-            )}
-
-            {submitResult && (
-              <pre className="mt-6 max-h-64 overflow-auto rounded-md border bg-gray-50 p-3 text-xs">
-{JSON.stringify(submitResult, null, 2)}
-              </pre>
             )}
 
             {isSubmitting && (

@@ -16,6 +16,20 @@ interface RecapScreenProps {
 export default function RecapScreen({ data }: RecapScreenProps) {
   const [step, setStep] = useState(0);
 
+  // Detect form type
+  const isBusinessForm = 'businessName' in data || 'businessType' in data;
+  const isAutoForm = 'numVehicles' in data || 'coverageUrgency' in data;
+  const isHomeForm = 'isNewPurchase' in data || 'propertyFeatures' in data;
+  
+  // Determine coverage type and icon
+  const getCoverageInfo = () => {
+    if (isAutoForm) return { type: 'Auto', Icon: Car };
+    if (isHomeForm) return { type: 'Home', Icon: Home };
+    return { type: '', Icon: Building2 };
+  };
+  
+  const { type: coverageType, Icon: CoverageIcon } = getCoverageInfo();
+
   useEffect(() => {
     const timers = [
       setTimeout(() => setStep(1), 500),   // Subtitle
@@ -128,31 +142,44 @@ export default function RecapScreen({ data }: RecapScreenProps) {
           </div>
         )}
 
-        {/* Business Card */}
+        {/* Business/Coverage Card */}
         {step >= 3 && (
           <div id="business-card" className="bg-card border rounded-xl shadow-sm p-8 mb-6 animate-[fadeInUp_0.6s_ease-out_forwards]">
-            <div className="flex items-center gap-4 mb-4">
-              <BusinessIcon className="w-12 h-12 text-primary" />
-              <div>
-                <h3 className="text-3xl font-bold text-secondary">{data.businessName}</h3>
-                <p className="text-muted-foreground">{data.businessType}</p>
+            {isBusinessForm ? (
+              <>
+                <div className="flex items-center gap-4 mb-4">
+                  <BusinessIcon className="w-12 h-12 text-primary" />
+                  <div>
+                    <h3 className="text-3xl font-bold text-secondary">{data.businessName}</h3>
+                    <p className="text-muted-foreground">{data.businessType}</p>
+                  </div>
+                </div>
+                
+                {data.isNewBusiness !== null && (
+                  <p className="text-lg text-secondary/80 italic">
+                    {data.isNewBusiness 
+                      ? "Congrats on opening a new business!" 
+                      : data.yearBusinessStarted 
+                        ? `Congrats on ${new Date().getFullYear() - parseInt(data.yearBusinessStarted)} years of business!`
+                        : data.businessName}
+                  </p>
+                )}
+              </>
+            ) : (
+              <div className="flex items-center gap-4">
+                <CoverageIcon className="w-12 h-12 text-primary" />
+                <div>
+                  <h3 className="text-3xl font-bold text-secondary">
+                    {coverageType} Coverage for {data.firstName}
+                  </h3>
+                </div>
               </div>
-            </div>
-            
-            {data.isNewBusiness !== null && (
-              <p className="text-lg text-secondary/80 italic">
-                {data.isNewBusiness 
-                  ? "Congrats on opening a new business!" 
-                  : data.yearBusinessStarted 
-                    ? `Congrats on ${new Date().getFullYear() - parseInt(data.yearBusinessStarted)} years of business!`
-                    : data.businessName}
-              </p>
             )}
           </div>
         )}
 
-        {/* Products */}
-        {step >= 4 && data.products && data.products.length > 0 && (
+        {/* Products - Only show for business forms */}
+        {step >= 4 && isBusinessForm && data.products && data.products.length > 0 && (
           <div className="bg-card border rounded-xl shadow-sm p-8 mb-6 animate-[fadeInUp_0.6s_ease-out_forwards]">
             {data.products.includes('Expert Consultation') ? (
               <div className="space-y-6">
@@ -234,33 +261,33 @@ export default function RecapScreen({ data }: RecapScreenProps) {
             </div>
 
             {selectedAgent ? (
-              <div className="bg-card border rounded-xl shadow-sm p-6 animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
-                <h3 className="text-lg font-semibold mb-4 text-secondary">Your Dedicated Agent</h3>
-                <div className="flex items-center gap-4">
-                  <div className="bg-primary/10 rounded-2xl overflow-hidden">
-                    <img 
-                      src={selectedAgent.headshotSrc} 
-                      alt={`${selectedAgent.firstName} ${selectedAgent.lastName}`}
-                      className="w-24 h-24 object-cover"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="font-semibold text-lg text-secondary">{selectedAgent.firstName} {selectedAgent.lastName}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{selectedAgent.title}</p>
-                    <p className="text-sm text-primary font-medium mt-2">Will reach out within 1-2 business days</p>
-                  </div>
+              <div className="bg-card border rounded-xl shadow-sm overflow-hidden animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
+                <div className="p-6 pb-0">
+                  <h3 className="text-lg font-semibold mb-2 text-secondary">Your Dedicated Agent</h3>
+                  <p className="font-semibold text-lg text-secondary">{selectedAgent.firstName} {selectedAgent.lastName}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{selectedAgent.title}</p>
+                  <p className="text-sm text-primary font-medium mt-2 mb-4">Will reach out within 1-2 business days</p>
+                </div>
+                <div className="w-full h-48 bg-primary/10 relative overflow-hidden">
+                  <img 
+                    src={selectedAgent.headshotSrc} 
+                    alt={`${selectedAgent.firstName} ${selectedAgent.lastName}`}
+                    className="w-full h-full object-cover object-top"
+                  />
                 </div>
               </div>
             ) : (
-              <div className="bg-card border rounded-xl shadow-sm p-6 animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
-                <h3 className="text-lg font-semibold mb-4 text-secondary">Our agents are on it!</h3>
-                <div className="space-y-4">
+              <div className="bg-card border rounded-xl shadow-sm overflow-hidden animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
+                <div className="p-6 pb-2">
+                  <h3 className="text-2xl font-semibold mb-1 text-secondary">Our agents are on it!</h3>
+                  <p className="text-sm text-primary font-medium mb-3">We'll reach out to you shortly</p>
+                </div>
+                <div className="w-full">
                   <img
                     src="/agents/group/gusjusora.png"
                     alt="Our team of agents"
-                    className="w-full h-auto rounded-lg"
+                    className="w-full h-auto"
                   />
-                  <p className="text-sm text-primary font-medium">We'll reach out to you shortly</p>
                 </div>
               </div>
             )}

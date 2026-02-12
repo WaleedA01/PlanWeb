@@ -8,6 +8,7 @@ import { HomeIcon, Key, Palmtree, DoorOpen } from 'lucide-react';
 interface Step3Props {
   data: HomeFormData;
   onUpdate: (updates: Partial<HomeFormData>) => void;
+  showValidation?: boolean;
 }
 
 const PROPERTY_USAGE = [
@@ -18,7 +19,9 @@ const PROPERTY_USAGE = [
   { value: 'vacant', label: 'Vacant', icon: DoorOpen },
 ];
 
-export default function Step3PropertyFeatures({ data, onUpdate }: Step3Props) {
+export default function Step3PropertyFeatures({ data, onUpdate, showValidation }: Step3Props) {
+  const hasError = showValidation && !data.propertyUsage;
+
   return (
     <div className="space-y-8">
       <div className="text-center">
@@ -27,7 +30,12 @@ export default function Step3PropertyFeatures({ data, onUpdate }: Step3Props) {
       </div>
 
       <div>
-        <Label className="mb-3 block text-lg">What is the property usage?</Label>
+        <Label className={`mb-3 block text-lg ${hasError ? 'text-red-600' : ''}`}>
+          What is the property usage? {hasError && '*'}
+        </Label>
+        {hasError && (
+          <p className="text-sm text-red-600 mb-3">Please select a property usage</p>
+        )}
         <div className="flex flex-wrap justify-center gap-4">
           {PROPERTY_USAGE.map((usage) => {
             const isSelected = data.propertyUsage === usage.value;
@@ -39,6 +47,8 @@ export default function Step3PropertyFeatures({ data, onUpdate }: Step3Props) {
                 className={`relative w-full sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-0.67rem)] lg:w-[calc(20%-0.8rem)] p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                   isSelected
                     ? 'border-primary bg-primary text-white shadow-md'
+                    : hasError
+                    ? 'border-red-500 hover:border-red-600'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
@@ -59,17 +69,6 @@ export default function Step3PropertyFeatures({ data, onUpdate }: Step3Props) {
             );
           })}
         </div>
-      </div>
-
-      <div>
-        <Label htmlFor="additionalNotes" className="text-lg">Additional Information</Label>
-        <Textarea
-          id="additionalNotes"
-          value={data.additionalNotes}
-          onChange={(e) => onUpdate({ additionalNotes: e.target.value })}
-          placeholder="Any additional information..."
-          rows={4}
-        />
       </div>
     </div>
   );

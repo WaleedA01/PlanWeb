@@ -28,6 +28,7 @@ interface Step4FinalStepProps<T extends ContactFormData> {
   onUpdate: (updates: Partial<T>) => void;
   agentLocked?: boolean;
   lockedAgentName?: string | null;
+  showValidation?: boolean;
 }
 
 const formatPhoneNumber = (value: string): string => {
@@ -55,8 +56,29 @@ const isValidPhone = (phone: string): boolean => {
 
 export const validateContactInfo = <T extends ContactFormData>(data: T): boolean => {
   if (!data.preferredContactMethod) return false;
-  if (data.email && !isValidEmail(data.email)) return false;
-  if (data.phoneNumber && !isValidPhone(data.phoneNumber)) return false;
+  
+  const method = data.preferredContactMethod;
+  
+  // Email only: require valid email
+  if (method === 'email') {
+    if (!data.email || !isValidEmail(data.email)) return false;
+    // If phone is provided, it must be valid
+    if (data.phoneNumber && !isValidPhone(data.phoneNumber)) return false;
+  }
+  
+  // Phone or Text: require valid phone
+  if (method === 'phone' || method === 'text') {
+    if (!data.phoneNumber || !isValidPhone(data.phoneNumber)) return false;
+    // If email is provided, it must be valid
+    if (data.email && !isValidEmail(data.email)) return false;
+  }
+  
+  // Either: require both valid email and phone
+  if (method === 'either') {
+    if (!data.email || !isValidEmail(data.email)) return false;
+    if (!data.phoneNumber || !isValidPhone(data.phoneNumber)) return false;
+  }
+  
   return true;
 };
 
@@ -64,11 +86,18 @@ export default function Step4FinalStep<T extends ContactFormData>({
   data, 
   onUpdate, 
   agentLocked, 
-  lockedAgentName 
+  lockedAgentName,
+  showValidation
 }: Step4FinalStepProps<T>) {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [emailError, setEmailError] = useState<string>('');
   const [phoneError, setPhoneError] = useState<string>('');
+
+  const hasMethodError = showValidation && !data.preferredContactMethod;
+  const hasEmailError = showValidation && data.preferredContactMethod && 
+    ((data.preferredContactMethod === 'email' || data.preferredContactMethod === 'either') && (!data.email || !isValidEmail(data.email)));
+  const hasPhoneError = showValidation && data.preferredContactMethod && 
+    ((data.preferredContactMethod === 'phone' || data.preferredContactMethod === 'text' || data.preferredContactMethod === 'either') && (!data.phoneNumber || !isValidPhone(data.phoneNumber)));
 
   useEffect(() => {
     if (agentLocked && data.selectedAgentId) {
@@ -119,7 +148,12 @@ export default function Step4FinalStep<T extends ContactFormData>({
 
       <div className="space-y-6">
         <div>
-          <Label className="mb-3 block text-lg">How would you like us to contact you?</Label>
+          <Label className={`mb-3 block text-lg ${hasMethodError ? 'text-red-600' : ''}`}>
+            How would you like us to contact you? {hasMethodError && '*'}
+          </Label>
+          {hasMethodError && (
+            <p className="text-sm text-red-600 mb-3">Please select a contact method</p>
+          )}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {contactMethods.map((method) => {
               const isSelected = data.preferredContactMethod === method.value;
@@ -131,6 +165,8 @@ export default function Step4FinalStep<T extends ContactFormData>({
                   className={`relative p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
+                      : hasMethodError
+                      ? 'border-red-500 hover:border-red-600'
                       : 'border-border hover:border-primary/50'
                   }`}
                 >
@@ -164,14 +200,16 @@ export default function Step4FinalStep<T extends ContactFormData>({
         {data.preferredContactMethod === 'email' && (
           <>
             <div className="animate-in fade-in duration-500">
-              <Label htmlFor="email" className="text-lg">Email</Label>
+              <Label htmlFor="email" className={`text-lg ${hasEmailError ? 'text-red-600' : ''}`}>
+                Email {hasEmailError && '*'}
+              </Label>
               <Input
                 id="email"
                 type="email"
                 value={data.email}
                 onChange={(e) => handleEmailChange(e.target.value)}
                 placeholder="your@email.com"
-                className={emailError ? 'border-red-500' : ''}
+                className={emailError || hasEmailError ? 'border-red-500' : ''}
               />
               {emailError && <p className="text-sm text-red-500 mt-1">{emailError}</p>}
             </div>
@@ -193,14 +231,16 @@ export default function Step4FinalStep<T extends ContactFormData>({
         {(data.preferredContactMethod === 'phone' || data.preferredContactMethod === 'text') && (
           <>
             <div className="animate-in fade-in duration-500">
-              <Label htmlFor="phoneNumber" className="text-lg">Phone Number</Label>
+              <Label htmlFor="phoneNumber" className={`text-lg ${hasPhoneError ? 'text-red-600' : ''}`}>
+                Phone Number {hasPhoneError && '*'}
+              </Label>
               <Input
                 id="phoneNumber"
                 type="tel"
                 value={data.phoneNumber}
                 onChange={(e) => handlePhoneChange(e.target.value)}
                 placeholder="(555) 123-4567"
-                className={phoneError ? 'border-red-500' : ''}
+                className={phoneError || hasPhoneError ? 'border-red-500' : ''}
               />
               {phoneError && <p className="text-sm text-red-500 mt-1">{phoneError}</p>}
             </div>
@@ -222,26 +262,30 @@ export default function Step4FinalStep<T extends ContactFormData>({
         {data.preferredContactMethod === 'either' && (
           <>
             <div className="animate-in fade-in duration-500">
-              <Label htmlFor="email" className="text-lg">Email</Label>
+              <Label htmlFor="email" className={`text-lg ${hasEmailError ? 'text-red-600' : ''}`}>
+                Email {hasEmailError && '*'}
+              </Label>
               <Input
                 id="email"
                 type="email"
                 value={data.email}
                 onChange={(e) => handleEmailChange(e.target.value)}
                 placeholder="your@email.com"
-                className={emailError ? 'border-red-500' : ''}
+                className={emailError || hasEmailError ? 'border-red-500' : ''}
               />
               {emailError && <p className="text-sm text-red-500 mt-1">{emailError}</p>}
             </div>
             <div className="animate-in fade-in duration-500">
-              <Label htmlFor="phoneNumber" className="text-lg">Phone Number</Label>
+              <Label htmlFor="phoneNumber" className={`text-lg ${hasPhoneError ? 'text-red-600' : ''}`}>
+                Phone Number {hasPhoneError && '*'}
+              </Label>
               <Input
                 id="phoneNumber"
                 type="tel"
                 value={data.phoneNumber}
                 onChange={(e) => handlePhoneChange(e.target.value)}
                 placeholder="(555) 123-4567"
-                className={phoneError ? 'border-red-500' : ''}
+                className={phoneError || hasPhoneError ? 'border-red-500' : ''}
               />
               {phoneError && <p className="text-sm text-red-500 mt-1">{phoneError}</p>}
             </div>

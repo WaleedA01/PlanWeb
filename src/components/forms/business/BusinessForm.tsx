@@ -443,11 +443,11 @@ export default function BusinessForm() {
           </FormStep>
 
           <FormStep isActive={currentStep === 3 && !showTransition}>
-            <Step3BusinessType data={formData} onUpdate={updateFormData} classifications={businessClassifications} />
+            <Step3BusinessType data={formData} onUpdate={updateFormData} classifications={businessClassifications} showValidation={showValidation} />
           </FormStep>
 
           <FormStep isActive={currentStep === 4}>
-            <Step4Products data={formData} onUpdate={updateFormData} />
+            <Step4Products data={formData} onUpdate={updateFormData} showValidation={showValidation} />
           </FormStep>
 
           <FormStep isActive={currentStep === 5}>

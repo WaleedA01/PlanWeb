@@ -10,7 +10,10 @@ interface Step2Props {
   showValidation?: boolean;
 }
 
-export default function Step2OwnerInfo({ data, onUpdate }: Step2Props) {
+export default function Step2OwnerInfo({ data, onUpdate, showValidation }: Step2Props) {
+  const hasFirstNameError = showValidation && !data.firstName;
+  const hasLastNameError = showValidation && !data.lastName;
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -21,18 +24,22 @@ export default function Step2OwnerInfo({ data, onUpdate }: Step2Props) {
       </div>
 
       <div>
-        <Label className="text-lg mb-2 block">Business Owner</Label>
+        <Label className={`text-lg mb-2 block ${(hasFirstNameError || hasLastNameError) ? 'text-red-600' : ''}`}>
+          Business Owner {(hasFirstNameError || hasLastNameError) && '*'}
+        </Label>
         <div className="grid grid-cols-2 gap-4">
           <Input
             placeholder="First Name"
             value={data.firstName}
             onChange={(e) => onUpdate({ firstName: e.target.value })}
             autoFocus
+            className={hasFirstNameError ? 'border-red-500' : ''}
           />
           <Input
             placeholder="Last Name"
             value={data.lastName}
             onChange={(e) => onUpdate({ lastName: e.target.value })}
+            className={hasLastNameError ? 'border-red-500' : ''}
           />
         </div>
       </div>

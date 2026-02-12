@@ -10,9 +10,10 @@ interface BusinessAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
   classifications: BusinessClassification[];
+  hasError?: boolean;
 }
 
-export default function BusinessAutocomplete({ value, onChange, classifications }: BusinessAutocompleteProps) {
+export default function BusinessAutocomplete({ value, onChange, classifications, hasError = false }: BusinessAutocompleteProps) {
   const [inputValue, setInputValue] = useState(value);
   const [isOpen, setIsOpen] = useState(false);
   const [results, setResults] = useState<FuseResult<BusinessClassification>[]>([]);
@@ -97,7 +98,7 @@ export default function BusinessAutocomplete({ value, onChange, classifications 
           onChange={(e) => setInputValue(e.target.value)}
           onFocus={() => inputValue.length >= 2 && setIsOpen(true)}
           placeholder="Type to search (e.g., restaurant, retail, construction)..."
-          className="w-full pl-10"
+          className={`w-full pl-10 ${hasError ? 'border-red-500' : ''}`}
         />
         <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

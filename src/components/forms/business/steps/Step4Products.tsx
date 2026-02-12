@@ -10,12 +10,14 @@ import Image from 'next/image';
 interface Step3Props {
   data: BusinessFormData;
   onUpdate: (updates: Partial<BusinessFormData>) => void;
+  showValidation?: boolean;
 }
 
-export default function Step3Products({ data, onUpdate }: Step3Props) {
+export default function Step3Products({ data, onUpdate, showValidation = false }: Step3Props) {
   const [showAll, setShowAll] = useState(false);
   const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
   const [showProductGrid, setShowProductGrid] = useState(false);
+  const hasError = showValidation && data.products.length === 0;
 
   const productsWithoutOther = PRODUCTS.filter(p => p.id !== 'other');
   const otherProduct = PRODUCTS.find(p => p.id === 'other');
@@ -52,6 +54,9 @@ export default function Step3Products({ data, onUpdate }: Step3Props) {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Coverages</h2>
+        {hasError && (
+          <p className="text-red-500 text-sm font-medium mt-2">* Please select at least one coverage option</p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -64,6 +69,8 @@ export default function Step3Products({ data, onUpdate }: Step3Props) {
               ? 'border-2 border-primary bg-primary text-white shadow-md'
               : hasSpecificProducts
               ? 'border border-border bg-gray-50 opacity-50 hover:opacity-100 hover:border-primary/50'
+              : hasError
+              ? 'border-2 border-red-500 hover:border-red-600'
               : 'border-2 border-border hover:border-primary/50'
           }`}
         >

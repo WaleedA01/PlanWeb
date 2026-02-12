@@ -9,6 +9,7 @@ import { HelpCircle } from 'lucide-react';
 interface Step2Props {
   data: AutoFormData;
   onUpdate: (updates: Partial<AutoFormData>) => void;
+  showValidation?: boolean;
 }
 
 const COVERAGE_URGENCY: Array<{ value: 'now' | 'week' | 'shopping'; label: string; icon: any }> = [
@@ -20,7 +21,11 @@ const COVERAGE_URGENCY: Array<{ value: 'now' | 'week' | 'shopping'; label: strin
 const VEHICLE_COUNTS: Array<'1' | '2' | '3' | '4' | '5+'> = ['1', '2', '3', '4', '5+'];
 const DRIVER_COUNTS: Array<'1' | '2' | '3' | '4' | '5+'> = ['1', '2', '3', '4', '5+'];
 
-export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
+export default function Step2VehicleStatus({ data, onUpdate, showValidation = false }: Step2Props) {
+  const hasCoverageError = showValidation && !data.coverageUrgency;
+  const hasVehiclesError = showValidation && !data.numVehicles;
+  const hasDriversError = showValidation && !data.numDrivers;
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -30,7 +35,9 @@ export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
 
       <div className="space-y-6">
         <div>
-          <Label className="mb-3 block text-lg">How soon do you need coverage?</Label>
+          <Label className={`mb-3 block text-lg ${hasCoverageError ? 'text-red-500' : ''}`}>
+            How soon do you need coverage? {hasCoverageError && <span className="text-red-500">*</span>}
+          </Label>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {COVERAGE_URGENCY.map((option) => {
               const isSelected = data.coverageUrgency === option.value;
@@ -42,6 +49,8 @@ export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
                   className={`relative p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
+                      : hasCoverageError
+                      ? 'border-red-500 hover:border-red-600'
                       : 'border-border hover:border-primary/50'
                   }`}
                 >
@@ -65,7 +74,9 @@ export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
         </div>
 
         <div>
-          <Label className="mb-3 block text-lg">Select number of vehicles</Label>
+          <Label className={`mb-3 block text-lg ${hasVehiclesError ? 'text-red-500' : ''}`}>
+            Select number of vehicles {hasVehiclesError && <span className="text-red-500">*</span>}
+          </Label>
           <div className="grid grid-cols-5 gap-3">
             {VEHICLE_COUNTS.map((count) => {
               const isSelected = data.numVehicles === count;
@@ -77,6 +88,8 @@ export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
                   className={`relative p-4 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
+                      : hasVehiclesError
+                      ? 'border-red-500 hover:border-red-600'
                       : 'border-border hover:border-primary/50'
                   }`}
                 >
@@ -91,7 +104,9 @@ export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
 
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <Label className="text-lg mb-0">Select number of drivers</Label>
+            <Label className={`text-lg mb-0 ${hasDriversError ? 'text-red-500' : ''}`}>
+              Select number of drivers {hasDriversError && <span className="text-red-500">*</span>}
+            </Label>
             <Tooltip content="Including yourself">
               <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
             </Tooltip>
@@ -107,6 +122,8 @@ export default function Step2VehicleStatus({ data, onUpdate }: Step2Props) {
                   className={`relative p-4 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
+                      : hasDriversError
+                      ? 'border-red-500 hover:border-red-600'
                       : 'border-border hover:border-primary/50'
                   }`}
                 >

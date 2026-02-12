@@ -226,15 +226,10 @@ export default function OtherForm() {
             />
 
             {submitError && (
-              <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                {submitError}
+              <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <p className="font-medium">Unable to proceed:</p>
+                <p>{submitError}</p>
               </div>
-            )}
-
-            {submitResult && (
-              <pre className="mt-6 max-h-64 overflow-auto rounded-md border bg-gray-50 p-3 text-xs">
-{JSON.stringify(submitResult, null, 2)}
-              </pre>
             )}
 
             {isSubmitting && (

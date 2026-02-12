@@ -8,9 +8,12 @@ interface Step2Props {
   data: BusinessFormData;
   onUpdate: (updates: Partial<BusinessFormData>) => void;
   classifications: BusinessClassification[];
+  showValidation?: boolean;
 }
 
-export default function Step2BusinessType({ data, onUpdate, classifications }: Step2Props) {
+export default function Step2BusinessType({ data, onUpdate, classifications, showValidation = false }: Step2Props) {
+  const hasError = showValidation && !data.businessType;
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -18,11 +21,17 @@ export default function Step2BusinessType({ data, onUpdate, classifications }: S
         <p className="text-base md:text-lg text-primary">Search and select the category that best describes your business</p>
       </div>
 
-      <BusinessAutocomplete
-        value={data.businessType}
-        onChange={(value) => onUpdate({ businessType: value })}
-        classifications={classifications}
-      />
+      <div>
+        {hasError && (
+          <p className="text-red-500 text-sm mb-2 font-medium">* Please select a business type to continue</p>
+        )}
+        <BusinessAutocomplete
+          value={data.businessType}
+          onChange={(value) => onUpdate({ businessType: value })}
+          classifications={classifications}
+          hasError={hasError}
+        />
+      </div>
     </div>
   );
 }

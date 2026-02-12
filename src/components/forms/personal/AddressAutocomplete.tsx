@@ -21,6 +21,7 @@ interface AddressAutocompleteProps {
   label?: string;
   placeholder?: string;
   tooltip?: string;
+  hasError?: boolean;
 }
 
 export default function AddressAutocomplete({
@@ -29,7 +30,8 @@ export default function AddressAutocomplete({
   onManualEntry,
   label = "Address",
   placeholder = "Enter your address...",
-  tooltip
+  tooltip,
+  hasError = false
 }: AddressAutocompleteProps) {
   const [inputValue, setInputValue] = useState(value || '');
   const [predictions, setPredictions] = useState<PlaceResult[]>([]);
@@ -96,7 +98,9 @@ export default function AddressAutocomplete({
   return (
     <div className="relative">
       <div className="flex items-center gap-2 mb-2">
-        <Label className="mb-0">{label}</Label>
+        <Label className={`mb-0 ${hasError ? 'text-red-600' : ''}`}>
+          {label} {hasError && '*'}
+        </Label>
         {tooltip && (
           <Tooltip content={tooltip}>
             <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
@@ -109,6 +113,7 @@ export default function AddressAutocomplete({
         onFocus={() => inputValue && predictions.length > 0 && setShowDropdown(true)}
         placeholder={placeholder}
         autoComplete="off"
+        className={hasError ? 'border-red-500' : ''}
       />
       
       {showDropdown && (

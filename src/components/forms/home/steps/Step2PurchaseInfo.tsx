@@ -10,6 +10,7 @@ import { Combobox } from '@/components/ui/combobox';
 interface Step2Props {
   data: HomeFormData;
   onUpdate: (updates: Partial<HomeFormData>) => void;
+  showValidation?: boolean;
 }
 
 const HOME_INSURERS = [
@@ -17,7 +18,10 @@ const HOME_INSURERS = [
   ...getCarrierNames('home'),
 ];
 
-export default function Step2PurchaseInfo({ data, onUpdate }: Step2Props) {
+export default function Step2PurchaseInfo({ data, onUpdate, showValidation }: Step2Props) {
+  const hasNewPurchaseError = showValidation && data.isNewPurchase === null;
+  const hasCloseDateError = showValidation && data.isNewPurchase === true && !data.closeDate;
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -27,7 +31,12 @@ export default function Step2PurchaseInfo({ data, onUpdate }: Step2Props) {
 
       <div className="space-y-6">
         <div>
-          <Label className="mb-3 block text-lg">Is this a new purchase?</Label>
+          <Label className={`mb-3 block text-lg ${hasNewPurchaseError ? 'text-red-600' : ''}`}>
+            Is this a new purchase? {hasNewPurchaseError && '*'}
+          </Label>
+          {hasNewPurchaseError && (
+            <p className="text-sm text-red-600 mb-3">Please select an option</p>
+          )}
           <div className="grid grid-cols-2 gap-4">
             {[
               { value: true, label: 'Yes', icon: FileSignature },
@@ -42,6 +51,8 @@ export default function Step2PurchaseInfo({ data, onUpdate }: Step2Props) {
                   className={`relative p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
+                      : hasNewPurchaseError
+                      ? 'border-red-500 hover:border-red-600'
                       : 'border-border hover:border-primary/50'
                   }`}
                 >
@@ -66,12 +77,15 @@ export default function Step2PurchaseInfo({ data, onUpdate }: Step2Props) {
 
         {data.isNewPurchase === true && (
           <div className="animate-in fade-in duration-500">
-            <Label htmlFor="closeDate" className="text-lg">Close Date</Label>
+            <Label htmlFor="closeDate" className={`text-lg ${hasCloseDateError ? 'text-red-600' : ''}`}>
+              Close Date {hasCloseDateError && '*'}
+            </Label>
             <Input
               id="closeDate"
               type="date"
               value={data.closeDate}
               onChange={(e) => onUpdate({ closeDate: e.target.value })}
+              className={hasCloseDateError ? 'border-red-500' : ''}
             />
           </div>
         )}
