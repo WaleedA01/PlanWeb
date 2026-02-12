@@ -146,6 +146,44 @@ export default function AutoForm() {
     setIsSubmitting(true);
 
     try {
+      const hasFiles = (formData.policyFiles?.length > 0) || (formData.licenseFiles?.length > 0);
+
+      // If files exist, send via new endpoint with attachments
+      if (hasFiles) {
+        const fileFormData = new FormData();
+        
+        // Add all form fields
+        Object.entries(formData).forEach(([key, value]) => {
+          if (key !== 'policyFiles' && key !== 'licenseFiles' && value !== null && value !== undefined) {
+            fileFormData.append(key, String(value));
+          }
+        });
+
+        // Add policy files
+        formData.policyFiles?.forEach((file) => {
+          fileFormData.append('policyFile', file);
+        });
+
+        // Add license files
+        formData.licenseFiles?.forEach((file) => {
+          fileFormData.append('licenseFile', file);
+        });
+
+        const fileRes = await fetch('/api/submit-with-files', {
+          method: 'POST',
+          body: fileFormData,
+        });
+
+        if (!fileRes.ok) {
+          const fileData = await fileRes.json().catch(() => null);
+          setSubmitError(fileData?.error || 'Failed to send files');
+          setTurnstileToken(null);
+          setTurnstileKey((k) => k + 1);
+          return;
+        }
+      }
+
+      // Always send to Zapier (existing flow)
       const answers = {
         ...formData,
         agentId: formData.selectedAgentId,
