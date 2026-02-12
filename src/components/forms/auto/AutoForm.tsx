@@ -6,7 +6,7 @@ import Step1PersonalInfo from './steps/Step1PersonalInfo';
 import Step2VehicleStatus from './steps/Step2VehicleStatus';
 import Step3VehicleDetails from './steps/Step3VehicleDetails';
 import Step4Documents from './steps/Step4Documents';
-import ContactInfoStep, { validateContactInfo } from '../shared/ContactInfoStep';
+import Step5FinalStep, { validateContactInfo } from './steps/Step5FinalStep';
 import FormContainer from '../shared/FormContainer';
 import FormStep from '../shared/FormStep';
 import PersonalMap from '../personal/PersonalMap';
@@ -320,7 +320,7 @@ export default function AutoForm() {
           </FormStep>
 
           <FormStep isActive={currentStep === 5}>
-            <ContactInfoStep 
+            <Step5FinalStep 
               data={formData} 
               onUpdate={updateFormData}
               agentLocked={agentLocked}

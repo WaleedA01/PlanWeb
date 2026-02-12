@@ -1,11 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AutoFormData } from '../types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, Phone, Users, MessageSquare } from 'lucide-react';
+import { Mail, Phone, MessageSquare } from 'lucide-react';
 
 type Agent = {
   id: string;
@@ -16,15 +15,60 @@ type Agent = {
   status: 'available' | 'unavailable' | 'inactive';
 };
 
-interface Step5Props {
-  data: AutoFormData;
-  onUpdate: (updates: Partial<AutoFormData>) => void;
-  agentLocked?: boolean;
-  lockedAgentName?: string;
+interface ContactFormData {
+  email: string;
+  phoneNumber: string;
+  preferredContactMethod: string;
+  additionalNotes: string;
+  selectedAgentId: string;
 }
 
-export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAgentName }: Step5Props) {
+interface Step5FinalStepProps<T extends ContactFormData> {
+  data: T;
+  onUpdate: (updates: Partial<T>) => void;
+  agentLocked?: boolean;
+  lockedAgentName?: string | null;
+}
+
+const formatPhoneNumber = (value: string): string => {
+  const cleaned = value.replace(/\D/g, '');
+  const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
+  if (!match) return value;
+  
+  const [, area, prefix, line] = match;
+  if (line) return `(${area}) ${prefix}-${line}`;
+  if (prefix) return `(${area}) ${prefix}`;
+  if (area) return `(${area}`;
+  return '';
+};
+
+const isValidEmail = (email: string): boolean => {
+  if (!email) return true;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const isValidPhone = (phone: string): boolean => {
+  if (!phone) return true;
+  const cleaned = phone.replace(/\D/g, '');
+  return cleaned.length === 10;
+};
+
+export const validateContactInfo = <T extends ContactFormData>(data: T): boolean => {
+  if (!data.preferredContactMethod) return false;
+  if (data.email && !isValidEmail(data.email)) return false;
+  if (data.phoneNumber && !isValidPhone(data.phoneNumber)) return false;
+  return true;
+};
+
+export default function Step5FinalStep<T extends ContactFormData>({ 
+  data, 
+  onUpdate, 
+  agentLocked, 
+  lockedAgentName 
+}: Step5FinalStepProps<T>) {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [emailError, setEmailError] = useState<string>('');
+  const [phoneError, setPhoneError] = useState<string>('');
 
   useEffect(() => {
     if (agentLocked && data.selectedAgentId) {
@@ -37,6 +81,27 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
         .catch(console.error);
     }
   }, [agentLocked, data.selectedAgentId]);
+
+  const handlePhoneChange = (value: string) => {
+    const formatted = formatPhoneNumber(value);
+    onUpdate({ phoneNumber: formatted } as Partial<T>);
+    
+    if (value && !isValidPhone(formatted)) {
+      setPhoneError('Please enter a valid 10-digit phone number');
+    } else {
+      setPhoneError('');
+    }
+  };
+
+  const handleEmailChange = (value: string) => {
+    onUpdate({ email: value } as Partial<T>);
+    
+    if (value && !isValidEmail(value)) {
+      setEmailError('Please enter a valid email address');
+    } else {
+      setEmailError('');
+    }
+  };
 
   const contactMethods = [
     { value: 'email', label: 'Email', icon: Mail },
@@ -62,7 +127,7 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
                 <button
                   key={method.value}
                   type="button"
-                  onClick={() => onUpdate({ preferredContactMethod: method.value as any })}
+                  onClick={() => onUpdate({ preferredContactMethod: method.value } as Partial<T>)}
                   className={`relative p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
@@ -80,7 +145,7 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
                     {'icons' in method && method.icons ? (
                       <div className="flex items-center gap-2">
                         {method.icons.map((Icon, i) => (
-                          <Icon key={i} className={`w-6 h-6 ${isSelected ? 'text-white' : 'text-primary'}`} />
+                          <Icon key={i} className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-primary'}`} />
                         ))}
                       </div>
                     ) : (
@@ -99,14 +164,16 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
         {data.preferredContactMethod === 'email' && (
           <>
             <div className="animate-in fade-in duration-500">
-              <Label htmlFor="email" className="text-lg">Email *</Label>
+              <Label htmlFor="email" className="text-lg">Email</Label>
               <Input
                 id="email"
                 type="email"
                 value={data.email}
-                onChange={(e) => onUpdate({ email: e.target.value })}
+                onChange={(e) => handleEmailChange(e.target.value)}
                 placeholder="your@email.com"
+                className={emailError ? 'border-red-500' : ''}
               />
+              {emailError && <p className="text-sm text-red-500 mt-1">{emailError}</p>}
             </div>
             <div className="animate-in fade-in duration-500">
               <Label htmlFor="phoneNumber" className="text-lg">Phone Number</Label>
@@ -114,9 +181,11 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
                 id="phoneNumber"
                 type="tel"
                 value={data.phoneNumber}
-                onChange={(e) => onUpdate({ phoneNumber: e.target.value })}
+                onChange={(e) => handlePhoneChange(e.target.value)}
                 placeholder="(555) 123-4567"
+                className={phoneError ? 'border-red-500' : ''}
               />
+              {phoneError && <p className="text-sm text-red-500 mt-1">{phoneError}</p>}
             </div>
           </>
         )}
@@ -124,14 +193,16 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
         {(data.preferredContactMethod === 'phone' || data.preferredContactMethod === 'text') && (
           <>
             <div className="animate-in fade-in duration-500">
-              <Label htmlFor="phoneNumber" className="text-lg">Phone Number *</Label>
+              <Label htmlFor="phoneNumber" className="text-lg">Phone Number</Label>
               <Input
                 id="phoneNumber"
                 type="tel"
                 value={data.phoneNumber}
-                onChange={(e) => onUpdate({ phoneNumber: e.target.value })}
+                onChange={(e) => handlePhoneChange(e.target.value)}
                 placeholder="(555) 123-4567"
+                className={phoneError ? 'border-red-500' : ''}
               />
+              {phoneError && <p className="text-sm text-red-500 mt-1">{phoneError}</p>}
             </div>
             <div className="animate-in fade-in duration-500">
               <Label htmlFor="email" className="text-lg">Email</Label>
@@ -139,9 +210,11 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
                 id="email"
                 type="email"
                 value={data.email}
-                onChange={(e) => onUpdate({ email: e.target.value })}
+                onChange={(e) => handleEmailChange(e.target.value)}
                 placeholder="your@email.com"
+                className={emailError ? 'border-red-500' : ''}
               />
+              {emailError && <p className="text-sm text-red-500 mt-1">{emailError}</p>}
             </div>
           </>
         )}
@@ -149,27 +222,42 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
         {data.preferredContactMethod === 'either' && (
           <>
             <div className="animate-in fade-in duration-500">
-              <Label htmlFor="email" className="text-lg">Email *</Label>
+              <Label htmlFor="email" className="text-lg">Email</Label>
               <Input
                 id="email"
                 type="email"
                 value={data.email}
-                onChange={(e) => onUpdate({ email: e.target.value })}
+                onChange={(e) => handleEmailChange(e.target.value)}
                 placeholder="your@email.com"
+                className={emailError ? 'border-red-500' : ''}
               />
+              {emailError && <p className="text-sm text-red-500 mt-1">{emailError}</p>}
             </div>
             <div className="animate-in fade-in duration-500">
-              <Label htmlFor="phoneNumber" className="text-lg">Phone Number *</Label>
+              <Label htmlFor="phoneNumber" className="text-lg">Phone Number</Label>
               <Input
                 id="phoneNumber"
                 type="tel"
                 value={data.phoneNumber}
-                onChange={(e) => onUpdate({ phoneNumber: e.target.value })}
+                onChange={(e) => handlePhoneChange(e.target.value)}
                 placeholder="(555) 123-4567"
+                className={phoneError ? 'border-red-500' : ''}
               />
+              {phoneError && <p className="text-sm text-red-500 mt-1">{phoneError}</p>}
             </div>
           </>
         )}
+
+        <div className="animate-in fade-in duration-500">
+          <Label htmlFor="additionalNotes" className="text-lg">Additional Notes</Label>
+          <Textarea
+            id="additionalNotes"
+            value={data.additionalNotes}
+            onChange={(e) => onUpdate({ additionalNotes: e.target.value } as Partial<T>)}
+            placeholder="Tell us anything else we should know..."
+            rows={4}
+          />
+        </div>
 
         {agentLocked && selectedAgent && (
           <div className="rounded-xl border-2 border-primary bg-primary/5 p-6">
@@ -187,21 +275,6 @@ export default function Step5ContactInfo({ data, onUpdate, agentLocked, lockedAg
             </div>
           </div>
         )}
-
-        <div>
-          <Label htmlFor="additionalNotes" className="text-lg">
-            {agentLocked && selectedAgent 
-              ? `Anything else you'd like ${selectedAgent.firstName} to know?`
-              : "Anything else you'd like the agent to know?"}
-          </Label>
-          <Textarea
-            id="additionalNotes"
-            value={data.additionalNotes}
-            onChange={(e) => onUpdate({ additionalNotes: e.target.value })}
-            placeholder="Any additional information..."
-            rows={4}
-          />
-        </div>
       </div>
     </div>
   );

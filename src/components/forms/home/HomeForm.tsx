@@ -9,7 +9,7 @@ import AnimatedTransition from '../shared/AnimatedTransition';
 import Step1PersonalInfo from './steps/Step1PersonalInfo';
 import Step2PurchaseInfo from './steps/Step2PurchaseInfo';
 import Step3PropertyFeatures from './steps/Step3PropertyFeatures';
-import ContactInfoStep, { validateContactInfo } from '../shared/ContactInfoStep';
+import Step4FinalStep, { validateContactInfo } from './steps/Step4FinalStep';
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { Home } from 'lucide-react';
 import PersonalMap from '../personal/PersonalMap';
@@ -287,7 +287,7 @@ export default function HomeForm() {
           </FormStep>
 
           <FormStep isActive={currentStep === 4}>
-            <ContactInfoStep 
+            <Step4FinalStep 
               data={formData} 
               onUpdate={updateFormData}
               agentLocked={agentLocked}

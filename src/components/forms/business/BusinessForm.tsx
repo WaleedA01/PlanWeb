@@ -11,7 +11,7 @@ import Step1BusinessInfo from './steps/Step1BusinessInfo';
 import Step2BusinessType from './steps/Step2BusinessType';
 import Step3Products from './steps/Step3Products';
 import Step4BusinessDetails from './steps/Step4BusinessDetails';
-import ContactInfoStep, { validateContactInfo } from '../shared/ContactInfoStep';
+import Step5FinalStep, { validateContactInfo } from './steps/Step5FinalStep';
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { Shield, Building2, CheckCircle2, UtensilsCrossed, Store, Wrench, Briefcase, Home, Car, Heart, GraduationCap, Scissors, Dumbbell, Coffee, ShoppingBag, Hammer } from 'lucide-react';
 import BusinessMap from './BusinessMap';
@@ -387,7 +387,7 @@ export default function BusinessForm() {
           </FormStep>
 
           <FormStep isActive={currentStep === 5}>
-            <ContactInfoStep 
+            <Step5FinalStep 
               data={formData} 
               onUpdate={updateFormData}
               agentLocked={agentLocked}

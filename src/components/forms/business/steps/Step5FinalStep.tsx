@@ -23,7 +23,7 @@ interface ContactFormData {
   selectedAgentId: string;
 }
 
-interface ContactInfoStepProps<T extends ContactFormData> {
+interface Step5FinalStepProps<T extends ContactFormData> {
   data: T;
   onUpdate: (updates: Partial<T>) => void;
   agentLocked?: boolean;
@@ -43,34 +43,29 @@ const formatPhoneNumber = (value: string): string => {
 };
 
 const isValidEmail = (email: string): boolean => {
-  if (!email) return true; // Empty is valid (optional)
+  if (!email) return true;
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
 const isValidPhone = (phone: string): boolean => {
-  if (!phone) return true; // Empty is valid (optional)
+  if (!phone) return true;
   const cleaned = phone.replace(/\D/g, '');
   return cleaned.length === 10;
 };
 
 export const validateContactInfo = <T extends ContactFormData>(data: T): boolean => {
   if (!data.preferredContactMethod) return false;
-  
-  // If they provided email, it must be valid
   if (data.email && !isValidEmail(data.email)) return false;
-  
-  // If they provided phone, it must be valid
   if (data.phoneNumber && !isValidPhone(data.phoneNumber)) return false;
-  
   return true;
 };
 
-export default function ContactInfoStep<T extends ContactFormData>({ 
+export default function Step5FinalStep<T extends ContactFormData>({ 
   data, 
   onUpdate, 
   agentLocked, 
   lockedAgentName 
-}: ContactInfoStepProps<T>) {
+}: Step5FinalStepProps<T>) {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [emailError, setEmailError] = useState<string>('');
   const [phoneError, setPhoneError] = useState<string>('');
@@ -252,6 +247,17 @@ export default function ContactInfoStep<T extends ContactFormData>({
             </div>
           </>
         )}
+
+        <div className="animate-in fade-in duration-500">
+          <Label htmlFor="additionalNotes" className="text-lg">Tell us about your business needs</Label>
+          <Textarea
+            id="additionalNotes"
+            value={data.additionalNotes}
+            onChange={(e) => onUpdate({ additionalNotes: e.target.value } as Partial<T>)}
+            placeholder="Share any specific coverage requirements or questions..."
+            rows={4}
+          />
+        </div>
 
         {agentLocked && selectedAgent && (
           <div className="rounded-xl border-2 border-primary bg-primary/5 p-6">

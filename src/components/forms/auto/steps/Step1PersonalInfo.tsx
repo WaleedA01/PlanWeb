@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { AutoFormData } from '../types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AddressAutocomplete from '../../shared/AddressAutocomplete';
+import AddressAutocomplete from '../../personal/AddressAutocomplete';
 
 interface Step1Props {
   data: AutoFormData;
