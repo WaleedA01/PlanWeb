@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { BusinessFormData } from '../business/types';
+import { AutoFormData } from '../auto/types';
+import { HomeFormData } from '../home/types';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { CheckCircle, Building2, UtensilsCrossed, Store, Wrench, Briefcase, Home, Car, Heart, GraduationCap, Scissors, Dumbbell, Coffee, ShoppingBag, Hammer, Sparkles } from 'lucide-react';
@@ -10,7 +12,7 @@ import { PRODUCTS } from '@/lib/products';
 import { AGENTS } from '@/lib/agents';
 
 interface RecapScreenProps {
-  data: BusinessFormData;
+  data: BusinessFormData | AutoFormData | HomeFormData;
 }
 
 export default function RecapScreen({ data }: RecapScreenProps) {
@@ -46,8 +48,11 @@ export default function RecapScreen({ data }: RecapScreenProps) {
 
   // Get business icon
   const getBusinessIcon = () => {
+    if (!isBusinessForm) return Building2;
+    
+    const businessData = data as BusinessFormData;
     const genericTypes = ['establishment', 'point_of_interest', 'premise', 'subpremise'];
-    const specificType = data.googleTypes?.find(type => !genericTypes.includes(type));
+    const specificType = businessData.googleTypes?.find((type: string) => !genericTypes.includes(type));
     
     const iconMap: Record<string, any> = {
       restaurant: UtensilsCrossed,
