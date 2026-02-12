@@ -7,11 +7,12 @@ import FormStep from '../shared/FormStep';
 import RecapScreen from '../shared/RecapScreen';
 import SuccessAnimation from '../shared/SuccessAnimation';
 import AnimatedTransition from '../shared/AnimatedTransition';
-import Step1BusinessInfo from './steps/Step1BusinessInfo';
-import Step2BusinessType from './steps/Step2BusinessType';
-import Step3Products from './steps/Step3Products';
-import Step4BusinessDetails from './steps/Step4BusinessDetails';
-import Step5FinalStep, { validateContactInfo } from './steps/Step5FinalStep';
+import Step1BusinessSearch from './steps/Step1BusinessSearch';
+import Step2OwnerInfo from './steps/Step2OwnerInfo';
+import Step3BusinessType from './steps/Step3BusinessType';
+import Step4Products from './steps/Step4Products';
+import Step5BusinessDetails from './steps/Step5BusinessDetails';
+import Step6FinalStep, { validateContactInfo } from './steps/Step6FinalStep';
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { Shield, Building2, CheckCircle2, UtensilsCrossed, Store, Wrench, Briefcase, Home, Car, Heart, GraduationCap, Scissors, Dumbbell, Coffee, ShoppingBag, Hammer } from 'lucide-react';
 import BusinessMap from './BusinessMap';
@@ -29,6 +30,7 @@ export default function BusinessForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitResult, setSubmitResult] = useState<any>(null);
+  const [showValidation, setShowValidation] = useState(false);
 
   const [qrToken, setQrToken] = useState<string | null>(null);
   const [agentLocked, setAgentLocked] = useState(false);
@@ -168,28 +170,80 @@ export default function BusinessForm() {
   const BusinessIcon = getBusinessIcon();
 
   const updateFormData = (updates: Partial<BusinessFormData>) => {
-    // If QR locked, ignore any attempts to change agent selection
     if (agentLocked && 'selectedAgentId' in updates) {
       const next = { ...(updates as any) };
       delete (next as any).selectedAgentId;
       updates = next;
     }
 
-    console.log('🔄 Form data update requested:', updates);
-    setFormData((prev) => {
-      const newData = { ...prev, ...updates };
-      console.log('📊 New form data state:', newData);
-      console.log('🗺 Map coordinates:', { lat: newData.latitude, lng: newData.longitude });
-      return newData;
-    });
+    setFormData((prev) => ({ ...prev, ...updates }));
   };
 
   const handleNext = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (currentStep === 1) {
+    
+    if (!canProceed()) {
+      setShowValidation(true);
+      setSubmitError(getValidationError());
+      return;
+    }
+    
+    setShowValidation(false);
+    setSubmitError(null);
+    if (currentStep === 2) {
       setShowTransition(true);
-    } else if (currentStep < 5) {
+    } else if (currentStep < 6) {
       setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const getValidationError = (): string => {
+    switch (currentStep) {
+      case 1:
+        if (!formData.streetAddress) return 'Please enter a business address';
+        if (!formData.city) return 'Please enter a city';
+        if (!formData.state) return 'Please enter a state';
+        if (!formData.postalCode) return 'Please enter a ZIP code';
+        return 'Please complete all required fields';
+      case 2:
+        if (!formData.firstName) return 'Please enter your first name';
+        if (!formData.lastName) return 'Please enter your last name';
+        return 'Please complete all required fields';
+      case 3:
+        return 'Please select a business type';
+      case 4:
+        return 'Please select at least one product';
+      case 5:
+        if (formData.isNewBusiness === null) return 'Please indicate if this is a new business';
+        if (formData.isNewBusiness === true && !formData.expectedCoverageDate) return 'Please enter expected coverage date';
+        if (formData.isNewBusiness === false && !formData.yearBusinessStarted) return 'Please enter year business started';
+        if (!formData.numEmployees) return 'Please enter number of employees';
+        if (!formData.annualSales) return 'Please enter annual sales';
+        return 'Please complete all required fields';
+      case 6:
+        if (!formData.preferredContactMethod) return 'Please select a contact method';
+        if (!turnstileToken) return 'Please complete the verification';
+        
+        const method = formData.preferredContactMethod;
+        if (method === 'email') {
+          if (!formData.email) return 'Please enter your email address';
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Please enter a valid email address';
+          if (formData.phoneNumber && formData.phoneNumber.replace(/\D/g, '').length !== 10) return 'Phone number must be 10 digits or left empty';
+        }
+        if (method === 'phone' || method === 'text') {
+          if (!formData.phoneNumber) return 'Please enter your phone number';
+          if (formData.phoneNumber.replace(/\D/g, '').length !== 10) return 'Please enter a valid 10-digit phone number';
+          if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Email must be valid or left empty';
+        }
+        if (method === 'either') {
+          if (!formData.email) return 'Please enter your email address';
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Please enter a valid email address';
+          if (!formData.phoneNumber) return 'Please enter your phone number';
+          if (formData.phoneNumber.replace(/\D/g, '').length !== 10) return 'Please enter a valid 10-digit phone number';
+        }
+        return 'Please complete all required fields';
+      default:
+        return 'Please complete all required fields';
     }
   };
 
@@ -202,11 +256,19 @@ export default function BusinessForm() {
 
   const handleTransitionComplete = () => {
     setShowTransition(false);
-    setCurrentStep(2);
+    setCurrentStep(3);
   };
 
   const handleSubmit = async () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    if (!canProceed()) {
+      setShowValidation(true);
+      setSubmitError(getValidationError());
+      return;
+    }
+    
+    setShowValidation(false);
     setSubmitError(null);
     setSubmitResult(null);
 
@@ -262,17 +324,19 @@ export default function BusinessForm() {
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return formData.firstName && formData.lastName && formData.businessName && formData.streetAddress && formData.city && formData.state && formData.postalCode;
+        return !!(formData.streetAddress && formData.city && formData.state && formData.postalCode);
       case 2:
-        return formData.businessType !== '';
+        return !!(formData.firstName && formData.lastName);
       case 3:
-        return formData.products.length > 0;
+        return formData.businessType !== '';
       case 4:
+        return formData.products.length > 0;
+      case 5:
         if (formData.isNewBusiness === null) return false;
         if (formData.isNewBusiness === true && !formData.expectedCoverageDate) return false;
         if (formData.isNewBusiness === false && !formData.yearBusinessStarted) return false;
         return formData.numEmployees !== '' && formData.annualSales !== '';
-      case 5:
+      case 6:
         return validateContactInfo(formData) && !!turnstileToken;
       default:
         return false;
@@ -342,12 +406,12 @@ export default function BusinessForm() {
       <div className="bg-background py-12">
         <FormContainer
           currentStep={currentStep}
-          totalSteps={5}
+          totalSteps={6}
           onNext={handleNext}
           onPrevious={handlePrevious}
           onSubmit={handleSubmit}
-          isLastStep={currentStep === 5}
-          canProceed={!!canProceed() && !isSubmitting}
+          isLastStep={currentStep === 6}
+          canProceed={!!canProceed()}
           hideNavigation={showTransition}
           turnstileWidget={
             !turnstileToken ? (
@@ -359,7 +423,11 @@ export default function BusinessForm() {
           }
         >
           <FormStep isActive={currentStep === 1 && !showTransition}>
-            <Step1BusinessInfo data={formData} onUpdate={updateFormData} />
+            <Step1BusinessSearch data={formData} onUpdate={updateFormData} showValidation={showValidation} />
+          </FormStep>
+
+          <FormStep isActive={currentStep === 2 && !showTransition}>
+            <Step2OwnerInfo data={formData} onUpdate={updateFormData} showValidation={showValidation} />
           </FormStep>
 
           <FormStep isActive={showTransition}>
@@ -374,29 +442,31 @@ export default function BusinessForm() {
             />
           </FormStep>
 
-          <FormStep isActive={currentStep === 2 && !showTransition}>
-            <Step2BusinessType data={formData} onUpdate={updateFormData} classifications={businessClassifications} />
-          </FormStep>
-
-          <FormStep isActive={currentStep === 3}>
-            <Step3Products data={formData} onUpdate={updateFormData} />
+          <FormStep isActive={currentStep === 3 && !showTransition}>
+            <Step3BusinessType data={formData} onUpdate={updateFormData} classifications={businessClassifications} />
           </FormStep>
 
           <FormStep isActive={currentStep === 4}>
-            <Step4BusinessDetails data={formData} onUpdate={updateFormData} />
+            <Step4Products data={formData} onUpdate={updateFormData} />
           </FormStep>
 
           <FormStep isActive={currentStep === 5}>
-            <Step5FinalStep 
+            <Step5BusinessDetails data={formData} onUpdate={updateFormData} showValidation={showValidation} />
+          </FormStep>
+
+          <FormStep isActive={currentStep === 6}>
+            <Step6FinalStep 
               data={formData} 
               onUpdate={updateFormData}
               agentLocked={agentLocked}
               lockedAgentName={lockedAgentName}
+              showValidation={showValidation}
             />
 
             {submitError && (
-              <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                {submitError}
+              <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <p className="font-medium">Unable to proceed:</p>
+                <p>{submitError}</p>
               </div>
             )}
 

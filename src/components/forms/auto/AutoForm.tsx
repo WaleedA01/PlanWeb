@@ -286,7 +286,7 @@ export default function AutoForm() {
           onSubmit={handleSubmit}
           isLastStep={currentStep === 5}
           canProceed={!!canProceed() && !isSubmitting}
-          hasDocuments={hasDocuments}
+          nextButtonText={currentStep === 4 && !hasDocuments ? 'Skip →' : 'Next'}
           turnstileWidget={
             !turnstileToken ? (
               <TurnstileWidget

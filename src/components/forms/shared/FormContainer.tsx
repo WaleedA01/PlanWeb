@@ -16,7 +16,7 @@ interface FormContainerProps {
   canProceed?: boolean;
   hideNavigation?: boolean;
   turnstileWidget?: ReactNode;
-  hasDocuments?: boolean;
+  nextButtonText?: string;
 }
 
 export default function FormContainer({
@@ -30,7 +30,7 @@ export default function FormContainer({
   canProceed = true,
   hideNavigation = false,
   turnstileWidget,
-  hasDocuments = false,
+  nextButtonText = 'Next',
 }: FormContainerProps) {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -43,7 +43,7 @@ export default function FormContainer({
       {/* Navigation Buttons */}
       {!hideNavigation && (
         <>
-          <div className={`flex justify-between gap-4 ${!canProceed ? 'pointer-events-none' : ''}`}>
+          <div className="flex justify-between gap-4">
             <Button
               type="button"
               variant="outline"
@@ -57,7 +57,6 @@ export default function FormContainer({
               <Button
                 type="button"
                 onClick={onSubmit}
-                disabled={!canProceed}
                 className="px-8 bg-primary hover:bg-primary/90"
               >
                 Submit
@@ -66,12 +65,11 @@ export default function FormContainer({
               <Button
                 type="button"
                 onClick={onNext}
-                disabled={!canProceed}
                 className={`bg-primary hover:bg-primary/90 ${
-                  currentStep === 4 && !hasDocuments ? 'px-16 py-6 text-lg' : 'px-8'
+                  nextButtonText.includes('Skip') ? 'px-16 py-6 text-lg' : 'px-8'
                 }`}
               >
-                {currentStep === 4 && !hasDocuments ? 'Skip →' : 'Next'}
+                {nextButtonText}
               </Button>
             )}
           </div>

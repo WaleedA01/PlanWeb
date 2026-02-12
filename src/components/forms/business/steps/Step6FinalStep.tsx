@@ -28,6 +28,7 @@ interface Step5FinalStepProps<T extends ContactFormData> {
   onUpdate: (updates: Partial<T>) => void;
   agentLocked?: boolean;
   lockedAgentName?: string | null;
+  showValidation?: boolean;
 }
 
 const formatPhoneNumber = (value: string): string => {
@@ -55,8 +56,29 @@ const isValidPhone = (phone: string): boolean => {
 
 export const validateContactInfo = <T extends ContactFormData>(data: T): boolean => {
   if (!data.preferredContactMethod) return false;
-  if (data.email && !isValidEmail(data.email)) return false;
-  if (data.phoneNumber && !isValidPhone(data.phoneNumber)) return false;
+  
+  const method = data.preferredContactMethod;
+  
+  // Email only: require valid email
+  if (method === 'email') {
+    if (!data.email || !isValidEmail(data.email)) return false;
+    // If phone is provided, it must be valid
+    if (data.phoneNumber && !isValidPhone(data.phoneNumber)) return false;
+  }
+  
+  // Phone or Text: require valid phone
+  if (method === 'phone' || method === 'text') {
+    if (!data.phoneNumber || !isValidPhone(data.phoneNumber)) return false;
+    // If email is provided, it must be valid
+    if (data.email && !isValidEmail(data.email)) return false;
+  }
+  
+  // Either: require both valid email and phone
+  if (method === 'either') {
+    if (!data.email || !isValidEmail(data.email)) return false;
+    if (!data.phoneNumber || !isValidPhone(data.phoneNumber)) return false;
+  }
+  
   return true;
 };
 

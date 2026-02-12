@@ -9,6 +9,7 @@ import { Users, DollarSign } from 'lucide-react';
 interface Step4Props {
   data: BusinessFormData;
   onUpdate: (updates: Partial<BusinessFormData>) => void;
+  showValidation?: boolean;
 }
 
 const EMPLOYEE_RANGES = [
@@ -27,7 +28,13 @@ const SALES_RANGES = [
   { value: '3M+', label: '$3M+' },
 ];
 
-export default function Step4BusinessDetails({ data, onUpdate }: Step4Props) {
+export default function Step4BusinessDetails({ data, onUpdate, showValidation = false }: Step4Props) {
+  const hasNewBusinessError = showValidation && data.isNewBusiness === null;
+  const hasDateError = showValidation && data.isNewBusiness === true && !data.expectedCoverageDate;
+  const hasYearError = showValidation && data.isNewBusiness === false && !data.yearBusinessStarted;
+  const hasEmployeesError = showValidation && !data.numEmployees;
+  const hasSalesError = showValidation && !data.annualSales;
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -37,7 +44,9 @@ export default function Step4BusinessDetails({ data, onUpdate }: Step4Props) {
 
       <div className="space-y-6">
         <div>
-          <Label className="mb-3 block text-lg">Is this a new business?</Label>
+          <Label className={`mb-3 block text-lg ${hasNewBusinessError ? 'text-red-500' : ''}`}>
+            Is this a new business? {hasNewBusinessError && <span className="text-red-500">*</span>}
+          </Label>
           <RadioGroup
             value={data.isNewBusiness === null ? '' : data.isNewBusiness.toString()}
             onValueChange={(value) => onUpdate({ isNewBusiness: value === '' ? null : value === 'true' })}
@@ -57,31 +66,39 @@ export default function Step4BusinessDetails({ data, onUpdate }: Step4Props) {
 
         {data.isNewBusiness === true && (
           <div>
-            <Label htmlFor="expectedCoverageDate" className="text-lg">Expected Opening Date</Label>
+            <Label htmlFor="expectedCoverageDate" className={`text-lg ${hasDateError ? 'text-red-500' : ''}`}>
+              Expected Opening Date {hasDateError && <span className="text-red-500">*</span>}
+            </Label>
             <Input
               id="expectedCoverageDate"
               type="date"
               value={data.expectedCoverageDate}
               onChange={(e) => onUpdate({ expectedCoverageDate: e.target.value })}
+              className={hasDateError ? 'border-red-500' : ''}
             />
           </div>
         )}
 
         {data.isNewBusiness === false && (
           <div>
-            <Label htmlFor="yearBusinessStarted" className="text-lg">What year was your business founded?</Label>
+            <Label htmlFor="yearBusinessStarted" className={`text-lg ${hasYearError ? 'text-red-500' : ''}`}>
+              What year was your business founded? {hasYearError && <span className="text-red-500">*</span>}
+            </Label>
             <Input
               id="yearBusinessStarted"
               type="number"
               value={data.yearBusinessStarted}
               onChange={(e) => onUpdate({ yearBusinessStarted: e.target.value })}
               placeholder="2020"
+              className={hasYearError ? 'border-red-500' : ''}
             />
           </div>
         )}
 
         <div>
-          <Label className="mb-3 block text-lg">How many employees are involved in your business?</Label>
+          <Label className={`mb-3 block text-lg ${hasEmployeesError ? 'text-red-500' : ''}`}>
+            How many employees are involved in your business? {hasEmployeesError && <span className="text-red-500">*</span>}
+          </Label>
           <div className="flex flex-wrap justify-center gap-4">
             {EMPLOYEE_RANGES.map((range) => {
               const isSelected = data.numEmployees === range.value;
@@ -93,6 +110,8 @@ export default function Step4BusinessDetails({ data, onUpdate }: Step4Props) {
                   className={`relative w-full sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-0.67rem)] lg:w-[calc(20%-0.8rem)] p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
+                      : hasEmployeesError
+                      ? 'border-red-500 hover:border-red-600'
                       : 'border-border hover:border-primary/50'
                   }`}
                 >
@@ -116,7 +135,9 @@ export default function Step4BusinessDetails({ data, onUpdate }: Step4Props) {
         </div>
 
         <div>
-          <Label className="mb-3 block text-lg">What are your annual sales?</Label>
+          <Label className={`mb-3 block text-lg ${hasSalesError ? 'text-red-500' : ''}`}>
+            What are your annual sales? {hasSalesError && <span className="text-red-500">*</span>}
+          </Label>
           <div className="flex flex-wrap justify-center gap-4">
             {SALES_RANGES.map((range) => {
               const isSelected = data.annualSales === range.value;
@@ -128,6 +149,8 @@ export default function Step4BusinessDetails({ data, onUpdate }: Step4Props) {
                   className={`relative w-full sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-0.67rem)] lg:w-[calc(20%-0.8rem)] p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                     isSelected
                       ? 'border-primary bg-primary text-white shadow-md'
+                      : hasSalesError
+                      ? 'border-red-500 hover:border-red-600'
                       : 'border-border hover:border-primary/50'
                   }`}
                 >

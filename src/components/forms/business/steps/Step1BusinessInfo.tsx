@@ -10,24 +10,22 @@ import PlacesAutocomplete from '../PlacesAutocomplete';
 interface Step1Props {
   data: BusinessFormData;
   onUpdate: (updates: Partial<BusinessFormData>) => void;
+  substep: 'search' | 'owner' | 'review';
+  onSubstepChange: (substep: 'search' | 'owner' | 'review') => void;
 }
 
-export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
-  const [showForm, setShowForm] = useState(false);
+export default function Step1BusinessInfo({ data, onUpdate, substep, onSubstepChange }: Step1Props) {
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState('');
 
+  // Initialize selected place based on existing data
   useEffect(() => {
-    if (data.streetAddress && data.city && data.state) {
-      setShowForm(true);
+    if (data.streetAddress) {
       setSelectedPlace(data.businessName || data.streetAddress);
     }
-  }, [data.businessName, data.streetAddress, data.city, data.state]);
+  }, [data.businessName, data.streetAddress]);
 
   const handlePlaceSelect = async (placeDetails: any) => {
-    console.log('🔍 Place selected - Full details:', placeDetails);
-    console.log('📍 Coordinates:', { lat: placeDetails.latitude, lng: placeDetails.longitude });
-    
     const updates = {
       businessName: placeDetails.businessName || '',
       streetAddress: placeDetails.streetAddress,
@@ -39,46 +37,23 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
       googleTypes: placeDetails.types || [],
     };
     
-    console.log('📝 Updating form data with:', updates);
     onUpdate(updates);
-    
     setSelectedPlace(placeDetails.businessName || placeDetails.formattedAddress);
-    setShowForm(true);
+    onSubstepChange('owner');
     setShowManualEntry(false);
   };
 
   const handleManualEntry = () => {
     setShowManualEntry(true);
-    setShowForm(true);
+    onSubstepChange('owner');
   };
 
-  const handleEdit = () => {
-    setShowForm(false);
-    setSelectedPlace('');
-    setShowManualEntry(false);
-  };
-
-  if (!showForm) {
+  if (substep === 'search') {
     return (
       <div className="space-y-6">
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Let's get to know you</h2>
-        </div>
-
-        <div>
-          <Label className="text-lg mb-2 block">Business Owner</Label>
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              placeholder="First Name"
-              value={data.firstName}
-              onChange={(e) => onUpdate({ firstName: e.target.value })}
-            />
-            <Input
-              placeholder="Last Name"
-              value={data.lastName}
-              onChange={(e) => onUpdate({ lastName: e.target.value })}
-            />
-          </div>
+          <p className="text-base md:text-lg text-primary">Enter your business name or location and we'll set things up!</p>
         </div>
 
         <PlacesAutocomplete
@@ -88,6 +63,36 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
           label="Business Name or Address"
           placeholder="Search John's Sandwiches or 567 Main St..."
         />
+      </div>
+    );
+  }
+
+  if (substep === 'owner') {
+    return (
+      <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="text-center">
+          <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">How should we greet you?</h2>
+          <p className="text-base md:text-lg text-primary">
+            Enter the business owner for {data.businessName || 'your business'}
+          </p>
+        </div>
+
+        <div>
+          <Label className="text-lg mb-2 block">Business Owner</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              placeholder="First Name"
+              value={data.firstName}
+              onChange={(e) => onUpdate({ firstName: e.target.value })}
+              autoFocus
+            />
+            <Input
+              placeholder="Last Name"
+              value={data.lastName}
+              onChange={(e) => onUpdate({ lastName: e.target.value })}
+            />
+          </div>
+        </div>
       </div>
     );
   }
@@ -171,13 +176,6 @@ export default function Step1BusinessInfo({ data, onUpdate }: Step1Props) {
             onChange={(e) => onUpdate({ postalCode: e.target.value })}
             placeholder="33101"
           />
-        </div>
-
-        <div className="flex items-center justify-center gap-2 pt-2">
-          <span className="text-sm text-muted-foreground">Not the right place?</span>
-          <Button type="button" variant="link" size="sm" onClick={handleEdit} className="h-auto p-0">
-            Edit
-          </Button>
         </div>
       </div>
     </div>
