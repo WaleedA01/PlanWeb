@@ -1,4 +1,4 @@
-import { CARRIERS } from '@/lib/carriers';
+import { getAnimationCarriers } from '@/lib/carriers';
 
 export default function ProductsCarriersSection() {
   const businessProducts = [
@@ -23,7 +23,7 @@ export default function ProductsCarriersSection() {
     'Boat Insurance'
   ];
 
-  const carriers = CARRIERS;
+  const carriers = getAnimationCarriers();
 
   return (
     <section className="relative py-24 overflow-hidden bg-background">

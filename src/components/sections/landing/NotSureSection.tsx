@@ -64,7 +64,7 @@ export default function NotSureSection() {
                   Ready to Get Started?
                 </h3>
                 <p className="text-muted-foreground mb-6 md:mb-0">
-                  Get your free quote in just 2 minutes. No obligations, no hassle.
+                  Get your quote in just 2 minutes. No obligations, no hassle.
                 </p>
               </div>
 
@@ -75,7 +75,7 @@ export default function NotSureSection() {
                   size="lg"
                   className="bg-primary hover:bg-primary/90 text-white"
                 >
-                  <Link href="/personal">Get Free Quote</Link>
+                  <Link href="/personal">Begin Quote</Link>
                 </Button>
                 <Button 
                   asChild 
@@ -83,7 +83,7 @@ export default function NotSureSection() {
                   variant="outline"
                   className="border-2 border-primary text-primary hover:bg-primary/10"
                 >
-                  <Link href="/contact">Talk to Expert</Link>
+                  <Link href="/contact">Call us Now</Link>
                 </Button>
               </div>
             </div>

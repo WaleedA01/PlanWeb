@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import LogoLoop, { LogoItem } from '@/components/LogoLoop';
-import { CARRIERS } from '@/lib/carriers';
+import { getAnimationCarriers } from '@/lib/carriers';
 
 export default function PartnersSection() {
   const [isMobile, setIsMobile] = useState(false);
@@ -14,7 +14,7 @@ export default function PartnersSection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const carriers = CARRIERS.map(carrier => ({
+  const carriers = getAnimationCarriers().map(carrier => ({
     src: carrier.logoSrc,
     alt: carrier.alt,
     title: carrier.name,
