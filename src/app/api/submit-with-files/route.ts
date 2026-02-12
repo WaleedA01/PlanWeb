@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
     const city = formData.get("city") as string;
     const state = formData.get("state") as string;
     const postalCode = formData.get("postalCode") as string;
+    const formType = (formData.get("leadSource") as string)?.includes("Auto") ? "Auto" : "Home";
     
     const qrCookie = req.cookies.get("pl_qr")?.value;
     let recipientEmail = PRINCIPAL_EMAIL;
@@ -69,7 +70,6 @@ export async function POST(req: NextRequest) {
         const buffer = Buffer.from(await value.arrayBuffer());
         totalSize += buffer.length;
         
-        // Skip if total attachments exceed 10MB
         if (totalSize > 10 * 1024 * 1024) {
           console.warn(`Skipping file ${value.name} - total size exceeds 10MB`);
           break;
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
     }
 
     const emailHtml = `
-      <h2>New Auto Quote Request</h2>
+      <h2>New ${formType} Quote Request</h2>
       <p><strong>Customer:</strong> ${firstName} ${lastName}</p>
       <p><strong>Email:</strong> ${email}</p>
       <p><strong>Phone:</strong> ${phone}</p>
@@ -90,11 +90,10 @@ export async function POST(req: NextRequest) {
       ${attachments.length > 0 ? `<p><strong>Attachments:</strong> ${attachments.length} file(s) (${(totalSize / 1024 / 1024).toFixed(2)} MB)</p>` : ""}
     `;
 
-    // Add 15 second timeout
     const emailPromise = resend.emails.send({
       from: "PlanLife USA <info@planlifeusa.com>",
       to: recipientEmail,
-      subject: `New Auto Quote - ${firstName} ${lastName}`,
+      subject: `New ${formType} Quote - ${firstName} ${lastName}`,
       html: emailHtml,
       attachments: attachments.map(att => ({
         filename: att.filename,
@@ -124,7 +123,6 @@ export async function POST(req: NextRequest) {
 
   } catch (err: any) {
     console.error("Submit error:", err);
-    // Don't fail the request - just log it since Zapier already succeeded
     return NextResponse.json({ 
       ok: false, 
       error: err.message,

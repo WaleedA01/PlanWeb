@@ -131,6 +131,7 @@ export default function HomeForm() {
     setIsSubmitting(true);
 
     try {
+      // PRIORITY: Always send to Zapier first (AgencyZoom)
       const answers = {
         ...formData,
         leadSource: formData.leadSource || 'Home Questionnaire',
@@ -159,10 +160,36 @@ export default function HomeForm() {
         return;
       }
 
+      // SUCCESS: Show success immediately, send files in background
       setIsSubmitted(true);
       setTurnstileToken(null);
       setTurnstileKey((k) => k + 1);
       localStorage.removeItem('homeFormProgress');
+
+      // BACKGROUND: Send files via email (non-blocking)
+      const hasFiles = (formData.policyFiles?.length > 0);
+      if (hasFiles) {
+        const fileFormData = new FormData();
+        
+        Object.entries(formData).forEach(([key, value]) => {
+          if (key !== 'policyFiles' && value !== null && value !== undefined) {
+            fileFormData.append(key, String(value));
+          }
+        });
+
+        formData.policyFiles?.forEach((file) => {
+          fileFormData.append('policyFile', file);
+        });
+
+        // Fire and forget - don't await
+        fetch('/api/submit-with-files', {
+          method: 'POST',
+          body: fileFormData,
+        }).catch((err) => {
+          console.error('Background file upload failed:', err);
+        });
+      }
+
     } catch (err: any) {
       setSubmitError(err?.message || 'Network error submitting lead.');
       setTurnstileToken(null);
