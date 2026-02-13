@@ -46,6 +46,7 @@ export default function AutoForm() {
     preferredContactMethod: '',
     email: '',
     phoneNumber: '',
+    smsOptIn: false,
     additionalNotes: '',
     selectedAgentId: '',
     leadSource: 'Auto Questionnaire',
@@ -156,7 +157,6 @@ export default function AutoForm() {
         if (formData.isCurrentlyInsured === true && !formData.currentInsurer) return 'Please enter your current insurer';
         return 'Please complete all required fields';
       case 5:
-        if (!formData.preferredContactMethod) return 'Please select a contact method';
         if (!turnstileToken) return 'Please complete the verification';
         return 'Please complete all required contact information';
       default:

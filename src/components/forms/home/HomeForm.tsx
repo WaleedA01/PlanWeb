@@ -134,7 +134,6 @@ export default function HomeForm() {
         if (!formData.propertyUsage) return 'Please select a property usage';
         return 'Please complete all required fields';
       case 4:
-        if (!formData.preferredContactMethod) return 'Please select a contact method';
         if (!turnstileToken) return 'Please complete the verification';
         return 'Please complete all required contact information';
       default:

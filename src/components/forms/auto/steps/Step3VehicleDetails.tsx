@@ -4,7 +4,7 @@ import { AutoFormData } from '../types';
 import { Label } from '@/components/ui/label';
 import { Shield, ShieldOff } from 'lucide-react';
 import { getCarrierNames } from '@/lib/carriers';
-import { Combobox } from '@/components/ui/combobox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Step3Props {
   data: AutoFormData;
@@ -73,13 +73,18 @@ export default function Step3VehicleDetails({ data, onUpdate, showValidation = f
             <Label htmlFor="currentInsurer" className={`text-lg ${hasInsurerError ? 'text-red-500' : ''}`}>
               Who are you insured with? {hasInsurerError && <span className="text-red-500">*</span>}
             </Label>
-            <Combobox
-              value={data.currentInsurer}
-              onValueChange={(value: string) => onUpdate({ currentInsurer: value })}
-              options={AUTO_INSURERS.map((name) => ({ value: name, label: name }))}
-              placeholder="Select or type to search..."
-              className={hasInsurerError ? 'border-red-500' : ''}
-            />
+            <Select value={data.currentInsurer} onValueChange={(value: string) => onUpdate({ currentInsurer: value })}>
+              <SelectTrigger className={hasInsurerError ? 'border-red-500' : ''}>
+                <SelectValue placeholder="Select your insurer..." />
+              </SelectTrigger>
+              <SelectContent side="bottom" align="start" sideOffset={5} avoidCollisions={false} className="max-h-[300px] overflow-y-auto">
+                {AUTO_INSURERS.map((name) => (
+                  <SelectItem key={name} value={name}>
+                    {name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         )}
       </div>

@@ -35,6 +35,7 @@ export interface AutoFormData {
   preferredContactMethod: 'email' | 'phone' | 'text' | 'either' | '';
   email: string;
   phoneNumber: string;
+  smsOptIn: boolean;
   additionalNotes: string;
 
   // Meta

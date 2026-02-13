@@ -203,6 +203,12 @@ export function buildPersonalComments(answers: Record<string, unknown>): string 
     parts.push(`Preferred contact method: ${limit(str(contactPref), 80)}`);
   }
 
+  // SMS opt-in
+  const smsOptIn = (answers as any).smsOptIn;
+  if (smsOptIn === true) {
+    parts.push('Client opted in to text messaging for quote updates');
+  }
+
   // Product interest (other form)
   const productInterest = str((answers as any).productInterest);
   if (productInterest) {
