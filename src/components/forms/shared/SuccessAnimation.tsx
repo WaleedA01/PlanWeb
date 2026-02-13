@@ -70,14 +70,14 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
       setTimeout(() => setFadeOut(true), 5000),
       setTimeout(() => { setFadeOut(false); setStage(1); }, 5500),
       // Stage 1 -> 2
-      setTimeout(() => setFadeOut(true), 11500),
-      setTimeout(() => { setFadeOut(false); setStage(2); }, 12000),
+      setTimeout(() => setFadeOut(true), 8500),
+      setTimeout(() => { setFadeOut(false); setStage(2); }, 9000),
       // Stage 2 -> 3
-      setTimeout(() => setFadeOut(true), 17000),
-      setTimeout(() => { setFadeOut(false); setStage(3); }, 17500),
+      setTimeout(() => setFadeOut(true), 14000),
+      setTimeout(() => { setFadeOut(false); setStage(3); }, 14500),
       // Stage 3 -> 4
-      setTimeout(() => setFadeOut(true), 25000),
-      setTimeout(() => { setFadeOut(false); setStage(4); }, 25500),
+      setTimeout(() => setFadeOut(true), 22000),
+      setTimeout(() => { setFadeOut(false); setStage(4); }, 22500),
     ];
     return () => timers.forEach(clearTimeout);
   }, [imagesLoaded]);
@@ -214,11 +214,13 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
               />
             </div>
             <div className="flex justify-center px-4">
-              <img
-                src="/agents/group/gusjusora.png"
-                alt="Our team of agents"
-                className="w-full max-w-2xl h-auto rounded-2xl shadow-2xl"
-              />
+              <div className="bg-gradient-to-br from-[#0da9e4] via-[#3db8e8] to-[#7dd3f0] border border-border rounded-2xl overflow-hidden shadow-2xl max-w-2xl">
+                <img
+                  src="/agents/group/gusjusora.png"
+                  alt="Our team of agents"
+                  className="w-full h-auto"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -377,7 +379,7 @@ export default function SuccessAnimation({ data }: SuccessAnimationProps) {
           </div>
           <div className="block">
             <SplitText
-              text="We'll help you pick the right one"
+              text="We'll help you pick the right plan"
               tag="h2"
               className="text-4xl font-bold text-secondary"
               delay={30}

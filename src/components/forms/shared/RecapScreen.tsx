@@ -256,28 +256,21 @@ export default function RecapScreen({ data }: RecapScreenProps) {
                 </div>
                 <div>
                   <span className="text-muted-foreground block mb-1">Phone</span>
-                  <span className="font-medium text-secondary">{data.phoneNumber}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground block mb-1">Preferred Contact</span>
-                  <span className="font-medium text-secondary capitalize">{data.preferredContactMethod}</span>
+                  <span className="font-medium text-secondary">{data.phoneNumber || 'Not provided'}</span>
                 </div>
               </div>
             </div>
 
             {selectedAgent ? (
               <div className="bg-card border rounded-xl shadow-sm overflow-hidden animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
-                <div className="p-6 pb-0">
-                  <h3 className="text-lg font-semibold mb-2 text-secondary">Your Dedicated Agent</h3>
-                  <p className="font-semibold text-lg text-secondary">{selectedAgent.firstName} {selectedAgent.lastName}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{selectedAgent.title}</p>
-                  <p className="text-sm text-primary font-medium mt-2 mb-4">Will reach out within 1-2 business days</p>
+                <div className="p-6 pb-2">
+                  <h3 className="text-lg font-semibold mb-3 text-secondary">{selectedAgent.firstName} will reach out to you shortly</h3>
                 </div>
                 <div className="w-full h-48 bg-primary/10 relative overflow-hidden">
                   <img 
-                    src={selectedAgent.headshotSrc} 
+                    src={selectedAgent.fullImageSrc} 
                     alt={`${selectedAgent.firstName} ${selectedAgent.lastName}`}
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-contain object-bottom"
                   />
                 </div>
               </div>
@@ -291,7 +284,7 @@ export default function RecapScreen({ data }: RecapScreenProps) {
                   <img
                     src="/agents/group/gusjusora.png"
                     alt="Our team of agents"
-                    className="w-full h-auto"
+                    className="w-full h-auto object-contain object-bottom"
                   />
                 </div>
               </div>
@@ -340,7 +333,7 @@ export default function RecapScreen({ data }: RecapScreenProps) {
         {step >= 8 && (
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-[fadeInUp_0.6s_ease-out_forwards]">
             <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
-              <Link href="/contact">Call Us Now</Link>
+              <a href="tel:+14079305900">Call Us Now</a>
             </Button>
             <Button asChild size="lg" variant="outline">
               <Link href="/">Return to Home</Link>

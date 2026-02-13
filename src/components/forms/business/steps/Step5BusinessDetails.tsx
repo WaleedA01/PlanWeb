@@ -38,7 +38,7 @@ export default function Step4BusinessDetails({ data, onUpdate, showValidation = 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Business Details</h2>
+        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Few More Things...</h2>
         <p className="text-base md:text-lg text-primary">Tell us more about your business</p>
       </div>
 

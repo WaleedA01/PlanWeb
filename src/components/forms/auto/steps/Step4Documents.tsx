@@ -46,21 +46,20 @@ export default function Step4Documents({ data, onUpdate }: Step4Props) {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Document Upload</h2>
-        <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-          This is totally optional — we can always figure things out later. This will just help us serve you more efficiently and quicker.
+        <p className="text-base md:text-lg text-primary">
+          Uploading documents expedites the process
         </p>
       </div>
 
       <div className="space-y-8">
         {data.isCurrentlyInsured && (
           <div className="space-y-4">
-            <Label className="text-lg">Upload existing policy / dec page</Label>
+            <Label className="text-lg">Upload existing policy / Dec page</Label>
             <input
               ref={policyFileInputRef}
               type="file"
               multiple
               accept="image/*,.pdf"
-              capture="environment"
               onChange={handlePolicyFileChange}
               className="hidden"
             />
@@ -71,8 +70,7 @@ export default function Step4Documents({ data, onUpdate }: Step4Props) {
             >
               <Upload className="w-10 h-10" />
               <div className="text-center">
-                <p className="text-base font-medium">Click to upload policy documents</p>
-                <p className="text-sm">Declarations page or policy documents</p>
+                <p className="text-base font-medium">Upload</p>
               </div>
             </button>
 
@@ -116,7 +114,6 @@ export default function Step4Documents({ data, onUpdate }: Step4Props) {
                   ref={(el) => { licenseFileInputRefs.current[driverIndex] = el; }}
                   type="file"
                   accept="image/*,.pdf"
-                  capture="environment"
                   onChange={(e) => handleLicenseFileChange(driverIndex, e)}
                   className="hidden"
                 />
