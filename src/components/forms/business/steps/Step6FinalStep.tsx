@@ -300,9 +300,9 @@ export default function Step5FinalStep<T extends ContactFormData>({
           />
         </div>
 
-        {agentLocked && selectedAgent && (
-          <div className="rounded-xl border-2 border-primary bg-primary/5 p-6">
-            <Label className="text-lg mb-3 block">Your Agent</Label>
+        <div className="rounded-xl border-2 border-primary bg-primary/5 p-6">
+          <Label className="text-lg mb-3 block">{agentLocked && selectedAgent ? 'Your Agent' : 'One of Our Agents will be in contact Shortly'}</Label>
+          {agentLocked && selectedAgent ? (
             <div className="flex items-center gap-4">
               <img
                 src={selectedAgent.headshotSrc}
@@ -314,8 +314,10 @@ export default function Step5FinalStep<T extends ContactFormData>({
                 <div className="text-sm text-muted-foreground">{selectedAgent.title}</div>
               </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-sm text-muted-foreground">Your data is protected and will only be shared with your Agent and their team</p>
+          )}
+        </div>
       </div>
     </div>
   );
