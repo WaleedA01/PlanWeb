@@ -12,6 +12,8 @@ frontend:
         - echo "QR_SIGNING_SECRET=$QR_SIGNING_SECRET" >> .env
         - echo "GOOGLE_PLACES_API=$GOOGLE_PLACES_API" >> .env
         - echo "NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL" >> .env
+        - echo "NEXT_PUBLIC_POSTHOG_KEY=$NEXT_PUBLIC_POSTHOG_KEY" >> .env
+        - echo "NEXT_PUBLIC_POSTHOG_HOST=$NEXT_PUBLIC_POSTHOG_HOST" >> .env"
     build:
       commands:
         - npm run build
