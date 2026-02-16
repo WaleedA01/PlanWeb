@@ -45,7 +45,7 @@ export default function Step1BusinessSearch({ data, onUpdate }: Step1Props) {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Let's get to know you</h2>
-        <p className="text-base md:text-lg text-primary">Enter your business name or location and we'll set things up!</p>
+        <p className="text-base md:text-lg text-primary">Enter your business name or location</p>
       </div>
 
       <PlacesAutocomplete

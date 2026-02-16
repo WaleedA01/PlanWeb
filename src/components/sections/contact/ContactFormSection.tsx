@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { COMPANY_INFO, getPhoneLink, getEmailLink } from '@/lib/company-info';
@@ -10,34 +10,89 @@ export default function ContactFormSection() {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    contactMethod: 'either',
+    contactMethod: '',
     email: '',
     phone: '',
     message: '',
   });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-
-    // Track contact form submission
-    posthog.capture('contact_form_submitted', {
-      contact_method: formData.contactMethod,
-      has_message: formData.message.length > 0,
-    });
-
-    // Handle form submission
-  };
+  const [showValidation, setShowValidation] = useState(false);
+  const nameRef = useRef<HTMLDivElement>(null);
+  const contactMethodRef = useRef<HTMLDivElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const messageRef = useRef<HTMLTextAreaElement>(null);
 
   const isValidEmail = (email: string) => {
+    if (!email) return false;
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
   const isValidPhone = (phone: string) => {
-    return /^[\d\s()+-]{10,}$/.test(phone);
+    if (!phone) return false;
+    const cleaned = phone.replace(/\D/g, '');
+    return cleaned.length === 10;
   };
 
-  const isFormValid = isValidEmail(formData.email) || isValidPhone(formData.phone);
+  const validateForm = () => {
+    if (!formData.firstName || !formData.lastName) {
+      nameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+    if (!formData.contactMethod) {
+      contactMethodRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+    if (formData.contactMethod === 'email' && !isValidEmail(formData.email)) {
+      emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      emailRef.current?.focus();
+      return false;
+    }
+    if ((formData.contactMethod === 'phone' || formData.contactMethod === 'text') && !isValidPhone(formData.phone)) {
+      phoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      phoneRef.current?.focus();
+      return false;
+    }
+    if (formData.contactMethod === 'either' && (!isValidEmail(formData.email) || !isValidPhone(formData.phone))) {
+      if (!isValidEmail(formData.email)) {
+        emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        emailRef.current?.focus();
+      } else {
+        phoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        phoneRef.current?.focus();
+      }
+      return false;
+    }
+    if (!formData.message) {
+      messageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      messageRef.current?.focus();
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowValidation(true);
+    if (validateForm()) {
+      console.log('Form submitted:', formData);
+      
+      // Track contact form submission
+      posthog.capture('contact_form_submitted', {
+        contact_method: formData.contactMethod,
+        has_message: formData.message.length > 0,
+      });
+      
+      // Handle form submission
+    }
+  };
+
+  const hasNameError = showValidation && (!formData.firstName || !formData.lastName);
+  const hasMethodError = showValidation && !formData.contactMethod;
+  const hasEmailError = showValidation && formData.contactMethod && 
+    ((formData.contactMethod === 'email' || formData.contactMethod === 'either') && !isValidEmail(formData.email));
+  const hasPhoneError = showValidation && formData.contactMethod && 
+    ((formData.contactMethod === 'phone' || formData.contactMethod === 'text' || formData.contactMethod === 'either') && !isValidPhone(formData.phone));
+  const hasMessageError = showValidation && !formData.message;
 
   return (
     <section className="py-16 md:py-24 bg-background">
@@ -49,37 +104,36 @@ export default function ContactFormSection() {
               <h2 className="text-3xl font-bold text-secondary mb-6">Send Us a Message</h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Name Fields */}
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">
-                      First Name *
-                    </label>
+                <div ref={nameRef}>
+                  <label className={`block text-lg font-medium mb-3 ${hasNameError ? 'text-red-500' : 'text-secondary'}`}>
+                    How should we greet you? {hasNameError && <span className="text-red-500">*</span>}
+                  </label>
+                  <div className="grid md:grid-cols-2 gap-4">
                     <input
                       type="text"
-                      required
                       value={formData.firstName}
                       onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="First Name"
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
+                        hasNameError ? 'border-red-500' : 'border-border'
+                      }`}
                     />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">
-                      Last Name *
-                    </label>
                     <input
                       type="text"
-                      required
                       value={formData.lastName}
                       onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="Last Name"
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
+                        hasNameError ? 'border-red-500' : 'border-border'
+                      }`}
                     />
                   </div>
                 </div>
 
                 {/* Preferred Contact Method */}
-                <div>
-                  <label className="block text-sm font-medium text-secondary mb-3">
-                    Preferred Contact Method *
+                <div ref={contactMethodRef}>
+                  <label className={`block text-lg font-medium mb-3 ${hasMethodError ? 'text-red-500' : 'text-secondary'}`}>
+                    How would you like us to contact you? {hasMethodError && <span className="text-red-500">*</span>}
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
@@ -97,6 +151,8 @@ export default function ContactFormSection() {
                           className={`relative p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
                             isSelected
                               ? 'border-primary bg-primary text-white shadow-md'
+                              : hasMethodError
+                              ? 'border-red-500 hover:border-red-600'
                               : 'border-border hover:border-primary/50'
                           }`}
                         >
@@ -115,7 +171,7 @@ export default function ContactFormSection() {
                                 ))}
                               </div>
                             ) : (
-                              <method.icon className={`w-10 h-10 ${isSelected ? 'text-white' : 'text-primary'}`} />
+                              <method.icon className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-primary'}`} />
                             )}
                             <div className={`text-base font-medium ${isSelected ? 'text-white' : 'text-secondary'}`}>
                               {method.label}
@@ -127,45 +183,91 @@ export default function ContactFormSection() {
                   </div>
                 </div>
 
-                {/* Email and Phone */}
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">
-                      Email *
+                {/* Email and Phone - Conditional based on contact method */}
+                {formData.contactMethod === 'email' && (
+                  <div className="animate-in fade-in duration-500">
+                    <label className={`block text-lg font-medium mb-2 ${hasEmailError ? 'text-red-500' : 'text-secondary'}`}>
+                      Email {hasEmailError && <span className="text-red-500">*</span>}
                     </label>
                     <input
+                      ref={emailRef}
                       type="email"
-                      required
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="your@email.com"
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
+                        hasEmailError ? 'border-red-500' : 'border-border'
+                      }`}
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-secondary mb-2">
-                      Phone *
+                )}
+
+                {(formData.contactMethod === 'phone' || formData.contactMethod === 'text') && (
+                  <div className="animate-in fade-in duration-500">
+                    <label className={`block text-lg font-medium mb-2 ${hasPhoneError ? 'text-red-500' : 'text-secondary'}`}>
+                      Phone Number {hasPhoneError && <span className="text-red-500">*</span>}
                     </label>
                     <input
+                      ref={phoneRef}
                       type="tel"
-                      required
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="(555) 123-4567"
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
+                        hasPhoneError ? 'border-red-500' : 'border-border'
+                      }`}
                     />
                   </div>
-                </div>
+                )}
+
+                {formData.contactMethod === 'either' && (
+                  <div className="grid md:grid-cols-2 gap-4 animate-in fade-in duration-500">
+                    <div>
+                      <label className={`block text-lg font-medium mb-2 ${hasEmailError ? 'text-red-500' : 'text-secondary'}`}>
+                        Email {hasEmailError && <span className="text-red-500">*</span>}
+                      </label>
+                      <input
+                        ref={emailRef}
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        placeholder="your@email.com"
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
+                          hasEmailError ? 'border-red-500' : 'border-border'
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-lg font-medium mb-2 ${hasPhoneError ? 'text-red-500' : 'text-secondary'}`}>
+                        Phone Number {hasPhoneError && <span className="text-red-500">*</span>}
+                      </label>
+                      <input
+                        ref={phoneRef}
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="(555) 123-4567"
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
+                          hasPhoneError ? 'border-red-500' : 'border-border'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {/* Message */}
                 <div>
-                  <label className="block text-sm font-medium text-secondary mb-2">
-                    Message *
+                  <label className={`block text-lg font-medium mb-2 ${hasMessageError ? 'text-red-500' : 'text-secondary'}`}>
+                    Message {hasMessageError && <span className="text-red-500">*</span>}
                   </label>
                   <textarea
-                    required
+                    ref={messageRef}
                     rows={6}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none ${
+                      hasMessageError ? 'border-red-500' : 'border-border'
+                    }`}
                     placeholder="Tell us how we can help you..."
                   />
                 </div>
@@ -174,8 +276,7 @@ export default function ContactFormSection() {
                 <Button
                   type="submit"
                   size="lg"
-                  disabled={!isFormValid}
-                  className="w-full bg-primary hover:bg-primary/90 text-white py-6 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-primary hover:bg-primary/90 text-white py-6 text-lg"
                 >
                   Send Message
                 </Button>

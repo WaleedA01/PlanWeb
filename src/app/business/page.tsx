@@ -136,17 +136,6 @@ export default function BusinessPage() {
           </div>
         </div>
       </section>
-
-      {/* CTA */}
-      <section className="py-16 bg-secondary/50">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-          
-          <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
-            <Link href="/business/form">Start Your Quote</Link>
-          </Button>
-        </div>
-      </section>
     </div>
   );
 }

@@ -29,7 +29,7 @@ export default function Step2VehicleStatus({ data, onUpdate, showValidation = fa
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Coverage Details</h2>
+        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Let's Get Started</h2>
         <p className="text-base md:text-lg text-primary">Help us understand your needs</p>
       </div>
 

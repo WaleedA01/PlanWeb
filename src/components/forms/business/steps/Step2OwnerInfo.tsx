@@ -19,13 +19,13 @@ export default function Step2OwnerInfo({ data, onUpdate, showValidation }: Step2
       <div className="text-center">
         <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">How should we greet you?</h2>
         <p className="text-base md:text-lg text-primary">
-          Enter the business owner for {data.businessName || 'your business'}
+          Enter your name
         </p>
       </div>
 
       <div>
         <Label className={`text-lg mb-2 block ${(hasFirstNameError || hasLastNameError) ? 'text-red-600' : ''}`}>
-          Business Owner {(hasFirstNameError || hasLastNameError) && '*'}
+          Full Name {(hasFirstNameError || hasLastNameError) && '*'}
         </Label>
         <div className="grid grid-cols-2 gap-4">
           <Input

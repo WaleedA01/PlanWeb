@@ -271,26 +271,10 @@ export default function BusinessForm() {
         if (!formData.annualSales) return 'Please enter annual sales';
         return 'Please complete all required fields';
       case 6:
-        if (!formData.preferredContactMethod) return 'Please select a contact method';
+        if (!formData.email) return 'Please enter your email address';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Please enter a valid email address';
+        if (formData.phoneNumber && formData.phoneNumber.replace(/\D/g, '').length !== 10) return 'Phone number must be 10 digits if provided';
         if (!turnstileToken) return 'Please complete the verification';
-        
-        const method = formData.preferredContactMethod;
-        if (method === 'email') {
-          if (!formData.email) return 'Please enter your email address';
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Please enter a valid email address';
-          if (formData.phoneNumber && formData.phoneNumber.replace(/\D/g, '').length !== 10) return 'Phone number must be 10 digits or left empty';
-        }
-        if (method === 'phone' || method === 'text') {
-          if (!formData.phoneNumber) return 'Please enter your phone number';
-          if (formData.phoneNumber.replace(/\D/g, '').length !== 10) return 'Please enter a valid 10-digit phone number';
-          if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Email must be valid or left empty';
-        }
-        if (method === 'either') {
-          if (!formData.email) return 'Please enter your email address';
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Please enter a valid email address';
-          if (!formData.phoneNumber) return 'Please enter your phone number';
-          if (formData.phoneNumber.replace(/\D/g, '').length !== 10) return 'Please enter a valid 10-digit phone number';
-        }
         return 'Please complete all required fields';
       default:
         return 'Please complete all required fields';
