@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { getPhoneLink } from '@/lib/company-info';
 
 export default function HeroSection() {
   return (
@@ -63,7 +64,7 @@ export default function HeroSection() {
                 variant="outline" 
                 className="w-full text-base px-4 py-3 border border-secondary text-secondary hover:bg-primary hover:text-white transition-colors"
               >
-                <Link href="/contact">Speak to an Agent</Link>
+                <a href={getPhoneLink()}>Speak to an Agent</a>
               </Button>
             </div>
           </div>
@@ -94,7 +95,7 @@ export default function HeroSection() {
                     variant="outline" 
                     className="text-sm px-6 py-3 border border-secondary text-secondary hover:bg-primary hover:text-white w-full transition-colors"
                   >
-                    <Link href="/contact">Speak to an Agent</Link>
+                    <a href={getPhoneLink()}>Speak to an Agent</a>
                   </Button>
                 </div>
 

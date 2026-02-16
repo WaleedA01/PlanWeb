@@ -63,7 +63,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/personal/other" className="text-gray-300 hover:text-primary transition-colors">
+                <Link href="/personal/other/form" className="text-gray-300 hover:text-primary transition-colors">
                   Other Insurance
                 </Link>
               </li>

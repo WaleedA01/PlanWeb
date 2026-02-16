@@ -6,14 +6,14 @@ export default function TestimonialsSection() {
   const secondRow = testimonials.slice(7, 14);
 
   return (
-    <section className="py-16 md:py-24 bg-background overflow-hidden">
+    <section className="py-16 md:py-24 bg-secondary/5 overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-secondary mb-4">
             What Our <span className="text-primary">Clients Say</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             Don't just take our word for it. Here's what our satisfied customers have to say.
           </p>
         </div>
@@ -21,12 +21,12 @@ export default function TestimonialsSection() {
 
       {/* Testimonials Marquee - Full width outside container */}
       <div className="relative flex flex-col gap-4 mb-8 overflow-hidden">
-        <Marquee pauseOnHover className="[--duration:40s]">
+        <Marquee pauseOnHover className="[--duration:60s]">
           {firstRow.map((testimonial, index) => (
             <TestimonialCard key={index} {...testimonial} />
           ))}
         </Marquee>
-        <Marquee reverse pauseOnHover className="[--duration:40s]">
+        <Marquee reverse pauseOnHover className="[--duration:60s]">
           {secondRow.map((testimonial, index) => (
             <TestimonialCard key={index} {...testimonial} />
           ))}
@@ -36,16 +36,28 @@ export default function TestimonialsSection() {
       <div className="container mx-auto px-4">
         {/* Bottom Stats */}
         <div className="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          <div className="text-center p-6 bg-primary/5 rounded-lg">
-            <div className="text-3xl md:text-4xl font-bold text-primary mb-2">4.9/5</div>
+          <a 
+            href="https://www.google.com/search?sca_esv=9e7166714c898479&sxsrf=ANbL-n5cVUNPSebGzoHEXMM2_ccO5sWriw:1771260034618&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOdOiSjvSqwGwAP0ZEniJToZT3VlJGFkvxB9Dx6CWUcBIiAsLbB0oZ_-jvnq6DKfdpK2Cws4t6t2yZXCdPzbskkzCJjEaF72iDid5cneYQigwewhUig%3D%3D&q=PlanLife+Insurance+Reviews&sa=X&ved=2ahUKEwjS_avpud6SAxVGSDABHatUKMsQ0bkNegQIJhAH&biw=1920&bih=992&dpr=1"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-center p-6 bg-primary/5 rounded-lg hover:bg-primary/10 transition-colors cursor-pointer block"
+          >
+            <div className="text-5xl md:text-6xl font-bold text-primary mb-3">5.0</div>
+            <div className="flex gap-1 justify-center mb-2">
+              {[...Array(5)].map((_, i) => (
+                <svg key={i} className="w-6 h-6 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
             <div className="text-sm text-muted-foreground">Average Rating</div>
-          </div>
-          <div className="text-center p-6 bg-primary/5 rounded-lg">
-            <div className="text-3xl md:text-4xl font-bold text-primary mb-2">10,000+</div>
+          </a>
+          <div className="text-center p-6 bg-primary/5 rounded-lg flex flex-col justify-center">
+            <div className="text-4xl md:text-5xl font-bold text-primary mb-3">10,000+</div>
             <div className="text-sm text-muted-foreground">Happy Customers</div>
           </div>
-          <div className="text-center p-6 bg-primary/5 rounded-lg">
-            <div className="text-3xl md:text-4xl font-bold text-primary mb-2">$2.5M+</div>
+          <div className="text-center p-6 bg-primary/5 rounded-lg flex flex-col justify-center">
+            <div className="text-4xl md:text-5xl font-bold text-primary mb-3">$2.5M+</div>
             <div className="text-sm text-muted-foreground">Saved for Clients</div>
           </div>
         </div>

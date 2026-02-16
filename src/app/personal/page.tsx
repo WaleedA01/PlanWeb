@@ -80,7 +80,7 @@ export default function PersonalPage() {
 
           {/* Secondary Card - Combined */}
           <div className="max-w-6xl mx-auto">
-            <Link href="/personal/other" className="group">
+            <Link href="/personal/other/form" className="group">
               <div className="bg-primary backdrop-blur-sm rounded-3xl p-10 border-4 border-primary hover:shadow-2xl transition-all hover:scale-105 relative overflow-hidden">
                 {/* Background Icons - Right Aligned */}
                 <div className="absolute top-1/2 -translate-y-1/2 right-[20%] opacity-10">
