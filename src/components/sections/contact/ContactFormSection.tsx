@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { COMPANY_INFO, getPhoneLink, getEmailLink } from '@/lib/company-info';
+import posthog from 'posthog-js';
 
 export default function ContactFormSection() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,13 @@ export default function ContactFormSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
+
+    // Track contact form submission
+    posthog.capture('contact_form_submitted', {
+      contact_method: formData.contactMethod,
+      has_message: formData.message.length > 0,
+    });
+
     // Handle form submission
   };
 

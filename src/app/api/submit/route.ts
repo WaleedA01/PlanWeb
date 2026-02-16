@@ -6,6 +6,7 @@ import { resolveZapierWebhook } from "@/lib/submit/webhook";
 import { str } from "@/lib/submit/utils/strings";
 import { routeAndMap } from "@/lib/submit/router";
 import { getAgentById, getAgentFullName } from "@/lib/agents/getAgents";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 type ParsedBody = Partial<SubmitRequest> & Record<string, unknown>;
 
@@ -118,7 +119,24 @@ export async function POST(req: Request) {
 
   const text = await zapRes.text().catch(() => "");
 
+  // Generate a distinct ID for server-side tracking (use email if available, otherwise anonymous)
+  const email = str((answers as any).email);
+  const distinctId = email || `anonymous_${Date.now()}`;
+
   if (!zapRes.ok) {
+    // Track server-side submission error
+    const posthog = getPostHogClient();
+    posthog.capture({
+      distinctId,
+      event: 'lead_submission_error',
+      properties: {
+        form_type: rawFormType,
+        error: 'Zapier forward failed',
+        status_code: zapRes.status,
+        has_agent: !!agentId,
+      },
+    });
+
     return NextResponse.json(
       {
         error: "Zapier forward failed",
@@ -130,6 +148,21 @@ export async function POST(req: Request) {
       { status: 502 }
     );
   }
+
+  // Track successful server-side lead submission
+  const posthog = getPostHogClient();
+  posthog.capture({
+    distinctId,
+    event: 'lead_submitted',
+    properties: {
+      form_type: rawFormType,
+      city: str((answers as any).city),
+      state: str((answers as any).state),
+      has_agent: !!agentId,
+      has_qr_code: !!qrToken,
+      tags: tags.join('; '),
+    },
+  });
 
   return NextResponse.json(
     {

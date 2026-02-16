@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AutoFormData } from './types';
 import Step1PersonalInfo from './steps/Step1PersonalInfo';
 import Step2VehicleStatus from './steps/Step2VehicleStatus';
@@ -13,6 +13,7 @@ import PersonalMap from '../personal/PersonalMap';
 import SuccessAnimation from '../shared/SuccessAnimation';
 import { TurnstileWidget } from '@/components/TurnstileWidget';
 import { Car } from 'lucide-react';
+import posthog from 'posthog-js';
 
 export default function AutoForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -25,6 +26,7 @@ export default function AutoForm() {
   const [agentLocked, setAgentLocked] = useState(false);
   const [lockedAgentName, setLockedAgentName] = useState<string | null>(null);
   const [showValidation, setShowValidation] = useState(false);
+  const formStartedRef = useRef(false);
 
   const [formData, setFormData] = useState<AutoFormData>({
     firstName: '',
@@ -62,6 +64,15 @@ export default function AutoForm() {
       } catch (e) {
         console.error('Failed to load saved progress:', e);
       }
+    }
+
+    // Track form started event (only once per form session)
+    if (!formStartedRef.current) {
+      formStartedRef.current = true;
+      posthog.capture('auto_form_started', {
+        form_type: 'auto',
+        has_saved_progress: !!saved,
+      });
     }
   }, []);
 
@@ -123,17 +134,34 @@ export default function AutoForm() {
 
   const handleNext = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+
     if (currentStep !== 4 && !canProceed()) {
       setShowValidation(true);
       setSubmitError(getValidationError());
       return;
     }
-    
+
     setShowValidation(false);
     setSubmitError(null);
     if (currentStep < 5) {
+      // Track step completion
+      posthog.capture('auto_form_step_completed', {
+        form_type: 'auto',
+        step_number: currentStep,
+        step_name: getStepName(currentStep),
+      });
       setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const getStepName = (step: number): string => {
+    switch (step) {
+      case 1: return 'personal_info';
+      case 2: return 'vehicle_status';
+      case 3: return 'vehicle_details';
+      case 4: return 'documents';
+      case 5: return 'contact_info';
+      default: return 'unknown';
     }
   };
 
@@ -216,10 +244,23 @@ export default function AutoForm() {
         setSubmitError(data?.error || `Submit failed (HTTP ${res.status})`);
         setTurnstileToken(null);
         setTurnstileKey((k) => k + 1);
+        posthog.capture('auto_form_submission_error', {
+          form_type: 'auto',
+          error: data?.error || `HTTP ${res.status}`,
+        });
         return;
       }
 
       // SUCCESS: Show success immediately, send files in background
+      posthog.capture('auto_form_submitted', {
+        form_type: 'auto',
+        city: formData.city,
+        state: formData.state,
+        num_vehicles: formData.numVehicles,
+        num_drivers: formData.numDrivers,
+        is_currently_insured: formData.isCurrentlyInsured,
+        has_qr_code: !!qrToken,
+      });
       setIsSubmitted(true);
       setTurnstileToken(null);
       setTurnstileKey((k) => k + 1);

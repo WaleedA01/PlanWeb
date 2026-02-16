@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 
 const steps = [
   {
@@ -36,6 +37,9 @@ export default function HowItWorksDialog() {
       setProgress(0);
       return;
     }
+
+    // Track dialog opened
+    posthog.capture('how_it_works_dialog_opened');
 
     const progressInterval = setInterval(() => {
       setProgress((prev) => {

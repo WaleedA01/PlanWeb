@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { BusinessFormData, initialBusinessFormData } from './types';
 import FormContainer from '../shared/FormContainer';
 import FormStep from '../shared/FormStep';
@@ -17,6 +17,7 @@ import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { Shield, Building2, CheckCircle2, UtensilsCrossed, Store, Wrench, Briefcase, Home, Car, Heart, GraduationCap, Scissors, Dumbbell, Coffee, ShoppingBag, Hammer } from 'lucide-react';
 import BusinessMap from './BusinessMap';
 import { loadBusinessClassifications } from '@/lib/businessClassifications';
+import posthog from 'posthog-js';
 
 export default function BusinessForm() {
   const [isPreloading, setIsPreloading] = useState(true);
@@ -35,7 +36,9 @@ export default function BusinessForm() {
   const [qrToken, setQrToken] = useState<string | null>(null);
   const [agentLocked, setAgentLocked] = useState(false);
   const [lockedAgentName, setLockedAgentName] = useState<string | null>(null);
-  
+  const formStartedRef = useRef(false);
+  const lastStepViewedRef = useRef<number | null>(null);
+
   const [businessClassifications, setBusinessClassifications] = useState<any[]>([]);
 
   // Preload data before showing form
@@ -68,7 +71,32 @@ export default function BusinessForm() {
         console.error('Failed to load saved progress:', e);
       }
     }
+
+    // Track form started event (only once per form session)
+    if (!formStartedRef.current) {
+      formStartedRef.current = true;
+      posthog.capture('business_form_started', {
+        form_type: 'business',
+        has_saved_progress: !!saved,
+      });
+    }
   }, []);
+
+  // Track step viewed (impression) to measure true drop-off points
+  useEffect(() => {
+    // Avoid duplicate fires on re-render
+    if (lastStepViewedRef.current === currentStep) return;
+    lastStepViewedRef.current = currentStep;
+
+    posthog.capture('business_form_step_viewed', {
+      form_type: 'business',
+      step_number: currentStep,
+      step_name: getStepName(currentStep),
+      has_qr_code: !!qrToken,
+      has_agent: !!formData.selectedAgentId,
+      agent_locked: agentLocked,
+    });
+  }, [currentStep, qrToken, agentLocked]);
 
   // Resolve QR context (URL token if present, otherwise HttpOnly cookie via the API) and lock agent attribution
   useEffect(() => {
@@ -179,15 +207,37 @@ export default function BusinessForm() {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
+  const getStepName = (step: number): string => {
+    switch (step) {
+      case 1: return 'business_search';
+      case 2: return 'owner_info';
+      case 3: return 'business_type';
+      case 4: return 'products';
+      case 5: return 'business_details';
+      case 6: return 'contact_info';
+      default: return 'unknown';
+    }
+  };
+
   const handleNext = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+
     if (!canProceed()) {
       setShowValidation(true);
       setSubmitError(getValidationError());
       return;
     }
-    
+
+    // Track step completion
+    posthog.capture('business_form_step_completed', {
+      form_type: 'business',
+      step_number: currentStep,
+      step_name: getStepName(currentStep),
+      has_qr_code: !!qrToken,
+      has_agent: !!formData.selectedAgentId,
+      agent_locked: agentLocked,
+    });
+
     setShowValidation(false);
     setSubmitError(null);
     if (currentStep === 2) {
@@ -305,9 +355,32 @@ export default function BusinessForm() {
         setSubmitError(data?.error || `Submit failed (HTTP ${res.status})`);
         setTurnstileToken(null);
         setTurnstileKey((k) => k + 1);
+        posthog.capture('business_form_submission_error', {
+          form_type: 'business',
+          error: data?.error || `HTTP ${res.status}`,
+          step_number: currentStep,
+          step_name: getStepName(currentStep),
+          has_qr_code: !!qrToken,
+          has_agent: !!formData.selectedAgentId,
+          agent_locked: agentLocked,
+        });
         return;
       }
 
+      posthog.capture('business_form_submitted', {
+        form_type: 'business',
+        city: formData.city,
+        state: formData.state,
+        business_type: formData.businessType,
+        products_count: formData.products.length,
+        is_new_business: formData.isNewBusiness,
+        num_employees: formData.numEmployees,
+        has_qr_code: !!qrToken,
+        step_number: currentStep,
+        step_name: getStepName(currentStep),
+        has_agent: !!formData.selectedAgentId,
+        agent_locked: agentLocked,
+      });
       setIsSubmitted(true);
       setTurnstileToken(null);
       setTurnstileKey((k) => k + 1);

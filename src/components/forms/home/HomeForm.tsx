@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { HomeFormData, initialHomeFormData } from './types';
 import FormContainer from '../shared/FormContainer';
 import FormStep from '../shared/FormStep';
@@ -13,6 +13,7 @@ import Step4FinalStep, { validateContactInfo } from './steps/Step4FinalStep';
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { Home } from 'lucide-react';
 import PersonalMap from '../personal/PersonalMap';
+import posthog from 'posthog-js';
 
 export default function HomeForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -30,6 +31,7 @@ export default function HomeForm() {
   const [qrToken, setQrToken] = useState<string | null>(null);
   const [agentLocked, setAgentLocked] = useState(false);
   const [lockedAgentName, setLockedAgentName] = useState<string | null>(null);
+  const formStartedRef = useRef(false);
 
   // Load saved progress on mount
   useEffect(() => {
@@ -42,6 +44,15 @@ export default function HomeForm() {
       } catch (e) {
         console.error('Failed to load saved progress:', e);
       }
+    }
+
+    // Track form started event (only once per form session)
+    if (!formStartedRef.current) {
+      formStartedRef.current = true;
+      posthog.capture('home_form_started', {
+        form_type: 'home',
+        has_saved_progress: !!saved,
+      });
     }
   }, []);
 
@@ -98,15 +109,32 @@ export default function HomeForm() {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
+  const getStepName = (step: number): string => {
+    switch (step) {
+      case 1: return 'personal_info';
+      case 2: return 'purchase_info';
+      case 3: return 'property_features';
+      case 4: return 'contact_info';
+      default: return 'unknown';
+    }
+  };
+
   const handleNext = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+
     if (!canProceed()) {
       setShowValidation(true);
       setSubmitError(getValidationError());
       return;
     }
-    
+
+    // Track step completion
+    posthog.capture('home_form_step_completed', {
+      form_type: 'home',
+      step_number: currentStep,
+      step_name: getStepName(currentStep),
+    });
+
     setShowValidation(false);
     setSubmitError(null);
     if (currentStep === 1) {
@@ -200,10 +228,22 @@ export default function HomeForm() {
         setSubmitError(data?.error || `Submit failed (HTTP ${res.status})`);
         setTurnstileToken(null);
         setTurnstileKey((k) => k + 1);
+        posthog.capture('home_form_submission_error', {
+          form_type: 'home',
+          error: data?.error || `HTTP ${res.status}`,
+        });
         return;
       }
 
       // SUCCESS: Show success immediately, send files in background
+      posthog.capture('home_form_submitted', {
+        form_type: 'home',
+        city: formData.city,
+        state: formData.state,
+        property_usage: formData.propertyUsage,
+        is_new_purchase: formData.isNewPurchase,
+        has_qr_code: !!qrToken,
+      });
       setIsSubmitted(true);
       setTurnstileToken(null);
       setTurnstileKey((k) => k + 1);
