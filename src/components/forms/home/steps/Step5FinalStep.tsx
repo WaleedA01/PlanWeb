@@ -67,7 +67,7 @@ export default function Step5FinalStep<T extends ContactFormData>({
   agentLocked, 
   lockedAgentName,
   showValidation
-}: Step4FinalStepProps<T>) {
+}: Step5FinalStepProps<T>) {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [emailError, setEmailError] = useState<string>('');
   const [phoneError, setPhoneError] = useState<string>('');
