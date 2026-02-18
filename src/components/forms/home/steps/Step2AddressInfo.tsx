@@ -6,15 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AddressAutocomplete from '../../personal/AddressAutocomplete';
 
-interface Step1Props {
+interface Step2Props {
   data: HomeFormData;
   onUpdate: (updates: Partial<HomeFormData>) => void;
   showValidation?: boolean;
 }
 
-export default function Step1PersonalInfo({ data, onUpdate, showValidation }: Step1Props) {
-  const hasFirstNameError = showValidation && !data.firstName;
-  const hasLastNameError = showValidation && !data.lastName;
+export default function Step2AddressInfo({ data, onUpdate, showValidation }: Step2Props) {
   const hasStreetError = showValidation && !data.streetAddress;
   const hasCityError = showValidation && !data.city;
   const hasStateError = showValidation && !data.state;
@@ -62,28 +60,8 @@ export default function Step1PersonalInfo({ data, onUpdate, showValidation }: St
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Let's get to know you</h2>
-          <p className="text-base md:text-lg text-primary">Tell us about yourself and your property</p>
-        </div>
-
-        <div>
-          <Label className={`text-lg mb-2 block ${(hasFirstNameError || hasLastNameError) ? 'text-red-600' : ''}`}>
-            Your Name {(hasFirstNameError || hasLastNameError) && '*'}
-          </Label>
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              placeholder="First Name"
-              value={data.firstName}
-              onChange={(e) => onUpdate({ firstName: e.target.value })}
-              className={hasFirstNameError ? 'border-red-500' : ''}
-            />
-            <Input
-              placeholder="Last Name"
-              value={data.lastName}
-              onChange={(e) => onUpdate({ lastName: e.target.value })}
-              className={hasLastNameError ? 'border-red-500' : ''}
-            />
-          </div>
+          <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Property Address</h2>
+          <p className="text-base md:text-lg text-primary">Where is your property located?</p>
         </div>
 
         <AddressAutocomplete
@@ -101,37 +79,11 @@ export default function Step1PersonalInfo({ data, onUpdate, showValidation }: St
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="text-center">
-        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Personal Information</h2>
-        <p className="text-base md:text-lg text-primary">Review and confirm your details</p>
+        <h2 className="text-3xl md:text-4xl font-medium text-secondary mb-3">Property Address</h2>
+        <p className="text-base md:text-lg text-primary">Review and confirm your address</p>
       </div>
 
       <div className="space-y-6">
-        <div>
-          <Label className={`text-lg mb-2 block ${(hasFirstNameError || hasLastNameError) ? 'text-red-600' : ''}`}>
-            Your Name {(hasFirstNameError || hasLastNameError) && '*'}
-          </Label>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Input
-                id="firstName"
-                value={data.firstName}
-                onChange={(e) => onUpdate({ firstName: e.target.value })}
-                placeholder="First Name"
-                className={hasFirstNameError ? 'border-red-500' : ''}
-              />
-            </div>
-            <div>
-              <Input
-                id="lastName"
-                value={data.lastName}
-                onChange={(e) => onUpdate({ lastName: e.target.value })}
-                placeholder="Last Name"
-                className={hasLastNameError ? 'border-red-500' : ''}
-              />
-            </div>
-          </div>
-        </div>
-
         <div>
           <Label htmlFor="streetAddress" className={`text-lg ${hasStreetError ? 'text-red-600' : ''}`}>
             Street Address {hasStreetError && '*'}

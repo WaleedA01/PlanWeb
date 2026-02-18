@@ -10,9 +10,9 @@ export interface HomeFormData {
   latitude?: number;
   longitude?: number;
 
-  // Step 2: Purchase Info
+  // Step 1: Purchase Info
   isNewPurchase: boolean | null;
-  currentInsurer: string;
+  insuranceStatus: string; // 'currently-insured' | 'looking-to-insure'
   closeDate: string;
   coverageDate: string;
   policyFiles?: File[];
@@ -45,7 +45,7 @@ export const initialHomeFormData: HomeFormData = {
   latitude: undefined,
   longitude: undefined,
   isNewPurchase: null,
-  currentInsurer: '',
+  insuranceStatus: '',
   closeDate: '',
   coverageDate: '',
   policyFiles: [],

@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import StructuredData from "@/components/StructuredData";
+import { defaultMetadata } from "@/lib/metadata";
+import { localBusinessSchema, organizationSchema } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "PlanLife",
-  description: "PlanLife website",
-};
+export const metadata: Metadata = defaultMetadata;
 
 export default function RootLayout({
   children,
@@ -16,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <StructuredData data={[localBusinessSchema, organizationSchema]} />
         <Header />
         {children}
         <Footer />

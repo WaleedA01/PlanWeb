@@ -15,8 +15,8 @@ export default function Header() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="hover:scale-105 transition-transform">
-              <Image src="/logo-full.png" alt="PlanLife" width={150} height={40} className="hidden md:block" />
-              <Image src="/logo-square.png" alt="PlanLife" width={40} height={40} className="md:hidden" />
+              <Image src="/logo-full.png" alt="PlanLife Insurance - Florida Insurance Agency" width={150} height={40} className="hidden md:block" priority />
+              <Image src="/logo-square.png" alt="PlanLife Insurance Logo" width={40} height={40} className="md:hidden" priority />
             </Link>
 
             {/* Desktop Navigation */}
@@ -51,6 +51,10 @@ export default function Header() {
               </Link>
               <Link href="/faq" className="text-foreground hover:text-primary transition-colors relative group">
                 FAQ
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+              </Link>
+              <Link href="/blog" className="text-foreground hover:text-primary transition-colors relative group">
+                Blog
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
               </Link>
               <Link href="/services">
@@ -155,6 +159,13 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 FAQ
+              </Link>
+              <Link 
+                href="/blog" 
+                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.85s_forwards] opacity-0"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Blog
               </Link>
               <Link 
                 href="/services" 

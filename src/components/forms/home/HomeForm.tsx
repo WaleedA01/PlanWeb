@@ -6,10 +6,11 @@ import FormContainer from '../shared/FormContainer';
 import FormStep from '../shared/FormStep';
 import SuccessAnimation from '../shared/SuccessAnimation';
 import AnimatedTransition from '../shared/AnimatedTransition';
-import Step1PersonalInfo from './steps/Step1PersonalInfo';
-import Step2PurchaseInfo from './steps/Step2PurchaseInfo';
-import Step3PropertyFeatures from './steps/Step3PropertyFeatures';
-import Step4FinalStep, { validateContactInfo } from './steps/Step4FinalStep';
+import Step1PurchaseInfo from './steps/Step1PurchaseInfo';
+import Step2AddressInfo from './steps/Step2AddressInfo';
+import Step3NameInfo from './steps/Step3NameInfo';
+import Step4PropertyFeatures from './steps/Step4PropertyFeatures';
+import Step5FinalStep, { validateContactInfo } from './steps/Step5FinalStep';
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { Home } from 'lucide-react';
 import PersonalMap from '../personal/PersonalMap';
@@ -19,7 +20,8 @@ export default function HomeForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<HomeFormData>(initialHomeFormData);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showTransition, setShowTransition] = useState(false);
+  const [showTransition1, setShowTransition1] = useState(false);
+  const [showTransition2, setShowTransition2] = useState(false);
 
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileKey, setTurnstileKey] = useState(0);
@@ -111,10 +113,11 @@ export default function HomeForm() {
 
   const getStepName = (step: number): string => {
     switch (step) {
-      case 1: return 'personal_info';
-      case 2: return 'purchase_info';
-      case 3: return 'property_features';
-      case 4: return 'contact_info';
+      case 1: return 'purchase_info';
+      case 2: return 'address_info';
+      case 3: return 'name_info';
+      case 4: return 'property_features';
+      case 5: return 'contact_info';
       default: return 'unknown';
     }
   };
@@ -138,8 +141,10 @@ export default function HomeForm() {
     setShowValidation(false);
     setSubmitError(null);
     if (currentStep === 1) {
-      setShowTransition(true);
-    } else if (currentStep < 4) {
+      setShowTransition1(true);
+    } else if (currentStep === 3) {
+      setShowTransition2(true);
+    } else if (currentStep < 5) {
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -147,21 +152,24 @@ export default function HomeForm() {
   const getValidationError = (): string => {
     switch (currentStep) {
       case 1:
-        if (!formData.firstName) return 'Please enter your first name';
-        if (!formData.lastName) return 'Please enter your last name';
+        if (formData.isNewPurchase === null) return 'Please indicate if this is a new purchase';
+        if (formData.isNewPurchase === true && !formData.closeDate) return 'Please enter expected close date';
+        if (formData.isNewPurchase === false && !formData.insuranceStatus) return 'Please select your insurance status';
+        return 'Please complete all required fields';
+      case 2:
         if (!formData.streetAddress) return 'Please enter your street address';
         if (!formData.city) return 'Please enter your city';
         if (!formData.state) return 'Please enter your state';
         if (!formData.postalCode) return 'Please enter your ZIP code';
         return 'Please complete all required fields';
-      case 2:
-        if (formData.isNewPurchase === null) return 'Please indicate if this is a new purchase';
-        if (formData.isNewPurchase === true && !formData.closeDate) return 'Please enter expected close date';
-        return 'Please complete all required fields';
       case 3:
-        if (!formData.propertyUsage) return 'Please select a property usage';
+        if (!formData.firstName) return 'Please enter your first name';
+        if (!formData.lastName) return 'Please enter your last name';
         return 'Please complete all required fields';
       case 4:
+        if (!formData.propertyUsage) return 'Please select a property usage';
+        return 'Please complete all required fields';
+      case 5:
         if (!turnstileToken) return 'Please complete the verification';
         return 'Please complete all required contact information';
       default:
@@ -176,9 +184,14 @@ export default function HomeForm() {
     }
   };
 
-  const handleTransitionComplete = () => {
-    setShowTransition(false);
+  const handleTransition1Complete = () => {
+    setShowTransition1(false);
     setCurrentStep(2);
+  };
+
+  const handleTransition2Complete = () => {
+    setShowTransition2(false);
+    setCurrentStep(4);
   };
 
   const handleSubmit = async () => {
@@ -285,14 +298,17 @@ export default function HomeForm() {
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return formData.firstName && formData.lastName && formData.streetAddress && formData.city && formData.state && formData.postalCode;
-      case 2:
         if (formData.isNewPurchase === null) return false;
         if (formData.isNewPurchase === true) return !!formData.closeDate;
+        if (formData.isNewPurchase === false) return !!formData.insuranceStatus;
         return true;
+      case 2:
+        return formData.streetAddress && formData.city && formData.state && formData.postalCode;
       case 3:
-        return !!formData.propertyUsage;
+        return formData.firstName && formData.lastName;
       case 4:
+        return !!formData.propertyUsage;
+      case 5:
         return validateContactInfo(formData) && !!turnstileToken;
       default:
         return false;
@@ -356,13 +372,13 @@ export default function HomeForm() {
       <div className="bg-background py-12">
         <FormContainer
           currentStep={currentStep}
-          totalSteps={4}
+          totalSteps={5}
           onNext={handleNext}
           onPrevious={handlePrevious}
           onSubmit={handleSubmit}
-          isLastStep={currentStep === 4}
+          isLastStep={currentStep === 5}
           canProceed={!!canProceed() && !isSubmitting}
-          hideNavigation={showTransition}
+          hideNavigation={showTransition1 || showTransition2}
           turnstileWidget={
             !turnstileToken ? (
               <TurnstileWidget
@@ -372,32 +388,48 @@ export default function HomeForm() {
             ) : null
           }
         >
-          <FormStep isActive={currentStep === 1 && !showTransition}>
-            <Step1PersonalInfo data={formData} onUpdate={updateFormData} showValidation={showValidation} />
+          <FormStep isActive={currentStep === 1 && !showTransition1}>
+            <Step1PurchaseInfo data={formData} onUpdate={updateFormData} showValidation={showValidation} />
           </FormStep>
 
-          <FormStep isActive={showTransition}>
+          <FormStep isActive={showTransition1}>
             <AnimatedTransition
-              line1="Nice to meet you!"
-              line2="Tell us about your home!"
+              line1={formData.isNewPurchase ? "Congrats on the new home!" : "You're in the right place"}
+              line2={formData.isNewPurchase ? "Let's get you covered!" : "Let's gather some more details."}
               line1ClassName="text-5xl md:text-6xl font-bold text-primary"
               line2ClassName="text-xl md:text-2xl font-medium text-muted-foreground"
               animationType="slideUp"
               duration={3500}
-              onComplete={handleTransitionComplete}
+              onComplete={handleTransition1Complete}
             />
           </FormStep>
 
-          <FormStep isActive={currentStep === 2 && !showTransition}>
-            <Step2PurchaseInfo data={formData} onUpdate={updateFormData} showValidation={showValidation} />
+          <FormStep isActive={currentStep === 2 && !showTransition1}>
+            <Step2AddressInfo data={formData} onUpdate={updateFormData} showValidation={showValidation} />
           </FormStep>
 
-          <FormStep isActive={currentStep === 3}>
-            <Step3PropertyFeatures data={formData} onUpdate={updateFormData} showValidation={showValidation} />
+          <FormStep isActive={currentStep === 3 && !showTransition2}>
+            <Step3NameInfo data={formData} onUpdate={updateFormData} showValidation={showValidation} />
+          </FormStep>
+
+          <FormStep isActive={showTransition2}>
+            <AnimatedTransition
+              line1={`Nice to meet you, ${formData.firstName}!`}
+              line2="We're almost done."
+              line1ClassName="text-5xl md:text-6xl font-bold text-primary"
+              line2ClassName="text-xl md:text-2xl font-medium text-muted-foreground"
+              animationType="slideUp"
+              duration={3500}
+              onComplete={handleTransition2Complete}
+            />
           </FormStep>
 
           <FormStep isActive={currentStep === 4}>
-            <Step4FinalStep 
+            <Step4PropertyFeatures data={formData} onUpdate={updateFormData} showValidation={showValidation} />
+          </FormStep>
+
+          <FormStep isActive={currentStep === 5}>
+            <Step5FinalStep 
               data={formData} 
               onUpdate={updateFormData}
               agentLocked={agentLocked}

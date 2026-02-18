@@ -24,7 +24,7 @@ interface ContactFormData {
   selectedAgentId: string;
 }
 
-interface Step4FinalStepProps<T extends ContactFormData> {
+interface Step5FinalStepProps<T extends ContactFormData> {
   data: T;
   onUpdate: (updates: Partial<T>) => void;
   agentLocked?: boolean;
@@ -61,7 +61,7 @@ export const validateContactInfo = <T extends ContactFormData>(data: T): boolean
   return true;
 };
 
-export default function Step4FinalStep<T extends ContactFormData>({ 
+export default function Step5FinalStep<T extends ContactFormData>({ 
   data, 
   onUpdate, 
   agentLocked, 

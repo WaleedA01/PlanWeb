@@ -18,8 +18,9 @@ export default function HeroSection() {
           <div className="relative w-[70%] h-full">
             <Image
               src="/agents/group/gusjusora.png"
-              alt="Insurance Team"
+              alt="PlanLife Insurance Team - Licensed Insurance Agents in Florida"
               fill
+              sizes="(max-width: 1024px) 0vw, 70vw"
               className="object-contain object-bottom drop-shadow-2xl"
               priority
             />
@@ -32,17 +33,18 @@ export default function HeroSection() {
         <div className="lg:hidden flex flex-col items-center text-center relative">
           {/* Text Content */}
           <div className="mb-2 relative z-0">
-            <h1 className="text-6xl md:text-5xl font-bold text-secondary mb-4 leading-tight">
+            <div className="text-6xl md:text-5xl font-bold text-secondary mb-4 leading-tight">
               Protect What Matters <span className="text-white underline">Most.</span>
-            </h1>
+            </div>
           </div>
 
           {/* Agent Image - overlays bottom of text */}
           <div className="relative w-full max-w-md h-64 md:h-80 mb-0 -mt-4 z-10">
             <Image
               src="/agents/group/gusjusora.png"
-              alt="Insurance Team"
+              alt="PlanLife Insurance Team - Licensed Insurance Agents in Florida"
               fill
+              sizes="(max-width: 768px) 100vw, 448px"
               className="object-contain object-bottom drop-shadow-2xl"
               priority
             />

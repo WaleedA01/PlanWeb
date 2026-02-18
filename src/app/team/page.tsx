@@ -1,3 +1,5 @@
+import { Metadata } from 'next';
+import { pageMetadata } from '@/lib/metadata';
 import fs from "fs";
 import path from "path";
 
@@ -5,6 +7,8 @@ import AgentCard from '@/components/AgentCard';
 import { getActiveAgents, getAgentFullName, sortAgents } from "@/lib/agents/getAgents";
 import FadeInSection from '@/components/animations/FadeInSection';
 import JoinTeamCTASection from '@/components/sections/about/JoinTeamCTASection';
+
+export const metadata: Metadata = pageMetadata.team;
 
 export default function Team() {
   const agents = sortAgents(getActiveAgents());
