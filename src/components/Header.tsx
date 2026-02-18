@@ -53,10 +53,6 @@ export default function Header() {
                 FAQ
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
               </Link>
-              <Link href="/blog" className="text-foreground hover:text-primary transition-colors relative group">
-                Blog
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-              </Link>
               <Link href="/services">
                 <Button className="bg-secondary hover:bg-secondary/90 text-white shadow-lg font-semibold transition-all">
                   Get Started
@@ -159,13 +155,6 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 FAQ
-              </Link>
-              <Link 
-                href="/blog" 
-                className="text-white text-2xl font-medium hover:text-primary transition-all hover:scale-110 animate-[slideInFade_0.5s_ease-out_0.85s_forwards] opacity-0"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Blog
               </Link>
               <Link 
                 href="/services" 

@@ -8,7 +8,7 @@ import { Calendar, User, ArrowLeft, Tag } from 'lucide-react';
 import StructuredData from '@/components/StructuredData';
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
@@ -19,7 +19,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = getPostBySlug(params.slug);
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
   
   if (!post) {
     return {
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${post.title} | PlanLife`,
     description: post.description,
     alternates: {
-      canonical: `https://planlifeusa.com/blog/${params.slug}`,
+      canonical: `https://planlifeusa.com/blog/${slug}`,
     },
     openGraph: {
       title: post.title,
@@ -43,8 +44,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function BlogPost({ params }: Props) {
-  const post = getPostBySlug(params.slug);
+export default async function BlogPost({ params }: Props) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
 
   if (!post) {
     notFound();
@@ -110,20 +112,45 @@ export default function BlogPost({ params }: Props) {
       </section>
 
       {/* Article Content */}
-      <article className="py-12 md:py-16">
+      <article className="py-12 md:py-16 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
+            {/* Reading time estimate */}
+            <div className="flex items-center gap-4 text-sm text-muted-foreground mb-8 pb-8 border-b border-border">
+              <span className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {Math.ceil(post.content.split(' ').length / 200)} min read
+              </span>
+              <span className="text-border">•</span>
+              <span>{post.category}</span>
+            </div>
+            
             <div className="prose prose-lg max-w-none
-              prose-headings:text-secondary prose-headings:font-bold
-              prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6
-              prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
-              prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-6
-              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-              prose-strong:text-secondary prose-strong:font-semibold
-              prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6
-              prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-6
-              prose-li:text-muted-foreground prose-li:mb-2
-              prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic
+              prose-headings:font-bold prose-headings:tracking-tight
+              prose-h1:text-4xl prose-h1:text-secondary prose-h1:mb-6 prose-h1:mt-12 prose-h1:leading-tight
+              prose-h2:text-3xl prose-h2:text-secondary prose-h2:mt-12 prose-h2:mb-5 prose-h2:pb-3 prose-h2:border-b-2 prose-h2:border-primary/20 prose-h2:leading-tight
+              prose-h3:text-xl prose-h3:text-primary prose-h3:mt-8 prose-h3:mb-3 prose-h3:font-semibold
+              prose-h4:text-lg prose-h4:text-secondary prose-h4:mt-6 prose-h4:mb-2 prose-h4:font-semibold
+              prose-p:text-muted-foreground prose-p:leading-[1.8] prose-p:mb-5 prose-p:text-base
+              prose-a:text-primary prose-a:no-underline prose-a:font-medium hover:prose-a:underline prose-a:transition-all
+              prose-strong:text-secondary prose-strong:font-bold
+              prose-em:text-secondary/90 prose-em:italic
+              prose-ul:my-5 prose-ul:space-y-2 prose-ul:list-disc prose-ul:pl-6
+              prose-ol:my-5 prose-ol:space-y-2 prose-ol:list-decimal prose-ol:pl-6
+              prose-li:text-muted-foreground prose-li:leading-[1.7] prose-li:text-base prose-li:my-1
+              prose-li:marker:text-primary prose-li:marker:font-bold
+              prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:pl-6 prose-blockquote:pr-4 prose-blockquote:py-4 prose-blockquote:my-6 prose-blockquote:italic prose-blockquote:rounded-r-lg prose-blockquote:shadow-sm prose-blockquote:text-secondary/90
+              prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:font-normal
+              prose-pre:bg-secondary/5 prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-pre:p-4 prose-pre:my-6
+              prose-hr:border-border prose-hr:my-10
+              prose-table:border-collapse prose-table:w-full prose-table:shadow-sm prose-table:rounded-lg prose-table:overflow-hidden prose-table:my-6
+              prose-thead:bg-primary/10
+              prose-th:p-3 prose-th:text-left prose-th:font-bold prose-th:text-secondary prose-th:border-b-2 prose-th:border-primary/30
+              prose-td:p-3 prose-td:border prose-td:border-border prose-td:bg-white
+              prose-tr:border-b prose-tr:border-border
+              first:prose-p:text-lg first:prose-p:text-secondary/90 first:prose-p:leading-relaxed first:prose-p:font-medium
             ">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {post.content}
