@@ -5,7 +5,7 @@ const baseUrl = 'https://planlifeusa.com';
 
 export const defaultMetadata: Metadata = {
   metadataBase: new URL(baseUrl),
-  title: 'PlanLife | Business, Auto, Home Insurance in Florida',
+  title: { absolute: 'PlanLife | Business, Auto, Home Insurance in Florida' },
   alternates: {
     canonical: baseUrl,
   },
@@ -42,52 +42,52 @@ export const defaultMetadata: Metadata = {
 
 export const pageMetadata = {
   home: {
-    title: 'PlanLife | Business, Auto, Home Insurance in Florida',
+    title: { absolute: 'PlanLife | Business, Auto, Home Insurance in Florida' },
     description: "Get affordable auto, home, and business insurance in Florida. 50+ carriers, 20+ years experience, 5-star rated. Free quotes in minutes. Call (407) 557-3100",
     alternates: { canonical: `${baseUrl}` },
   },
   aboutUs: {
-    title: "PlanLife | Florida's Most Trusted Insurance Agency Since 2020",
+    title: { absolute: "PlanLife | Florida's Most Trusted Insurance Agency Since 2020" },
     description: "Learn about PlanLife Insurance, Florida's premier insurance agency. 20+ years experience, 10,000+ happy customers, $2.5M+ saved. Meet our expert team.",
     alternates: { canonical: `${baseUrl}/about-us` },
   },
   services: {
-    title: 'PlanLife | Insurance Services in Florida - Auto, Home, Business & Life',
+    title: { absolute: 'PlanLife | Insurance Services in Florida - Auto, Home, Business & Life' },
     description: 'Comprehensive insurance services in Florida: auto, home, business, life, umbrella. 50+ top carriers including Progressive, Geico, Hartford. Get your free quote today.',
     alternates: { canonical: `${baseUrl}/services` },
   },
   personal: {
-    title: 'PlanLife | Personal Insurance in Florida - Auto, Home & Life Coverage',
+    title: { absolute: 'PlanLife | Personal Insurance in Florida - Auto, Home & Life Coverage' },
     description: 'Protect what matters with personal insurance from PlanLife. Auto, home, renters, life, boat, RV & umbrella coverage. Compare quotes from 50+ carriers.',
     alternates: { canonical: `${baseUrl}/personal` },
   },
   business: {
-    title: 'PlanLife | Business Insurance in Florida - Liability, Workers Comp & More',
+    title: { absolute: 'PlanLife | Business Insurance in Florida - Liability, Workers Comp & More' },
     description: 'Comprehensive business insurance in Florida: general liability, property, workers comp, cyber liability, commercial auto. Tailored coverage for your business.',
     alternates: { canonical: `${baseUrl}/business` },
   },
   team: {
-    title: 'PlanLife | Meet Our Licensed Insurance Agents - Expert Team in Florida',
+    title: { absolute: 'PlanLife | Meet Our Licensed Insurance Agents - Expert Team in Florida' },
     description: "Meet PlanLife's licensed insurance professionals. 20+ years combined experience helping Florida families and businesses find perfect coverage.",
     alternates: { canonical: `${baseUrl}/team` },
   },
   careers: {
-    title: 'PlanLife | Insurance Careers in Florida - Join Our Team Today',
+    title: { absolute: 'PlanLife | Insurance Careers in Florida - Join Our Team Today' },
     description: 'Join PlanLife Insurance in Florida. Exciting career opportunities in insurance sales and customer service. Competitive pay, benefits, and growth potential.',
     alternates: { canonical: `${baseUrl}/careers` },
   },
   contact: {
-    title: `PlanLife | Contact Us in Florida - Call ${COMPANY_INFO.contact.phone}`,
+    title: { absolute: `PlanLife | Contact Us in Florida - Call ${COMPANY_INFO.contact.phone}` },
     description: `Contact PlanLife Insurance in Florida. Call ${COMPANY_INFO.contact.phone}, email ${COMPANY_INFO.contact.email}, or visit us at ${COMPANY_INFO.address.full}.`,
     alternates: { canonical: `${baseUrl}/contact` },
   },
   faq: {
-    title: 'PlanLife | Insurance FAQ - Common Questions Answered by Florida Experts',
+    title: { absolute: 'PlanLife | Insurance FAQ - Common Questions Answered by Florida Experts' },
     description: "Get answers to common insurance questions. Learn about coverage types, claims process, pricing, and more from Florida's trusted insurance experts.",
     alternates: { canonical: `${baseUrl}/faq` },
   },
   blog: {
-    title: 'PlanLife | Insurance Blog - Tips, Guides & Expert Advice for Florida',
+    title: { absolute: 'PlanLife | Insurance Blog - Tips, Guides & Expert Advice for Florida' },
     description: 'Expert insurance advice for Florida businesses and homeowners. Learn about coverage requirements, cost-saving tips, and industry insights from PlanLife.',
     alternates: { canonical: `${baseUrl}/blog` },
   },
