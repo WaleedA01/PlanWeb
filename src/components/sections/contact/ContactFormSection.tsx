@@ -10,14 +10,14 @@ export default function ContactFormSection() {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    contactMethod: '',
     email: '',
     phone: '',
     message: '',
   });
   const [showValidation, setShowValidation] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const nameRef = useRef<HTMLDivElement>(null);
-  const contactMethodRef = useRef<HTMLDivElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
@@ -38,28 +38,14 @@ export default function ContactFormSection() {
       nameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return false;
     }
-    if (!formData.contactMethod) {
-      contactMethodRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return false;
-    }
-    if (formData.contactMethod === 'email' && !isValidEmail(formData.email)) {
+    if (!isValidEmail(formData.email)) {
       emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       emailRef.current?.focus();
       return false;
     }
-    if ((formData.contactMethod === 'phone' || formData.contactMethod === 'text') && !isValidPhone(formData.phone)) {
+    if (!isValidPhone(formData.phone)) {
       phoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       phoneRef.current?.focus();
-      return false;
-    }
-    if (formData.contactMethod === 'either' && (!isValidEmail(formData.email) || !isValidPhone(formData.phone))) {
-      if (!isValidEmail(formData.email)) {
-        emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        emailRef.current?.focus();
-      } else {
-        phoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        phoneRef.current?.focus();
-      }
       return false;
     }
     if (!formData.message) {
@@ -70,29 +56,64 @@ export default function ContactFormSection() {
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setShowValidation(true);
-    if (validateForm()) {
-      console.log('Form submitted:', formData);
-      
-      // Track contact form submission
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) throw new Error('Failed to send message');
+
       posthog.capture('contact_form_submitted', {
-        contact_method: formData.contactMethod,
         has_message: formData.message.length > 0,
       });
-      
-      // Handle form submission
+
+      setIsSubmitted(true);
+    } catch (err) {
+      console.error('Contact form error:', err);
+      alert('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const hasNameError = showValidation && (!formData.firstName || !formData.lastName);
-  const hasMethodError = showValidation && !formData.contactMethod;
-  const hasEmailError = showValidation && formData.contactMethod && 
-    ((formData.contactMethod === 'email' || formData.contactMethod === 'either') && !isValidEmail(formData.email));
-  const hasPhoneError = showValidation && formData.contactMethod && 
-    ((formData.contactMethod === 'phone' || formData.contactMethod === 'text' || formData.contactMethod === 'either') && !isValidPhone(formData.phone));
+  const hasEmailError = showValidation && !isValidEmail(formData.email);
+  const hasPhoneError = showValidation && !isValidPhone(formData.phone);
   const hasMessageError = showValidation && !formData.message;
+
+  if (isSubmitted) {
+    return (
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="bg-white border border-border rounded-2xl p-12 shadow-lg">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-3xl font-bold text-secondary mb-4">Message Sent!</h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                Thank you for reaching out. We'll get back to you shortly.
+              </p>
+              <Button onClick={() => window.location.href = '/'} className="bg-primary hover:bg-primary/90">
+                Back to Home
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 md:py-24 bg-background">
@@ -130,62 +151,9 @@ export default function ContactFormSection() {
                   </div>
                 </div>
 
-                {/* Preferred Contact Method */}
-                <div ref={contactMethodRef}>
-                  <label className={`block text-lg font-medium mb-3 ${hasMethodError ? 'text-red-500' : 'text-secondary'}`}>
-                    How would you like us to contact you? {hasMethodError && <span className="text-red-500">*</span>}
-                  </label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {[
-                      { value: 'email', label: 'Email', icon: Mail },
-                      { value: 'phone', label: 'Phone', icon: Phone },
-                      { value: 'text', label: 'Text (SMS)', icon: Phone },
-                      { value: 'either', label: 'Any', icons: [Mail, Phone] },
-                    ].map((method) => {
-                      const isSelected = formData.contactMethod === method.value;
-                      return (
-                        <button
-                          key={method.value}
-                          type="button"
-                          onClick={() => setFormData({ ...formData, contactMethod: method.value })}
-                          className={`relative p-6 rounded-xl transition-all duration-200 border-2 hover:shadow-lg ${
-                            isSelected
-                              ? 'border-primary bg-primary text-white shadow-md'
-                              : hasMethodError
-                              ? 'border-red-500 hover:border-red-600'
-                              : 'border-border hover:border-primary/50'
-                          }`}
-                        >
-                          {isSelected && (
-                            <div className="absolute top-2 right-2 w-5 h-5 bg-white rounded-full flex items-center justify-center">
-                              <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                              </svg>
-                            </div>
-                          )}
-                          <div className="flex flex-col items-center text-center space-y-2">
-                            {'icons' in method && method.icons ? (
-                              <div className="flex items-center gap-2">
-                                {method.icons.map((Icon, i) => (
-                                  <Icon key={i} className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-primary'}`} />
-                                ))}
-                              </div>
-                            ) : (
-                              <method.icon className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-primary'}`} />
-                            )}
-                            <div className={`text-base font-medium ${isSelected ? 'text-white' : 'text-secondary'}`}>
-                              {method.label}
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Email and Phone - Conditional based on contact method */}
-                {formData.contactMethod === 'email' && (
-                  <div className="animate-in fade-in duration-500">
+                {/* Email and Phone */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
                     <label className={`block text-lg font-medium mb-2 ${hasEmailError ? 'text-red-500' : 'text-secondary'}`}>
                       Email {hasEmailError && <span className="text-red-500">*</span>}
                     </label>
@@ -200,10 +168,7 @@ export default function ContactFormSection() {
                       }`}
                     />
                   </div>
-                )}
-
-                {(formData.contactMethod === 'phone' || formData.contactMethod === 'text') && (
-                  <div className="animate-in fade-in duration-500">
+                  <div>
                     <label className={`block text-lg font-medium mb-2 ${hasPhoneError ? 'text-red-500' : 'text-secondary'}`}>
                       Phone Number {hasPhoneError && <span className="text-red-500">*</span>}
                     </label>
@@ -218,42 +183,7 @@ export default function ContactFormSection() {
                       }`}
                     />
                   </div>
-                )}
-
-                {formData.contactMethod === 'either' && (
-                  <div className="grid md:grid-cols-2 gap-4 animate-in fade-in duration-500">
-                    <div>
-                      <label className={`block text-lg font-medium mb-2 ${hasEmailError ? 'text-red-500' : 'text-secondary'}`}>
-                        Email {hasEmailError && <span className="text-red-500">*</span>}
-                      </label>
-                      <input
-                        ref={emailRef}
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="your@email.com"
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                          hasEmailError ? 'border-red-500' : 'border-border'
-                        }`}
-                      />
-                    </div>
-                    <div>
-                      <label className={`block text-lg font-medium mb-2 ${hasPhoneError ? 'text-red-500' : 'text-secondary'}`}>
-                        Phone Number {hasPhoneError && <span className="text-red-500">*</span>}
-                      </label>
-                      <input
-                        ref={phoneRef}
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        placeholder="(555) 123-4567"
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                          hasPhoneError ? 'border-red-500' : 'border-border'
-                        }`}
-                      />
-                    </div>
-                  </div>
-                )}
+                </div>
 
                 {/* Message */}
                 <div>
@@ -276,9 +206,10 @@ export default function ContactFormSection() {
                 <Button
                   type="submit"
                   size="lg"
+                  disabled={isSubmitting}
                   className="w-full bg-primary hover:bg-primary/90 text-white py-6 text-lg"
                 >
-                  Send Message
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
                 </Button>
               </form>
             </div>

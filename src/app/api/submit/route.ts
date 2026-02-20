@@ -7,6 +7,7 @@ import { str } from "@/lib/submit/utils/strings";
 import { routeAndMap } from "@/lib/submit/router";
 import { getAgentById, getAgentFullName } from "@/lib/agents/getAgents";
 import { getPostHogClient } from "@/lib/posthog-server";
+import { sendEmailReceipts } from "@/lib/submit/emailReceipt";
 
 type ParsedBody = Partial<SubmitRequest> & Record<string, unknown>;
 
@@ -163,6 +164,19 @@ export async function POST(req: Request) {
       tags: tags.join('; '),
     },
   });
+
+  // Send email receipts (don't block response)
+  sendEmailReceipts({
+    formType: rawFormType,
+    answers,
+    agentId,
+    submittedAt: new Date().toLocaleString('en-US', { 
+      timeZone: 'America/New_York',
+      dateStyle: 'full',
+      timeStyle: 'short'
+    }),
+    files: [], // Files will be sent via separate endpoint
+  }).catch(err => console.error('Email receipt error:', err));
 
   return NextResponse.json(
     {

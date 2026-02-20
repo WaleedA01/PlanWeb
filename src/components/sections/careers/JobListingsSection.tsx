@@ -6,6 +6,41 @@ import { COMPANY_INFO, getEmailLink } from '@/lib/company-info';
 
 const jobListings = [
   {
+    id: 'licensed-insurance-agent',
+    title: 'Licensed Insurance Agent',
+    subtitle: 'All Insurance Types',
+    type: 'Full-Time',
+    location: 'Orlando, FL 32835',
+    workType: 'In-Person',
+    salary: '$40,000 - $80,000 per year',
+    description: 'PlanLife is seeking a motivated Licensed Insurance Agent to join our team. You\'ll work with clients across all insurance types including auto, home, life, health, and commercial coverage.',
+    ideal: 'This role is perfect for a licensed professional who wants to grow their career in a supportive environment while helping clients protect what matters most.',
+    responsibilities: [
+      'Meeting with clients to assess insurance needs across all product lines',
+      'Providing quotes and recommendations for auto, home, life, health, and commercial insurance',
+      'Building and maintaining strong client relationships',
+      'Processing applications and policy changes',
+      'Conducting policy reviews and identifying coverage gaps',
+      'Meeting sales goals and growing your book of business',
+      'Staying current on insurance products and industry regulations',
+    ],
+    requirements: [
+      'Active Florida insurance license (2-20, 2-15, or 2-40 required)',
+      'Strong sales and customer service skills',
+      'Excellent communication and interpersonal abilities',
+      'Self-motivated with ability to work independently',
+      'Detail-oriented and organized',
+    ],
+    benefits: [
+      'Competitive base salary plus commission',
+      'Health insurance',
+      'Paid time off',
+      'Professional development and training',
+      'Supportive team environment',
+      'Opportunity for career growth',
+    ],
+  },
+  {
     id: 'commercial-account-manager',
     title: 'Commercial Account Manager',
     subtitle: 'Property & Casualty Insurance',
@@ -206,7 +241,7 @@ export default function JobListingsSection() {
                         size="lg"
                         className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white"
                       >
-                        <a href={`${getEmailLink()}?subject=Application for ${job.title}`}>
+                        <a href={`/careers/${job.id}`}>
                           Apply Now
                         </a>
                       </Button>

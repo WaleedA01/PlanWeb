@@ -155,7 +155,7 @@ export function buildPersonalComments(answers: Record<string, unknown>): string 
   if (purchaseYN) {
     purchaseLines.push(`- Is this a new purchase?: ${purchaseYN}`);
     if (purchaseYN === "Yes" && closeDate) {
-      purchaseLines.push(`- Close date: ${limit(str(closeDate), 40)}`);
+      purchaseLines.push(`- Closing date: ${limit(str(closeDate), 40)}`);
     }
     if (purchaseYN === "No" && currentInsurer) {
       purchaseLines.push(`- Currently insured with: ${limit(str(currentInsurer), 80)}`);

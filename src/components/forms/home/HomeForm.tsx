@@ -153,7 +153,7 @@ export default function HomeForm() {
     switch (currentStep) {
       case 1:
         if (formData.isNewPurchase === null) return 'Please indicate if this is a new purchase';
-        if (formData.isNewPurchase === true && !formData.closeDate) return 'Please enter expected close date';
+        if (formData.isNewPurchase === true && !formData.closeDate) return 'Please enter expected closing date';
         if (formData.isNewPurchase === false && !formData.insuranceStatus) return 'Please select your insurance status';
         return 'Please complete all required fields';
       case 2:

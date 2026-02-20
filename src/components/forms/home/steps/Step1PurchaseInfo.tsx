@@ -72,7 +72,7 @@ export default function Step1PurchaseInfo({ data, onUpdate, showValidation }: St
         {data.isNewPurchase === true && (
           <div className="animate-in fade-in duration-500">
             <Label htmlFor="closeDate" className={`text-lg ${hasCloseDateError ? 'text-red-600' : ''}`}>
-              Close Date {hasCloseDateError && '*'}
+              Closing Date {hasCloseDateError && '*'}
             </Label>
             <Input
               id="closeDate"

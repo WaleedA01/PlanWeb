@@ -21,6 +21,13 @@ export const CARRIERS: Carrier[] = [
     excludeFromAnimation: true,
   },
   {
+    id: 'americanintegrity',
+    name: 'American Integrity',
+    logoSrc: '/carriers/americanintegrity.png',
+    alt: 'American Integrity Insurance - Home Insurance Partner',
+    lob: ['home'],
+  },
+  {
     id: 'amtrust',
     name: 'AmTrust',
     logoSrc: '/carriers/amtrust.png',
@@ -137,6 +144,13 @@ export const CARRIERS: Carrier[] = [
     name: 'Olympus',
     logoSrc: '/carriers/olympus.png',
     alt: 'Olympus',
+    lob: ['home'],
+  },
+  {
+    id: 'onealliance',
+    name: 'One Alliance North America',
+    logoSrc: '/carriers/onealliance.png',
+    alt: 'One Alliance North America Insurance - Home Insurance Partner',
     lob: ['home'],
   },
   {
