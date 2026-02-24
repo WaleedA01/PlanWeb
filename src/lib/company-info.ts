@@ -31,11 +31,6 @@ export const COMPANY_INFO = {
     linkedin: 'https://linkedin.com/company/planlife',
     instagram: 'https://www.instagram.com/planlifeusa/',
   },
-  
-  legal: {
-    licenseNumber: 'FL-12345678',
-    established: '2020',
-  },
 } as const;
 
 // Helper functions for formatted display

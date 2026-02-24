@@ -14,6 +14,7 @@ frontend:
         - echo "NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL" >> .env
         - echo "NEXT_PUBLIC_POSTHOG_KEY=$NEXT_PUBLIC_POSTHOG_KEY" >> .env
         - echo "NEXT_PUBLIC_POSTHOG_HOST=$NEXT_PUBLIC_POSTHOG_HOST" >> .env
+        - echo "RESEND_API_KEY=$RESEND_API_KEY" >> .env
     build:
       commands:
         - npm run build

@@ -255,7 +255,8 @@ export default function ContactFormSection() {
                   <div>
                     <p className="font-semibold mb-1">Location</p>
                     <p className="text-white/90">
-                      {COMPANY_INFO.address.city}, {COMPANY_INFO.address.state}
+                      {COMPANY_INFO.address.street}<br />
+                      {COMPANY_INFO.address.city}, {COMPANY_INFO.address.state} {COMPANY_INFO.address.zip}
                     </p>
                   </div>
                 </div>

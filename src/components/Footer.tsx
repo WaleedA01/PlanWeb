@@ -94,6 +94,10 @@ export default function Footer() {
                   {COMPANY_INFO.contact.phone}
                 </a>
               </li>
+              <li className="pt-2">
+                {COMPANY_INFO.address.street}<br />
+                {COMPANY_INFO.address.city}, {COMPANY_INFO.address.state} {COMPANY_INFO.address.zip}
+              </li>
               <li>
                 <Link href="/contact" className="text-primary hover:underline">
                   Contact Form
