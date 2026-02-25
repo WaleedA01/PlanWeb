@@ -165,18 +165,8 @@ export async function POST(req: Request) {
     },
   });
 
-  // Send email receipts (don't block response)
-  sendEmailReceipts({
-    formType: rawFormType,
-    answers,
-    agentId,
-    submittedAt: new Date().toLocaleString('en-US', { 
-      timeZone: 'America/New_York',
-      dateStyle: 'full',
-      timeStyle: 'short'
-    }),
-    files: [], // Files will be sent via separate endpoint
-  }).catch(err => console.error('Email receipt error:', err));
+  // Skip email sending here - all forms will send via /api/submit-with-files
+  // This ensures consistent email delivery and allows for future file uploads
 
   return NextResponse.json(
     {

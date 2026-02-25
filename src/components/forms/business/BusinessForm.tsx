@@ -368,7 +368,22 @@ export default function BusinessForm() {
       setIsSubmitted(true);
       setTurnstileToken(null);
       setTurnstileKey((k) => k + 1);
-      localStorage.removeItem('businessFormProgress'); // Clear saved progress after successful submit
+      localStorage.removeItem('businessFormProgress');
+
+      // Send via email endpoint for consistency
+      const fileFormData = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          fileFormData.append(key, String(value));
+        }
+      });
+
+      fetch('/api/submit-with-files', {
+        method: 'POST',
+        body: fileFormData,
+      }).catch((err) => {
+        console.error('Background email send failed:', err);
+      });
     } catch (err: any) {
       setSubmitError(err?.message || 'Network error submitting lead.');
       setTurnstileToken(null);

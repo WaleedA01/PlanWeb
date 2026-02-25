@@ -262,29 +262,26 @@ export default function HomeForm() {
       setTurnstileKey((k) => k + 1);
       localStorage.removeItem('homeFormProgress');
 
-      // BACKGROUND: Send files via email (non-blocking)
-      const hasFiles = (formData.policyFiles?.length ?? 0) > 0;
-      if (hasFiles) {
-        const fileFormData = new FormData();
-        
-        Object.entries(formData).forEach(([key, value]) => {
-          if (key !== 'policyFiles' && value !== null && value !== undefined) {
-            fileFormData.append(key, String(value));
-          }
-        });
+      // ALWAYS send via email endpoint to ensure files are included
+      const fileFormData = new FormData();
+      
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key !== 'policyFiles' && value !== null && value !== undefined) {
+          fileFormData.append(key, String(value));
+        }
+      });
 
-        formData.policyFiles?.forEach((file) => {
-          fileFormData.append('policyFile', file);
-        });
+      formData.policyFiles?.forEach((file) => {
+        fileFormData.append('policyFile', file);
+      });
 
-        // Fire and forget - don't await
-        fetch('/api/submit-with-files', {
-          method: 'POST',
-          body: fileFormData,
-        }).catch((err) => {
-          console.error('Background file upload failed:', err);
-        });
-      }
+      // Fire and forget - don't await
+      fetch('/api/submit-with-files', {
+        method: 'POST',
+        body: fileFormData,
+      }).catch((err) => {
+        console.error('Background file upload failed:', err);
+      });
 
     } catch (err: any) {
       setSubmitError(err?.message || 'Network error submitting lead.');

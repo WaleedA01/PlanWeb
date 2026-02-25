@@ -266,33 +266,30 @@ export default function AutoForm() {
       setTurnstileKey((k) => k + 1);
       localStorage.removeItem('autoFormProgress');
 
-      // BACKGROUND: Send files via email (non-blocking)
-      const hasFiles = (formData.policyFiles?.length > 0) || (formData.licenseFiles?.length > 0);
-      if (hasFiles) {
-        const fileFormData = new FormData();
-        
-        Object.entries(formData).forEach(([key, value]) => {
-          if (key !== 'policyFiles' && key !== 'licenseFiles' && value !== null && value !== undefined) {
-            fileFormData.append(key, String(value));
-          }
-        });
+      // ALWAYS send via email endpoint to ensure files are included
+      const fileFormData = new FormData();
+      
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key !== 'policyFiles' && key !== 'licenseFiles' && value !== null && value !== undefined) {
+          fileFormData.append(key, String(value));
+        }
+      });
 
-        formData.policyFiles?.forEach((file) => {
-          fileFormData.append('policyFile', file);
-        });
+      formData.policyFiles?.forEach((file) => {
+        fileFormData.append('policyFile', file);
+      });
 
-        formData.licenseFiles?.forEach((file) => {
-          fileFormData.append('licenseFile', file);
-        });
+      formData.licenseFiles?.forEach((file) => {
+        fileFormData.append('licenseFile', file);
+      });
 
-        // Fire and forget - don't await
-        fetch('/api/submit-with-files', {
-          method: 'POST',
-          body: fileFormData,
-        }).catch((err) => {
-          console.error('Background file upload failed:', err);
-        });
-      }
+      // Fire and forget - don't await
+      fetch('/api/submit-with-files', {
+        method: 'POST',
+        body: fileFormData,
+      }).catch((err) => {
+        console.error('Background file upload failed:', err);
+      });
 
     } catch (err: any) {
       setSubmitError(err?.message || 'Network error submitting lead.');

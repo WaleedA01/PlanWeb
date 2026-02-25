@@ -16,14 +16,21 @@ function formatAnswersForAgent(answers: Record<string, unknown>): string {
   return Object.entries(answers)
     .filter(([key]) => ![
       'turnstileToken', 'agentId', 'selectedAgentId', 'agentEmail', 'agentPhone', 'tags', 'agent',
-      'latitude', 'longitude', 'leadSource', 'smsOptIn', 'policyFiles', 'qr'
+      'latitude', 'longitude', 'leadSource', 'smsOptIn', 'policyFiles', 'licenseFiles', 'uploadedFiles', 'qr'
     ].includes(key))
     .filter(([, value]) => value !== '' && value !== null && value !== undefined)
     .map(([key, value]) => {
       const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+      let displayValue = value;
+      
+      // Handle file objects
+      if (typeof value === 'object' && value !== null && 'name' in value) {
+        displayValue = `Uploaded (${(value as any).name}): true ✅`;
+      }
+      
       return `<div style="padding: 10px; background-color: #f9fafb; border-radius: 6px; margin-bottom: 10px;">
         <span style="color: #6b7280; font-size: 12px; font-weight: 600;">${label}:</span>
-        <span style="color: #282F57; font-size: 14px;"> ${value}</span>
+        <span style="color: #282F57; font-size: 14px;"> ${displayValue}</span>
       </div>`;
     })
     .join('');
@@ -290,18 +297,20 @@ export async function sendEmailReceipts(data: ReceiptData) {
   // Prepare attachments for internal emails
   const attachments = files.map(f => ({ filename: f.filename, content: f.content }));
 
-  // Send internal emails first (Gus + Agent)
+  // Send internal emails (avoid duplicate if agent is Gus)
+  const isAgentGus = agent && agent.email === PRINCIPAL_EMAIL;
+  
   emails.push(
     resend.emails.send({
       from: "PlanLife USA <info@planlifeusa.com>",
       to: PRINCIPAL_EMAIL,
-      subject: `New ${formType} Quote - ${answers.firstName || ''} ${answers.lastName || ''}`,
+      subject: `New ${formType} Quote${isAgentGus ? ' Assigned to You' : ''} - ${answers.firstName || ''} ${answers.lastName || ''}`,
       html: internalHtml,
       attachments,
     })
   );
 
-  if (agent && agent.email !== PRINCIPAL_EMAIL) {
+  if (agent && !isAgentGus) {
     await new Promise(resolve => setTimeout(resolve, 600));
     emails.push(
       resend.emails.send({
