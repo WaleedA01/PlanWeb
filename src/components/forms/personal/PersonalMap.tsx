@@ -120,7 +120,7 @@ export default function PersonalMap({ latitude, longitude, show3DObject = false,
     try {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/redaplanlife/cml8jq4an00do01s370183ttq',
+        style: 'mapbox://styles/planlifemapbox/cmm3kuwzo00l201s3geg8azit',
         center: [longitude, latitude],
         zoom: 10,
         pitch: 0,
