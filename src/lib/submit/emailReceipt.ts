@@ -12,6 +12,61 @@ type ReceiptData = {
   files?: Array<{ filename: string; content: Buffer }>;
 };
 
+function normalizeFormType(formType: string, answers: Record<string, unknown>): string {
+  const normalized = (formType || '').trim().toLowerCase();
+
+  if (normalized && normalized !== 'other') {
+    return formType;
+  }
+
+  const hasBusinessFields = [
+    'businessName',
+    'businessType',
+    'products',
+    'numEmployees',
+    'annualSales',
+    'yearBusinessStarted',
+    'isNewBusiness',
+  ].some((key) => {
+    const value = answers[key];
+    if (Array.isArray(value)) return value.length > 0;
+    return value !== undefined && value !== null && value !== '';
+  });
+
+  if (hasBusinessFields) return 'Business';
+
+  const hasHomeFields = [
+    'propertyUsage',
+    'propertyFeatures',
+    'insuranceStatus',
+    'closeDate',
+    'coverageDate',
+    'isNewPurchase',
+  ].some((key) => {
+    const value = answers[key];
+    if (Array.isArray(value)) return value.length > 0;
+    return value !== undefined && value !== null && value !== '';
+  });
+
+  if (hasHomeFields) return 'Home';
+
+  const hasAutoFields = [
+    'numVehicles',
+    'numDrivers',
+    'isCurrentlyInsured',
+    'currentInsurer',
+    'coverageUrgency',
+  ].some((key) => {
+    const value = answers[key];
+    if (Array.isArray(value)) return value.length > 0;
+    return value !== undefined && value !== null && value !== '';
+  });
+
+  if (hasAutoFields) return 'Auto';
+
+  return formType || 'Other';
+}
+
 function formatAnswersForAgent(answers: Record<string, unknown>): string {
   return Object.entries(answers)
     .filter(([key]) => ![
@@ -139,6 +194,7 @@ function buildPropertyDetailsCard(answers: Record<string, unknown>): string {
 
 export async function sendEmailReceipts(data: ReceiptData) {
   const { formType, answers, agentId, submittedAt, files = [] } = data;
+  const normalizedFormType = normalizeFormType(formType, answers);
   const customerEmail = answers.email as string;
   
   if (!customerEmail) return;
@@ -196,7 +252,7 @@ export async function sendEmailReceipts(data: ReceiptData) {
         <div style="background-color: #ffffff; border-radius: 12px; padding: 30px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
           <h2 style="color: #282F57; font-size: 26px; margin-top: 0; margin-bottom: 12px; font-weight: 700;">Thank You, ${answers.firstName || 'there'}!</h2>
           <p style="color: #6b7280; font-size: 16px; line-height: 1.6; margin: 0;">
-            We've received your ${formType.toLowerCase() !== 'other' ? `${formType} insurance` : ''} information.
+            We've received your ${normalizedFormType.toLowerCase() !== 'other' ? `${normalizedFormType} insurance` : ''} information.
           </p>
         </div>
         
@@ -257,19 +313,19 @@ export async function sendEmailReceipts(data: ReceiptData) {
   const businessName = answers.businessName ? ` for ${answers.businessName}` : '';
   
   // Icon based on form type
-  const formIcon = formType.toLowerCase() === 'auto' ? '🚗' : formType.toLowerCase() === 'home' ? '🏠' : formType.toLowerCase() === 'business' ? '🏢' : '📄';
+  const formIcon = normalizedFormType.toLowerCase() === 'auto' ? '🚗' : normalizedFormType.toLowerCase() === 'home' ? '🏠' : normalizedFormType.toLowerCase() === 'business' ? '🏢' : '📄';
 
   const internalHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f5f5f5;">
       <div style="background: linear-gradient(135deg, rgba(40, 47, 87, 0.05) 0%, rgba(13, 169, 228, 0.05) 100%); padding: 50px 30px; text-align: center;">
         <img src="https://planlife.net/logo-full.png" alt="PlanLife USA" style="max-width: 280px; height: auto; margin: 0 auto 15px auto;" />
         <h1 style="color: #000000; margin: 0 0 8px 0; font-size: 24px; font-weight: bold;">🔔 New Lead Assignment 🔔</h1>
-        <p style="color: #282F57; margin: 0; font-size: 16px;">${formIcon} ${customerName} - ${formType} Insurance${businessName} ${formIcon}</p>
+        <p style="color: #282F57; margin: 0; font-size: 16px;">${formIcon} ${customerName} - ${normalizedFormType} Insurance${businessName} ${formIcon}</p>
       </div>
       
       <div style="padding: 30px;">
         <div style="background-color: #ffffff; border-radius: 12px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-          <h2 style="color: #282F57; font-size: 22px; margin-top: 0; margin-bottom: 15px; font-weight: 700;">New ${formType} Quote</h2>
+          <h2 style="color: #282F57; font-size: 22px; margin-top: 0; margin-bottom: 15px; font-weight: 700;">New ${normalizedFormType} Quote</h2>
           <div style="padding: 15px; background-color: #FFF4E6; border-radius: 8px; border-left: 4px solid #0da9e4;">
             <p style="margin: 0 0 8px 0; color: #282F57; font-size: 14px;"><strong>Customer:</strong> ${customerEmail}</p>
             ${agent ? `<p style="margin: 0; color: #282F57; font-size: 14px;"><strong>Agent:</strong> ${agentName} (${agent.email})</p>` : ''}
@@ -304,7 +360,7 @@ export async function sendEmailReceipts(data: ReceiptData) {
     resend.emails.send({
       from: "PlanLife USA <info@planlifeusa.com>",
       to: PRINCIPAL_EMAIL,
-      subject: `New ${formType} Quote${isAgentGus ? ' Assigned to You' : ''} - ${answers.firstName || ''} ${answers.lastName || ''}`,
+      subject: `New ${normalizedFormType} Quote${isAgentGus ? ' Assigned to You' : ''} - ${answers.firstName || ''} ${answers.lastName || ''}`,
       html: internalHtml,
       attachments,
     })
@@ -316,7 +372,7 @@ export async function sendEmailReceipts(data: ReceiptData) {
       resend.emails.send({
         from: "PlanLife USA <info@planlifeusa.com>",
         to: agent.email,
-        subject: `New ${formType} Quote Assigned to You - ${answers.firstName || ''} ${answers.lastName || ''}`,
+        subject: `New ${normalizedFormType} Quote Assigned to You - ${answers.firstName || ''} ${answers.lastName || ''}`,
         html: internalHtml,
         attachments,
       })
@@ -331,7 +387,7 @@ export async function sendEmailReceipts(data: ReceiptData) {
   await resend.emails.send({
     from: "PlanLife USA <info@planlifeusa.com>",
     to: customerEmail,
-    subject: `Your ${formType} Insurance Quote Request - PlanLife USA`,
+    subject: `Your ${normalizedFormType} Insurance Quote Request - PlanLife USA`,
     html: customerHtml,
   });
 }
