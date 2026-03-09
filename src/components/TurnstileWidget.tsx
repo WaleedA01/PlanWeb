@@ -11,6 +11,13 @@ declare global {
         options: {
           sitekey: string;
           callback: (token: string) => void;
+          "expired-callback"?: () => void;
+          "error-callback"?: () => void;
+          "timeout-callback"?: () => void;
+          retry?: "auto" | "never";
+          "refresh-expired"?: "auto" | "manual";
+          appearance?: "always" | "execute" | "interaction-only";
+          execution?: "render" | "execute";
         }
       ) => string;
       reset: (widgetId?: string) => void;
@@ -21,55 +28,135 @@ declare global {
 
 export function TurnstileWidget({
   onToken,
+  onInvalidate,
+  onStatusChange,
 }: {
   onToken: (token: string) => void;
+  onInvalidate?: () => void;
+  onStatusChange?: (status: "loading" | "ready" | "verified" | "expired" | "error") => void;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
   const renderedRef = useRef(false);
+  const retryTimeoutRef = useRef<number | null>(null);
+  const mountedRef = useRef(true);
+
+  const clearRetryTimeout = useCallback(() => {
+    if (retryTimeoutRef.current !== null) {
+      window.clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
+  }, []);
+
+  const cleanupWidget = useCallback(() => {
+    const id = widgetIdRef.current;
+
+    try {
+      if (id) {
+        if (window.turnstile?.remove) window.turnstile.remove(id);
+        else window.turnstile?.reset(id);
+      }
+    } catch {
+      // ignore cleanup failures
+    }
+
+    if (containerRef.current) {
+      containerRef.current.innerHTML = "";
+    }
+
+    widgetIdRef.current = null;
+    renderedRef.current = false;
+  }, []);
+
+  const scheduleRerender = useCallback(
+    (delay = 800) => {
+      if (!mountedRef.current) return;
+      clearRetryTimeout();
+      retryTimeoutRef.current = window.setTimeout(() => {
+        if (!mountedRef.current) return;
+        cleanupWidget();
+        onStatusChange?.("loading");
+        window.requestAnimationFrame(() => {
+          renderWidget();
+        });
+      }, delay);
+    },
+    [clearRetryTimeout, cleanupWidget, onStatusChange]
+  );
+
+  const handleInvalidation = useCallback(
+    (status: "expired" | "error") => {
+      onInvalidate?.();
+      onStatusChange?.(status);
+      scheduleRerender(status === "expired" ? 250 : 800);
+    },
+    [onInvalidate, onStatusChange, scheduleRerender]
+  );
 
   const renderWidget = useCallback(() => {
+    if (!mountedRef.current) return;
     if (renderedRef.current) return;
     if (!containerRef.current) return;
     if (!window.turnstile) return;
 
     const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
     if (!sitekey) {
-      // Fail silently in UI; server will block submission if token missing.
+      onStatusChange?.("error");
       return;
     }
 
-    // Ensure the container is empty before rendering.
     containerRef.current.innerHTML = "";
+    onStatusChange?.("loading");
 
     try {
       widgetIdRef.current = window.turnstile.render(containerRef.current, {
         sitekey,
-        callback: (token: string) => onToken(token),
+        retry: "auto",
+        "refresh-expired": "auto",
+        appearance: "always",
+        execution: "render",
+        callback: (token: string) => {
+          if (!mountedRef.current) return;
+          clearRetryTimeout();
+          onToken(token);
+          onStatusChange?.("verified");
+        },
+        "expired-callback": () => {
+          if (!mountedRef.current) return;
+          handleInvalidation("expired");
+        },
+        "error-callback": () => {
+          if (!mountedRef.current) return;
+          handleInvalidation("error");
+        },
+        "timeout-callback": () => {
+          if (!mountedRef.current) return;
+          handleInvalidation("error");
+        },
       });
       renderedRef.current = true;
+      onStatusChange?.("ready");
     } catch {
-      // If render fails for any reason, allow retry on next effect tick.
       renderedRef.current = false;
       widgetIdRef.current = null;
+      onStatusChange?.("error");
+      scheduleRerender(1000);
     }
-  }, [onToken]);
+  }, [clearRetryTimeout, handleInvalidation, onStatusChange, onToken, scheduleRerender]);
 
   useEffect(() => {
-    // Try immediately (in case the script is already loaded).
+    mountedRef.current = true;
     renderWidget();
 
-    // If Turnstile isn't available yet, poll briefly until it is.
     if (renderedRef.current) return;
 
     const start = Date.now();
     const interval = window.setInterval(() => {
       renderWidget();
-      // Stop polling once rendered or after ~3s.
-      if (renderedRef.current || Date.now() - start > 3000) {
+      if (renderedRef.current || Date.now() - start > 10000) {
         window.clearInterval(interval);
       }
-    }, 50);
+    }, 100);
 
     return () => {
       window.clearInterval(interval);
@@ -77,21 +164,12 @@ export function TurnstileWidget({
   }, [renderWidget]);
 
   useEffect(() => {
-    // Cleanup on unmount: reset/remove widget so it can be re-rendered cleanly.
     return () => {
-      const id = widgetIdRef.current;
-      try {
-        if (id) {
-          if (window.turnstile?.remove) window.turnstile.remove(id);
-          else window.turnstile?.reset(id);
-        }
-      } catch {
-        // ignore
-      }
-      widgetIdRef.current = null;
-      renderedRef.current = false;
+      mountedRef.current = false;
+      clearRetryTimeout();
+      cleanupWidget();
     };
-  }, []);
+  }, [clearRetryTimeout, cleanupWidget]);
 
   return (
     <>
@@ -99,7 +177,6 @@ export function TurnstileWidget({
         src="https://challenges.cloudflare.com/turnstile/v0/api.js"
         async
         defer
-        // When the script finishes loading, render immediately.
         onLoad={renderWidget}
       />
       <div ref={containerRef} />

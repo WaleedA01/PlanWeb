@@ -28,6 +28,7 @@ export default function BusinessForm() {
 
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileKey, setTurnstileKey] = useState(0);
+  const [turnstileStatus, setTurnstileStatus] = useState<"loading" | "ready" | "verified" | "expired" | "error">("loading");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitResult, setSubmitResult] = useState<any>(null);
@@ -274,7 +275,18 @@ export default function BusinessForm() {
         if (!formData.email) return 'Please enter your email address';
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Please enter a valid email address';
         if (formData.phoneNumber && formData.phoneNumber.replace(/\D/g, '').length !== 10) return 'Phone number must be 10 digits if provided';
-        if (!turnstileToken) return 'Please complete the verification';
+        if (!turnstileToken) {
+          if (turnstileStatus === 'loading' || turnstileStatus === 'ready') {
+            return 'Verification is still loading. Please wait a moment and try again.';
+          }
+          if (turnstileStatus === 'expired') {
+            return 'Verification expired and is refreshing automatically. Please wait a moment and try again.';
+          }
+          if (turnstileStatus === 'error') {
+            return 'Verification is being reloaded automatically. Please wait a moment and try again.';
+          }
+          return 'Please wait for verification to complete.';
+        }
         return 'Please complete all required fields';
       default:
         return 'Please complete all required fields';
@@ -307,7 +319,16 @@ export default function BusinessForm() {
     setSubmitResult(null);
 
     if (!turnstileToken) {
-      setSubmitError('Please complete the verification before submitting.');
+      if (turnstileStatus === 'loading' || turnstileStatus === 'ready') {
+        setSubmitError('Verification is still loading. Please wait a moment and submit again.');
+      } else if (turnstileStatus === 'expired') {
+        setSubmitError('Verification expired and is refreshing automatically. Please wait a moment and submit again.');
+      } else if (turnstileStatus === 'error') {
+        setSubmitError('Verification is being reloaded automatically. Please wait a moment and submit again.');
+        setTurnstileKey((k) => k + 1);
+      } else {
+        setSubmitError('Please wait for verification to complete before submitting.');
+      }
       return;
     }
 
@@ -338,6 +359,7 @@ export default function BusinessForm() {
       if (!res.ok) {
         setSubmitError(data?.error || `Submit failed (HTTP ${res.status})`);
         setTurnstileToken(null);
+        setTurnstileStatus('loading');
         setTurnstileKey((k) => k + 1);
         posthog.capture('business_form_submission_error', {
           form_type: 'business',
@@ -367,6 +389,7 @@ export default function BusinessForm() {
       });
       setIsSubmitted(true);
       setTurnstileToken(null);
+      setTurnstileStatus('loading');
       setTurnstileKey((k) => k + 1);
       localStorage.removeItem('businessFormProgress');
 
@@ -387,6 +410,7 @@ export default function BusinessForm() {
     } catch (err: any) {
       setSubmitError(err?.message || 'Network error submitting lead.');
       setTurnstileToken(null);
+      setTurnstileStatus('loading');
       setTurnstileKey((k) => k + 1);
     } finally {
       setIsSubmitting(false);
@@ -486,12 +510,44 @@ export default function BusinessForm() {
           canProceed={!!canProceed()}
           hideNavigation={showTransition}
           turnstileWidget={
-            !turnstileToken ? (
-              <TurnstileWidget
-                key={turnstileKey}
-                onToken={(token: string) => setTurnstileToken(token)}
-              />
-            ) : null
+            <div className="space-y-2">
+              {!turnstileToken ? (
+                <TurnstileWidget
+                  key={turnstileKey}
+                  onToken={(token: string) => {
+                    setTurnstileToken(token);
+                    setTurnstileStatus('verified');
+                    setSubmitError((prev) =>
+                      prev && prev.toLowerCase().includes('verification') ? null : prev
+                    );
+                  }}
+                  onInvalidate={() => {
+                    setTurnstileToken(null);
+                  }}
+                  onStatusChange={(status) => {
+                    setTurnstileStatus(status);
+                  }}
+                />
+              ) : null}
+
+              {!turnstileToken && (turnstileStatus === 'loading' || turnstileStatus === 'ready') && (
+                <p className="text-xs text-muted-foreground">
+                  Loading verification…
+                </p>
+              )}
+
+              {!turnstileToken && turnstileStatus === 'expired' && (
+                <p className="text-xs text-amber-700">
+                  Verification expired. Refreshing automatically…
+                </p>
+              )}
+
+              {!turnstileToken && turnstileStatus === 'error' && (
+                <p className="text-xs text-amber-700">
+                  Verification ran into an issue. Retrying automatically…
+                </p>
+              )}
+            </div>
           }
         >
           <FormStep isActive={currentStep === 1 && !showTransition}>

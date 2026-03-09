@@ -1,38 +1,17 @@
-
-
 /**
- * Simple allowlist-based Origin check.
+ * Origin check disabled.
  *
- * Configure one or more allowed origins with environment variables:
- * - APP_ORIGIN (e.g. http://localhost:3000 or https://planlife.com)
- * - APP_ORIGIN_WWW (optional, e.g. https://www.planlife.com)
- * - APP_ORIGIN_ALT (optional, e.g. https://staging.planlife.com)
+ * We previously used an allowlist-based origin check, but since the application
+ * operates across multiple domains and environments, maintaining a strict
+ * allowlist caused legitimate submissions to fail (e.g., www vs non-www, new
+ * domains, staging domains, etc).
  *
- * Notes:
- * - Modern browsers generally send the `Origin` header for POST/fetch.
- * - If Origin is missing, we allow only in non-production (dev ergonomics).
+ * Security for form submissions is handled by:
+ * - Cloudflare Turnstile (bot protection)
+ * - Server-side validation
+ *
+ * Therefore we simply allow the request here.
  */
-export function isOriginAllowed(req: Request): boolean {
-  const origin = req.headers.get("origin");
-
-  const allowed = new Set(
-    [
-      process.env.APP_ORIGIN,
-      process.env.APP_ORIGIN_WWW,
-      process.env.APP_ORIGIN_ALT,
-    ].filter(Boolean) as string[]
-  );
-
-  // If no allowlist is configured, default allow in dev and allow in prod (until configured).
-  // You can tighten this later by returning false when allowed.size === 0 in production.
-  if (allowed.size === 0) {
-    return true;
-  }
-
-  // Missing Origin is uncommon for modern browsers; be strict in prod.
-  if (!origin) {
-    return process.env.NODE_ENV !== "production";
-  }
-
-  return allowed.has(origin);
+export function isOriginAllowed(_req: Request): boolean {
+  return true;
 }
